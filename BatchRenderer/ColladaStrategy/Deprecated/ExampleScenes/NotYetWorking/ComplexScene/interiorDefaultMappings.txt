@@ -1,0 +1,103 @@
+% flip the camera handedness to match Blender-Collada output to Mitsuba and PBRT
+Collada {
+    Camera:scale|sid=scale = -1 1 1
+}
+
+% materials
+Generic {
+	ChromeMinnaertBlinn-material:material:matte
+	ChromeMinnaertBlinn-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+	Grey_001-material:material:matte
+	Grey_001-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	Grey_002-material:material:matte
+	Grey_002-material:diffuseReflectance.spectrum = mccBabel-3.spd
+
+	HalfRed-material:material:matte
+	HalfRed-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	HalfRed_001-material:material:matte
+	HalfRed_001-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+	Khaki-material:material:matte
+	Khaki-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	Magenta-material:material:matte
+	Magenta-material:diffuseReflectance.spectrum = mccBabel-3.spd
+
+	Material-material:material:matte
+	Material-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	Material_001-material:material:matte
+	Material_001-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+	Material_002-material:material:matte
+	Material_002-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	Material_003-material:material:matte
+	Material_003-material:diffuseReflectance.spectrum = mccBabel-3.spd
+
+	Material_004-material:material:matte
+	Material_004-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	Material_005-material:material:matte
+	Material_005-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+	Material_007-material:material:matte
+	Material_007-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	Material_008-material:material:matte
+	Material_008-material:diffuseReflectance.spectrum = mccBabel-3.spd
+
+	Material_009-material:material:matte
+	Material_009-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	Material__172757-material:material:matte
+	Material__172757-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+	Material__210043-material:material:matte
+	Material__210043-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	MediumGrey-material:material:matte
+	MediumGrey-material:diffuseReflectance.spectrum = mccBabel-3.spd
+
+	Red-material:material:matte
+	Red-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	SkyBlue_001-material:material:matte
+	SkyBlue_001-material:diffuseReflectance.spectrum = mccBabel-1.spd
+
+}
+
+
+% lights
+Generic {
+	Lamp_001-light:light:spot
+	Lamp_001-light:intensity.spectrum = D65.spd
+
+	Lamp_002-light:light:point
+	Lamp_002-light:intensity.spectrum = D65.spd
+
+	Lamp_003-light:light:point
+	Lamp_003-light:intensity.spectrum = D65.spd
+
+	Lamp_004-light:light:point
+	Lamp_004-light:intensity.spectrum = D65.spd
+
+	Lamp_005-light:light:point
+	Lamp_005-light:intensity.spectrum = D65.spd
+
+	Lamp_006-light:light:point
+	Lamp_006-light:intensity.spectrum = D65.spd
+
+	Lamp_007-light:light:point
+	Lamp_007-light:intensity.spectrum = D65.spd
+
+	Lamp_008-light:light:spot
+	Lamp_008-light:intensity.spectrum = D65.spd
+
+	Lamp_009-light:light:spot
+	Lamp_009-light:intensity.spectrum = D65.spd
+
+}

@@ -1,0 +1,235 @@
+[
+	{
+		"name": "leftAreaLamp",
+		"broadType": "lights",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "300:0 800:0"
+		}
+	},
+	{
+		"name": "frontAreaLamp",
+		"broadType": "lights",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "300:0 800:0"
+		}
+	},
+	{
+		"name": "leftAreaLamp",
+		"broadType": "meshes",
+		"operation": "blessAsAreaLight",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "GrayRGB_scale1.00_Spectrum.spd"
+		}
+	},
+	{
+		"name": "frontAreaLamp",
+		"broadType": "meshes",
+		"operation": "blessAsAreaLight",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "GrayRGB_scale0.16_Spectrum.spd"
+		}
+	},
+	{
+		"name": "darkCheckMaterial",
+		"broadType": "bsdf",
+		"specificType": "ward",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "diffuseReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.20_Spectrum.spd"
+            },
+            {
+            	"name": "specularReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.03_Spectrum.spd"
+            },
+            {
+            	"name": "ensureEnergyConservation",
+            	"valueType": "boolean",
+            	"value": "false"
+            },
+            {
+            	"name": "alphaU",
+            	"valueType": "float",
+            	"value": "0.1"
+            },
+            {
+            	"name": "alphaV",
+            	"valueType": "float",
+            	"value": "0.1"
+            }
+        ]
+	},
+	{
+		"name": "lightCheckMaterial",
+		"broadType": "bsdf",
+		"specificType": "ward",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "diffuseReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.44_Spectrum.spd"
+            },
+            {
+            	"name": "specularReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.03_Spectrum.spd"
+            },
+            {
+            	"name": "ensureEnergyConservation",
+            	"valueType": "boolean",
+            	"value": "false"
+            },
+            {
+            	"name": "alphaU",
+            	"valueType": "float",
+            	"value": "0.1"
+            },
+            {
+            	"name": "alphaV",
+            	"valueType": "float",
+            	"value": "0.1"
+            }
+        ]
+	},
+	{
+		"name": "clothMaterial",
+		"broadType": "bsdf",
+		"specificType": "ward",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "diffuseReflectance",
+            	"valueType": "spectrum",
+            	"value": "RedRGB_scale0.30_Spectrum.spd"
+            },
+            {
+            	"name": "specularReflectance",
+            	"valueType": "spectrum",
+            	"value": "RedRGB_scale0.10_Spectrum.spd"
+            },
+            {
+            	"name": "ensureEnergyConservation",
+            	"valueType": "boolean",
+            	"value": "false"
+            },
+            {
+            	"name": "alphaU",
+            	"valueType": "float",
+            	"value": "0.41"
+            },
+            {
+            	"name": "alphaV",
+            	"valueType": "float",
+            	"value": "0.41"
+            }
+        ]
+	},
+	{
+		"name": "roomMaterial",
+		"broadType": "bsdf",
+		"specificType": "ward",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "diffuseReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.20_Spectrum.spd"
+            },
+            {
+            	"name": "specularReflectance",
+            	"valueType": "spectrum",
+            	"value": "GrayRGB_scale0.03_Spectrum.spd"
+            },
+            {
+            	"name": "ensureEnergyConservation",
+            	"valueType": "boolean",
+            	"value": "false"
+            },
+            {
+            	"name": "alphaU",
+            	"valueType": "float",
+            	"value": "0.51"
+            },
+            {
+            	"name": "alphaV",
+            	"valueType": "float",
+            	"value": "0.51"
+            }
+        ]
+	},
+	{
+		"name": "cylinderMaterial",
+		"broadType": "bsdf",
+		"specificType": "roughplastic",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "diffuseReflectance",
+            	"valueType": "spectrum",
+            	"value": "BlueRGB_scale0.70_Spectrum.spd"
+            },
+            {
+            	"name": "alpha",
+            	"valueType": "float",
+            	"value": "0.01"
+            }
+        ]
+	},
+	{
+		"name": "integrator",
+		"broadType": "integrator",
+		"specificType": "bdpt",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "maxDepth",
+            	"valueType": "integer",
+            	"value": 7
+            },
+            {
+            	"name": "sampleDirect",
+            	"valueType": "boolean",
+            	"value": "true"
+            },
+            {
+            	"name": "lightImage",
+            	"valueType": "boolean",
+            	"value": "true"
+            }
+        ]
+	},
+	{
+		"name": "sampler",
+		"broadType": "sampler",
+		"specificType": "ldsampler",
+        "destination": "Mitsuba",
+		"operation": "update",
+		"properties": [
+            {
+            	"name": "sampleCount",
+            	"valueType": "integer",
+            	"value": 1024
+            }
+        ]
+	}
+]

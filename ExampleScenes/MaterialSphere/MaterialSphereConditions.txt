@@ -1,0 +1,4 @@
+imageName		groupName
+materialSphereMatte	matteGroup
+materialSphereWard	wardGroup
+materialSphereMetal	metalGroup

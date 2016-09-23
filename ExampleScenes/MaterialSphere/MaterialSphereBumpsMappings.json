@@ -1,0 +1,101 @@
+[
+	{
+		"name": "Point",
+		"broadType": "lights",
+		"specificType": "point",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "300:1 800:1"
+		}
+	},
+	{
+		"name": "Material",
+		"broadType": "materials",
+		"specificType": "metal",
+		"operation": "update",
+                "group": "metalGroup", 
+		"properties": [
+			{
+				"name": "roughness",
+				"valueType": "float",
+				"value": 0.4
+			},
+			{
+				"name": "eta",
+				"valueType": "spectrum",
+				"value": "Au.eta.spd"
+			},
+			{
+				"name": "k",
+				"valueType": "spectrum",
+				"value": "Au.k.spd"
+			}
+		]
+	},
+	{
+		"name": "Material",
+		"broadType": "materials",
+		"specificType": "anisoward",
+		"operation": "update",
+                "group": "wardGroup", 
+		"properties": [
+			{
+				"name": "alphaU",
+				"valueType": "float",
+				"value": 0.2
+			},
+			{
+				"name": "alphaV",
+				"valueType": "float",
+				"value": 0.2
+			},
+			{
+				"name": "diffuseReflectance",
+				"valueType": "spectrum",
+				"value": "mccBabel-7.spd"
+			}
+		]
+	},	{
+		"name": "Material",
+		"broadType": "materials",
+		"specificType": "matte",
+		"operation": "update",
+                "group": "matteGroup", 
+		"properties": [
+			{
+				"name": "diffuseReflectance",
+				"valueType": "spectrum",
+				"value": "mccBabel-11.spd"
+			}
+		]
+	},	{
+		"name": "earthTexture",
+		"broadType": "floatTextures",
+		"specificType": "bitmap",
+		"operation": "create",
+		"properties": {
+			"name": "filename",
+			"valueType": "string",
+			"value": "earthbump1k-stretch-rgb.exr"
+		}
+	},
+	{
+		"name": "Material",
+		"broadType": "materials",
+		"operation": "blessAsBumpMap",
+		"properties": [
+			{
+				"name": "texture",
+				"valueType": "string",
+				"value": "earthTexture"
+			},
+			{
+				"name": "scale",
+				"valueType": "float",
+				"value": 0.1
+			}
+		]
+	}
+]

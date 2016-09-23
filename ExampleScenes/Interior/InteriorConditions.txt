@@ -1,0 +1,7 @@
+imageName				imageWidth	imageHeight	windowSpectrum		groupName
+interior-large-direct			640		480		WindowLight.spd		directGroup
+interior-large-path			640		480		WindowLight.spd		pathGroup
+interior-small-direct			320		240		WindowLight.spd		directGroup
+interior-small-path			320		240		WindowLight.spd		pathGroup
+interior-small-direct-spots-only	320		240		300:0 800:0		directGroup
+interior-small-path-spots-only		320		240		300:0 800:0		pathGroup

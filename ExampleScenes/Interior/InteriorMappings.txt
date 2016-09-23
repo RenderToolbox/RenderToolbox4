@@ -1,0 +1,134 @@
+% flip the camera handedness to match Blender-Collada output to Mitsuba and PBRT
+Collada {
+    Camera:scale|sid=scale = -1 1 1
+}
+
+% materials
+Generic {
+	HangLampReflector-material:material:matte
+	HangLampReflector-material:diffuseReflectance.spectrum = 300:1 800:1
+
+	AreaLight-material:material:matte
+	AreaLight-material:diffuseReflectance.spectrum = 300:1 800:1
+
+	WallLight-material:material:matte
+	WallLight-material:diffuseReflectance.spectrum = 300:1 800:1
+
+	ChromeMinnaertBlinn-material:material:matte
+	ChromeMinnaertBlinn-material:diffuseReflectance.spectrum = mccBabel-2.spd
+
+	Grey_001-material:material:matte
+	Grey_001-material:diffuseReflectance.spectrum = mccBabel-4.spd
+
+	Grey_002-material:material:matte
+	Grey_002-material:diffuseReflectance.spectrum = mccBabel-5.spd
+
+	HalfRed-material:material:matte
+	HalfRed-material:diffuseReflectance.spectrum = mccBabel-6.spd
+
+	HalfRed_001-material:material:matte
+	HalfRed_001-material:diffuseReflectance.spectrum = mccBabel-7.spd
+
+	Khaki-material:material:matte
+	Khaki-material:diffuseReflectance.spectrum = mccBabel-8.spd
+
+	Magenta-material:material:matte
+	Magenta-material:diffuseReflectance.spectrum = mccBabel-9.spd
+
+	Material-material:material:matte
+	Material-material:diffuseReflectance.spectrum = mccBabel-10.spd
+
+	Material_001-material:material:matte
+	Material_001-material:diffuseReflectance.spectrum = mccBabel-11.spd
+
+	Material_002-material:material:matte
+	Material_002-material:diffuseReflectance.spectrum = mccBabel-12.spd
+
+	Material_003-material:material:matte
+	Material_003-material:diffuseReflectance.spectrum = mccBabel-13.spd
+
+	Material_004-material:material:matte
+	Material_004-material:diffuseReflectance.spectrum = mccBabel-14.spd
+
+	Material_005-material:material:matte
+	Material_005-material:diffuseReflectance.spectrum = mccBabel-15.spd
+
+	Material_007-material:material:matte
+	Material_007-material:diffuseReflectance.spectrum = mccBabel-16.spd
+
+	Material_008-material:material:matte
+	Material_008-material:diffuseReflectance.spectrum = mccBabel-17.spd
+
+	Material_009-material:material:matte
+	Material_009-material:diffuseReflectance.spectrum = mccBabel-18.spd
+
+	Material__172757-material:material:matte
+	Material__172757-material:diffuseReflectance.spectrum = mccBabel-19.spd
+
+	Material__210043-material:material:matte
+	Material__210043-material:diffuseReflectance.spectrum = mccBabel-20.spd
+
+	MediumGrey-material:material:matte
+	MediumGrey-material:diffuseReflectance.spectrum = mccBabel-21.spd
+
+	Red-material:material:matte
+	Red-material:diffuseReflectance.spectrum = mccBabel-22.spd
+}
+
+
+% lights
+Generic {
+	Lamp_001-light:light:spot
+	Lamp_001-light:intensity.spectrum = HangingLight.spd
+
+	Lamp_008-light:light:spot
+	Lamp_008-light:intensity.spectrum = YellowLight.spd
+
+	Lamp_009-light:light:spot
+	Lamp_009-light:intensity.spectrum = YellowLight.spd
+
+	SneakyPoint-light:light:point
+	SneakyPoint-light:intensity.spectrum = YellowLight.spd
+
+    CameraLight-mesh:light:area
+    CameraLight-mesh:intensity.spectrum = (windowSpectrum)
+
+    WallLight-mesh:light:area
+    WallLight-mesh:intensity.spectrum = (windowSpectrum)
+}
+
+Mitsuba {
+    % hanging lamp inner reflector is backwards to Mitsuba
+    Sphere_001-mesh:flipNormals.boolean = true
+}
+
+PBRT directGroup {
+    % use the direct lighting integrator
+    integrator:SurfaceIntegrator:directlighting
+    sampler:pixelsamples.integer = 8
+}
+
+Mitsuba directGroup {
+    % use the direct lighting integrator
+    integrator:integrator:direct
+    integrator:shadingSamples.integer = 32
+    Camera-camera_sampler:sampleCount.integer = 8
+}
+
+PBRT pathGroup {
+    % use the path tracer with 5 interreflections (7 total ray segments)
+    integrator:SurfaceIntegrator:path
+    integrator:maxdepth.integer = 5
+
+    % up the sample count to prevent graininess
+    sampler:pixelsamples.integer = 512
+}
+
+Mitsuba pathGroup {
+    % use the path tracer with 5 interreflections (7 total ray segments)
+    integrator:integrator:path
+    integrator:maxDepth.integer = 7
+
+    % up the sample count to prevent graininess
+    Camera-camera_sampler:sampleCount.integer = 512
+}

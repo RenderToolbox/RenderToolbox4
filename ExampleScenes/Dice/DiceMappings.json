@@ -1,0 +1,64 @@
+[
+	{
+		"name": "Point",
+		"broadType": "lights",
+        "specificType": "point",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "D65.spd"
+		}
+	},
+	{
+		"name": "Sun",
+		"broadType": "lights",
+        "specificType": "directional",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "D65.spd"
+		}
+	},
+	{
+		"name": "diceTexture",
+		"broadType": "spectrumTextures",
+		"specificType": "bitmap",
+		"operation": "create",
+		"properties": {
+			"name": "filename",
+			"valueType": "string",
+			"value": "DiceUVColored.exr"
+		}
+	},
+	{
+		"name": "Textured",
+		"broadType": "materials",
+		"specificType": "anisoward",
+		"operation": "update",
+		"properties": [
+            {
+                "name": "diffuseReflectance",
+                "valueType": "texture",
+                "value": "diceTexture"
+            },
+            {
+                "name": "specularReflectance",
+                "valueType": "spectrum",
+                "value": "300:0 800:0"
+            }
+       ]
+	},
+	{
+		"name": "Floor",
+		"broadType": "materials",
+		"specificType": "matte",
+		"operation": "update",
+		"properties": {
+            "name": "diffuseReflectance",
+            "valueType": "spectrum",
+            "value": "mccBabel-1.spd"
+        }
+	}
+]

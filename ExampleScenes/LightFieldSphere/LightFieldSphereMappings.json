@@ -1,0 +1,56 @@
+[
+	{
+		"name": "integrator",
+		"broadType": "integrator",
+		"specificType": "path",
+		"operation": "update",
+        "destination": "Mitsuba"
+	},
+	{
+		"name": "sampler",
+		"broadType": "sampler",
+		"specificType": "ldsampler",
+		"operation": "update",
+        "destination": "Mitsuba", 
+		"properties": {
+			"name": "sampleCount",
+			"valueType": "integer",
+			"value": 80
+		}
+	},
+	{
+		"name": "Hemi",
+		"broadType": "emitter",
+		"specificType": "envmap",
+		"operation": "update",
+        "destination": "Mitsuba", 
+		"properties": {
+			"name": "filename",
+			"valueType": "string",
+			"value": "hallstatt4_hd.hdr"
+		}
+	},
+	{
+		"name": "Material_001",
+		"broadType": "materials",
+		"specificType": "anisoward",
+		"operation": "update",
+		"properties": [
+            {
+                "name": "diffuseReflectance",
+                "valueType": "spectrum",
+                "value": "mccBabel-7.spd"
+            },
+            {
+                "name": "alphaU",
+                "valueType": "float",
+                "value": "(uval)"
+            },
+            {
+                "name": "alphaV",
+                "valueType": "float",
+                "value": "(uval)"
+            }
+        ]
+	}
+]

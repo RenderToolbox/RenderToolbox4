@@ -1,0 +1,4 @@
+imageName	blueRot	whiteRot	MitsubaLength	PBRTLength
+reference	45	-45		10		8
+shortPath	45	-45		2		0
+convex		-45	45		10		8

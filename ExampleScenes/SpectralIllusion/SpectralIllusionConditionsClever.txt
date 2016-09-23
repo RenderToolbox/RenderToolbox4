@@ -1,0 +1,2 @@
+imageName	targetColor			destinationColor
+clever		SpectralIllusionTarget.spd	SpectralIllusionDestination.spd

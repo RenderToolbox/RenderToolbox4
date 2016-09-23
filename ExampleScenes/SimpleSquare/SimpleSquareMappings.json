@@ -1,0 +1,24 @@
+[
+	{
+		"name": "Sun",
+		"broadType": "lights",
+		"specificType": "directional",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "D65.spd"
+		}
+	},
+	{
+		"name": "SquareMaterial",
+		"broadType": "materials",
+		"specificType": "matte",
+		"operation": "update",
+		"properties": {
+			"name": "diffuseReflectance",
+			"valueType": "spectrum",
+			"value": "(squareColor)"
+		}
+	}
+]

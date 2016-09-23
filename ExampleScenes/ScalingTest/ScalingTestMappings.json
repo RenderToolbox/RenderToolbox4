@@ -1,0 +1,142 @@
+[
+	{
+		"name": "Camera",
+		"broadType": "sensor",
+		"specificType": "thinlens",
+		"operation": "update",
+        "destination": "Mitsuba",
+		"properties": [
+            {
+                "name": "shutterOpen",
+                "valueType": "float",
+                "value": "(shutterOpen)"
+            },
+            {
+                "name": "shutterClose",
+                "valueType": "float",
+                "value": "(shutterClose)"
+            },
+            {
+                "name": "apertureRadius",
+                "valueType": "float",
+                "value": "(radius)"
+            },
+            {
+                "name": "focusDistance",
+                "valueType": "float",
+                "value": "(focalDistance)"
+            }
+        ]
+	},
+	{
+		"name": "sampler",
+		"broadType": "sampler",
+		"specificType": "ldsampler",
+		"operation": "update",
+        "destination": "Mitsuba",
+		"properties": {
+			"name": "sampleCount",
+			"valueType": "integer",
+			"value": "(nSamples)"
+		}
+	},
+	{
+		"name": "rfilter",
+		"broadType": "rfilter",
+		"specificType": "gaussian",
+		"operation": "update",
+        "destination": "Mitsuba",
+		"properties": {
+			"name": "stddev",
+			"valueType": "float",
+			"value": "(filterSigma)"
+		}
+	},
+	{
+		"name": "Camera",
+		"broadType": "Camera",
+		"specificType": "perspective",
+		"operation": "update",
+        "destination": "PBRT",
+		"properties": [
+            {
+                "name": "lensradius",
+                "valueType": "float",
+                "value": "(radius)"
+            },
+            {
+                "name": "focaldistance",
+                "valueType": "float",
+                "value": "(focalDistance)"
+            },
+            {
+                "name": "shutteropen",
+                "valueType": "float",
+                "value": "(shutterOpen)"
+            },
+            {
+                "name": "shutterclose",
+                "valueType": "float",
+                "value": "(shutterClose)"
+            }
+        ]
+	},
+	{
+		"name": "sampler",
+		"broadType": "Sampler",
+		"specificType": "lowdiscrepancy",
+		"operation": "update",
+        "destination": "PBRT",
+		"properties": {
+			"name": "pixelsamples",
+			"valueType": "integer",
+			"value": "(nSamples)"
+		}
+	},
+	{
+		"name": "filter",
+		"broadType": "PixelFilter",
+		"specificType": "gaussian",
+		"operation": "update",
+        "destination": "PBRT",
+		"properties": [
+            {
+                "name": "alpha",
+                "valueType": "float",
+                "value": "(filterAlpha)"
+            },
+            {
+                "name": "xwidth",
+                "valueType": "float",
+                "value": "(filterWidth)"
+            },
+            {
+                "name": "ywidth",
+                "valueType": "float",
+                "value": "(filterWidth)"
+            }
+        ]
+	},
+	{
+		"name": "Material",
+		"broadType": "materials",
+		"specificType": "matte",
+		"operation": "update",
+		"properties": {
+			"name": "diffuseReflectance",
+			"valueType": "spectrum",
+			"value": "mccBabel-7.spd"
+		}
+	},
+	{
+		"name": "Point",
+		"broadType": "lights",
+		"specificType": "point",
+		"operation": "update",
+		"properties": {
+			"name": "intensity",
+			"valueType": "spectrum",
+			"value": "300:1 800:1"
+		}
+	}
+]
