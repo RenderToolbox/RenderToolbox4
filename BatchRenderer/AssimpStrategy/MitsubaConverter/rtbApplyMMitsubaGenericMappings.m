@@ -195,8 +195,8 @@ for mm = 1:nGenericMappings
                         'eta', 'eta', 'spectrum', '300:0 800:0');
                     setSpectrumOrTexture(element, mapping, ...
                         'k', 'k', 'spectrum', '300:0 800:0');
-                    element.setProperty('roughness', 'float', ...
-                        rtbGetMappingProperty(mapping, 'alpha', .05));
+                    element.setProperty('alpha', 'float', ...
+                        rtbGetMappingProperty(mapping, 'roughness', .05));
             end
             
         case 'lights'
