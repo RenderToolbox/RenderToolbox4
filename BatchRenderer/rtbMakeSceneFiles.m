@@ -22,7 +22,7 @@ function nativeScenes = rtbMakeSceneFiles(parentScene, varargin)
 % renderer-native scene files.  If hints is omitted, values are taken
 % from rtbDefaultHints().
 %   - hints.strategy specifies how to load and manipulate scene data (e.g.
-%   Collada vs Assimp).  The default is RtbVersion3Strategy.
+%   Collada vs Assimp).  The default is RtbAssimpStrategy.
 %   - hints.renderer specifies which renderer to target
 %   - hints.imageHeight and hints.imageWidth specify the image pixel
 %   dimensions to specify for the scene

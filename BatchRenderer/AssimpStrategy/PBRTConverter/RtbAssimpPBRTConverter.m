@@ -1,4 +1,4 @@
-classdef RtbVersion3PBRTConverter < RtbConverter
+classdef RtbAssimpPBRTConverter < RtbConverter
     %% Implementation for rendering converting mexximp to Pbrt.
     %
     
@@ -34,9 +34,9 @@ classdef RtbVersion3PBRTConverter < RtbConverter
     
     methods
         
-        function obj = RtbVersion3PBRTConverter(hints)
+        function obj = RtbAssimpPBRTConverter(hints)
             obj.hints = rtbDefaultHints(hints);
-            obj.material = RtbVersion3PBRTConverter.defaultMaterial();
+            obj.material = RtbAssimpPBRTConverter.defaultMaterial();
             obj.diffuseParameter = 'Kd';
             obj.specularParameter = '';
             obj.outputFolder = rtbWorkingFolder('hints', obj.hints);

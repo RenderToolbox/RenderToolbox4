@@ -1,4 +1,4 @@
-classdef RtbVersion3MitsubaConverter < RtbConverter
+classdef RtbAssimpMitsubaConverter < RtbConverter
     %% Implementation for rendering converting mexximp to Mitsuba.
     %
     
@@ -34,9 +34,9 @@ classdef RtbVersion3MitsubaConverter < RtbConverter
     
     methods
         
-        function obj = RtbVersion3MitsubaConverter(hints)
+        function obj = RtbAssimpMitsubaConverter(hints)
             obj.hints = rtbDefaultHints(hints);
-            obj.material = RtbVersion3MitsubaConverter.defaultMaterial();
+            obj.material = RtbAssimpMitsubaConverter.defaultMaterial();
             obj.diffuseParameter = 'reflectance';
             obj.specularParameter = '';
             obj.outputFolder = rtbWorkingFolder( ...
