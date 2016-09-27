@@ -1,3 +1,0 @@
-reflectanceRGB	illuminant	
-0.500000 0.500000 0.500000	/home/ben/Documents/MATLAB/render_toolbox/rtbMakeRGBPromotionFigure/resources/CIE-day-10000.spd	
-

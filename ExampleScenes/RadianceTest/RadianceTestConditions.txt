@@ -1,9 +1,0 @@
-imageName	lightDistance	cameraY	cameraZ	cameraXRot	groupName	lightRadius	lightSpectrum				reflectorXRot
-reference	100		5	5	-45		pointLightGroup	0.01		uniformSpectrum5nm.spd	0
-2xFarLight	200		5	5	-45		pointLightGroup	0.01		uniformSpectrum5nm.spd	0
-2xFarCamera	100		10	10	-45		pointLightGroup	0.01		uniformSpectrum5nm.spd	0
-rotateReflector	100		5	5	-45		pointLightGroup	0.01		uniformSpectrum5nm.spd	-41.4
-rotateCamera	100		1.23	6.96	-10		pointLightGroup	0.01		uniformSpectrum5nm.spd	0
-sparseSpectrum	100		5	5	-45		pointLightGroup	0.01		uniformSpectrum10nm.spd	0
-unitAreaLight	100		5	5	-45		areaLightGroup	0.5642		uniformSpectrum5nm.spd	0
-halfAreaLight	100		5	5	-45		areaLightGroup	0.3989		uniformSpectrum5nm.spd	0

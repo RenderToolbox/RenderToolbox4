@@ -1,2 +1,0 @@
-imageName	dragonColor	
-macbethDragon-1	mccBabel-1.spd	

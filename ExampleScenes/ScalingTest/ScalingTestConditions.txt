@@ -1,7 +1,0 @@
-imageName	shutterOpen	shutterClose	radius	focalDistance	filterAlpha	filterSigma	filterWidth	nSamples	imageHeight	imageWidth
-reference	0		1		0.1	5		2		0.5		2		8		100		100
-2xExposure	0		2		0.1	5		2		0.5		2		8		100		100
-2xLens		0		1		0.2	5		2		0.5		2		8		100		100
-2xSamples	0		1		0.1	5		2		0.5		2		16		100		100
-2xFilter	0		1		0.1	5		0.5		1		4		8		100		100
-4xPixels	0		1		0.1	5		2		0.5		2		8		200		200

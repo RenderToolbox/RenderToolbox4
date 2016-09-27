@@ -1,4 +1,0 @@
-% flip the camera handedness to match Blender-Collada output to Mitsuba and PBRT
-Collada {
-    Camera:scale|sid=scale = -1 1 1
-}
