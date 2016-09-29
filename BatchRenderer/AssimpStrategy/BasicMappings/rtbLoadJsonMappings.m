@@ -24,7 +24,7 @@ argParser.parse(fileName);
 fileName = argParser.Results.fileName;
 
 if 2 == exist(fileName, 'file')
-    originalMappings = loadjson(fileName);
+    originalMappings = rtbReadJson(fileName);
 else
     originalMappings = {};
 end
