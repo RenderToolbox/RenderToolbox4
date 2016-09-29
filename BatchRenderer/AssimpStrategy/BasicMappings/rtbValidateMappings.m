@@ -9,11 +9,14 @@ function mappings = rtbValidateMappings(rawMappings)
 %
 % mappings = rtbValidateMappings(rawMappings)
 %
-% Copyright (c) 2016 mexximp Team
+%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox4 Team.
+%%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
+%%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
 
 
 %% Declare standard mappings struct fields.
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.StructExpand = true;
 parser.addParameter('name', '', @ischar);
 parser.addParameter('index', [], @isnumeric);
@@ -28,7 +31,11 @@ parser.addParameter('properties', []);
 nMappings = numel(rawMappings);
 validatedMappings = cell(1, nMappings);
 for mm = 1:nMappings
-    parser.parse(rawMappings{mm});
+    if iscell(rawMappings)
+        parser.parse(rawMappings{mm});
+    else
+        parser.parse(rawMappings(mm));
+    end
     mapping = parser.Results;
     
     % check each property element one at a time

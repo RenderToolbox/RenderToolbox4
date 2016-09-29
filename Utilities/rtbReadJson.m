@@ -10,7 +10,7 @@ function data = rtbReadJson(jsonString)
 %%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
 
-parser = rdtInputParser();
+parser = inputParser();
 parser.addRequired('jsonString', @ischar);
 parser.parse(jsonString);
 jsonString = parser.Results.jsonString;
