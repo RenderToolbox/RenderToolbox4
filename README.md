@@ -66,7 +66,7 @@ The ToolboxToolbox will also create a configuration script which you can edit wi
 ~/Documents/MATLAB/RenderToolbox4.m
 ```
 
-This you might wish to edit in this script:
+Here are some preferences you might wish to edit in this script:
  - which Docker images to use for rendering -- edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L47) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L76) for PBRT
  - where to store output files: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L27)
  - where to find local renderer executables, in case Docker is not available: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L50) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L79) for PBRT
