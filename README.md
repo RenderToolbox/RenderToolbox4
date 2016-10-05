@@ -1,6 +1,6 @@
 RenderToolbox4
 ==============
-RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.  For more in formation, please see the [wiki](https://github.com/RenderToolbox3/RenderToolbox4/wiki).
+RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.  For more information, please see the [wiki](https://github.com/RenderToolbox3/RenderToolbox4/wiki).
 
 # Installation
 RenderToolbox requires [Matlab](https://www.mathworks.com/products/matlab/), a few native system dependencies, and some Matlab toolboxes.
