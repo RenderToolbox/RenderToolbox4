@@ -99,8 +99,8 @@ Your RenderToolbox4 installation seems to be working!
 RenderToolbox4 is released under the MIT License.  Please see LICENSE file for details.
 
 RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox4 Team.
- - [About Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/wiki/About-Us)
- - [Join Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/wiki/Join-Us)
+ - [About Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/About-Us)
+ - [Join Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/Join-Us)
  
 ![dragon model in 24 ColorChecker colors](https://raw.githubusercontent.com/RenderToolbox3/RenderToolbox4/gh-pages/ExampleScenes/Dragon/DragonColorChecker%20%28PBRT%29.png)
 
