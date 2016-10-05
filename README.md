@@ -71,7 +71,7 @@ Here are some preferences you might wish to edit in this script:
  - where to store output files: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L27)
  - where to find local renderer executables, in case Docker is not available: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L50) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L79) for PBRT
 
-Now, each time you do `tbUse('RenderToolbox4')` your custom preferences will be set up.
+Next time you do `tbUse('RenderToolbox4')` your custom preferences will be set up.
 
 ## Testing
 To test that RenderToolbox is installed correctly, you can run
