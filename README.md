@@ -56,7 +56,13 @@ tbUse('RenderToolbox4');
 
 This will download necessary Matlab toolboxes and Docker images for RenderToolbox.  The first time through, this may take a while.
 
-This will also create a configuration script which you can edit with local preferences, like which Docker images to use for rendering, and where to store output files.  This script will be named `RenderToolbox4.m`.  The default folder would be in your Matlab [userpath](https://www.mathworks.com/help/matlab/ref/userpath.html).  For example `~/Documents/MATLAB/RenderToolbox4.m`.
+## Preferences
+The ToolboxToolbox will also create a configuration script which you can edit with local preferences.  This script will be named `RenderToolbox4.m`.  The default folder would be in your Matlab [userpath](https://www.mathworks.com/help/matlab/ref/userpath.html).  For example: `~/Documents/MATLAB/RenderToolbox4.m`.
+
+This you might wish to edit in this script:
+ - which Docker images to use for rendering -- edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L47) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L76) for PBRT
+ - where to store output files: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L27)
+ - where to find local renderer executables, in case Docker is not available: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L50) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L79) for PBRT
 
 Now, each time you do `tbUse('RenderToolbox4')` your custom preferences will be set up.
 
