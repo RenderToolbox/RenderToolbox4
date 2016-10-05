@@ -51,7 +51,7 @@ sudo apt-get install openexr
 RenderToolbox uses [Docker](https://github.com/RenderToolbox3/RenderToolbox4/wiki/Docker) to distribute pre-built renderers and other tools.  Here's where you can [Get Docker](https://www.docker.com/products/overview) for Linux, OS X, or Windows.
 
 ## Toolboxes
-The best way to get the Matlab toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
+The best way to get RenderToolbox and other required toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
 
 If you have the ToolboxToolbox, then getting RenderToolbox becomes a one-liner:
 ```
