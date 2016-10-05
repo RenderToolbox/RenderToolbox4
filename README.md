@@ -44,7 +44,7 @@ sudo apt-get install openexr
 ```
 
 ### Docker
-RenderToolbox uses [[Docker]] to distribute pre-built renderers and other tools.  Docker is available for Linux, OS X, and Windows.  [Get Docker!](https://www.docker.com/products/overview).
+RenderToolbox uses [Docker](https://github.com/RenderToolbox3/RenderToolbox4/wiki/Docker) to distribute pre-built renderers and other tools.  Docker is available for Linux, OS X, and Windows.  Here's where you can [Get Docker](https://www.docker.com/products/overview).
 
 ## Toolboxes
 The best way to get the Matlab toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
@@ -52,6 +52,34 @@ The best way to get the Matlab toolboxes is to use the [ToolboxToolbox](https://
 If you have the ToolboxToolbox, then getting RenderToolbox becomes a one-liner:
 ```
 tbUse('RenderToolbox4');
+```
+
+This will download necessary Matlab toolboxes and Docker images for RenderToolbox.  The first time through, this may take a while.
+
+This will also create a configuration script which you can edit with local preferences, like which Docker images to use for rendering, and where to store output files.  This script will be named `RenderToolbox4.m`.  The default folder would be in your Matlab [userpath](https://www.mathworks.com/help/matlab/ref/userpath.html).  For example `~/Documents/MATLAB/RenderToolbox4.m`.
+
+Now, each time you do `tbUse('RenderToolbox4')` your custom preferences will be set up.
+
+## Testing
+To test that RenderToolbox is installed correctly, you can run
+```
+rtbTestInstallation();
+```
+
+This should render 4 scenes, each with PBRT and Mitsuba.  The result should look like this:
+```
+4 scenes succeeded.
+
+1 rtbMakeCoordinatesTest.m
+2 rtbMakeDragon.m
+3 rtbMakeMaterialSphereBumps.m
+4 rtbMakeMaterialSphereRemodeled.m
+
+0 scenes failed.
+
+Elapsed time is 133.631781 seconds.
+
+Your RenderToolbox4 installation seems to be working!
 ```
 
 # About
