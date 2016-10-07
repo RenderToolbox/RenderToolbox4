@@ -11,6 +11,7 @@ classdef RtbRecipeTests < matlab.unittest.TestCase
             mappingsFile = fullfile(rtbRoot(), 'Test', 'Automated', 'Fixture', 'DragonColorCheckerMappings.txt');
             hints.workingFolder = fullfile(tempdir(), 'RtbRecipeTests');
             hints.renderer = 'SampleRenderer';
+            hints.recipeName = 'testLifecycle';
             
             recipe = rtbNewRecipe( ...
                 'configureScript', configureScript, ...
@@ -34,7 +35,8 @@ classdef RtbRecipeTests < matlab.unittest.TestCase
         
         function testReadWrite(testCase)
             % build a recipe
-            recipe = rtbNewRecipe();
+            hints.recipeName = 'testReadWrite';
+            recipe = rtbNewRecipe('hints', hints);
             testCase.assertInstanceOf(recipe, 'struct');
             testCase.assertNumElements(recipe, 1);
             
@@ -50,22 +52,27 @@ classdef RtbRecipeTests < matlab.unittest.TestCase
         
         function testConcurrentReadWrite(testCase)
             % build a recipe
-            recipe = rtbNewRecipe();
+            hints.recipeName = 'testConcurrentReadWrite';
+            recipe = rtbNewRecipe('hints', hints);
             testCase.assertInstanceOf(recipe, 'struct');
             testCase.assertNumElements(recipe, 1);
             
             % write to disk and read it back, a lot
             nLots = 10;
+            sameRecipes = cell(1, nLots);
             parfor ll = 1:nLots
                 archiveName = fullfile(tempdir(), 'RtbRecipeTests', sprintf('recipe-%d.mat', ll));
-                
                 rtbPackUpRecipe(recipe, archiveName);
-                sameRecipe = rtbUnpackRecipe(archiveName);
-                testCase.assertInstanceOf(recipe, 'struct');
-                testCase.assertNumElements(recipe, 1);
-                
+                sameRecipes{ll} = rtbUnpackRecipe(archiveName);
+            end
+            
+            for ll = 1:nLots
+                sameRecipe = sameRecipes{ll};
+                testCase.assertInstanceOf(sameRecipe, 'struct');
+                testCase.assertNumElements(sameRecipe, 1);
                 testCase.assertEqual(sameRecipe, recipe);
             end
+            
         end
     end
 end
