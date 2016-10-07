@@ -23,7 +23,7 @@
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
-		"url": "https:\/\/github.com\/RenderToolbox3\/mMitsuba.git"
+		"url": "https:\/\/github.com\/RenderToolbox\/mMitsuba.git"
 	},
 	{
 		"flavor": "",
@@ -49,7 +49,7 @@
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
-		"url": "https:\/\/github.com\/RenderToolbox3\/mPbrt.git"
+		"url": "https:\/\/github.com\/RenderToolbox\/mPbrt.git"
 	},
 	{
 		"flavor": "",
@@ -62,7 +62,7 @@
 		"toolboxRoot": "",
 		"type": "include",
 		"update": "",
-		"url": "https:\/\/raw.githubusercontent.com\/RenderToolbox3\/mexximp\/master\/mexximpToolboxConfig.json"
+		"url": "https:\/\/raw.githubusercontent.com\/RenderToolbox\/mexximp\/master\/mexximpToolboxConfig.json"
 	},
 	{
 		"flavor": "",
@@ -75,7 +75,7 @@
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
-		"url": "https:\/\/github.com\/RenderToolbox3\/SphereRendererToolbox.git"
+		"url": "https:\/\/github.com\/RenderToolbox\/SphereRendererToolbox.git"
 	},
 	{
 		"flavor": "",
@@ -101,7 +101,7 @@
 		"toolboxRoot": "",
 		"type": "webget",
 		"update": "",
-		"url": "https:\/\/github.com\/RenderToolbox3\/RenderToolbox4\/releases\/download\/v4.0\/build.zip"
+		"url": "https:\/\/github.com\/RenderToolbox\/RenderToolbox4\/releases\/download\/v4.0\/build.zip"
 	},
 	{
 		"flavor": "",
@@ -114,6 +114,6 @@
 		"toolboxRoot": "",
 		"type": "git",
 		"update": "",
-		"url": "https:\/\/github.com\/RenderToolbox3\/RenderToolbox4.git"
+		"url": "https:\/\/github.com\/RenderToolbox\/RenderToolbox4.git"
 	}
 ]
