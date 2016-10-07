@@ -20,9 +20,9 @@ function hints = rtbDefaultHints(hints)
 %
 % hints = rtbDefaultHints(hints)
 %
-%%% RenderToolbox4 Copyright (c) 2012-2013 The RenderToolbox4 Team.
-%%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
-%%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
+%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
+%%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
+%%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 if nargin < 1 || ~isstruct(hints)
     hints = struct();

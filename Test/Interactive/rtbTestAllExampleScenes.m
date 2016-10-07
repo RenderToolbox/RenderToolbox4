@@ -28,9 +28,9 @@ function results = rtbTestAllExampleScenes(varargin)
 % cell array of executive functions to run.  The default is to search the
 % ExampleScenes/ folder for files that begin with "Make".
 %
-%%% RenderToolbox4 Copyright (c) 2012-2013 The RenderToolbox4 Team.
-%%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
-%%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
+%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
+%%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
+%%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
 parser.addParameter('outputRoot', rtbWorkingFolder(), @ischar);

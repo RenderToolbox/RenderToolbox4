@@ -16,9 +16,9 @@ function [status, result, exception] = rtbRunCommand(command, varargin)
 % false.  Also returns any exception that was thrown during command
 % execution, or empty [] if no exception was thrown.
 %
-%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox4 Team.
-%%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
-%%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
+%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
+%%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
+%%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
 parser.addRequired('command', @ischar);
