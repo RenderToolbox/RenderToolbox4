@@ -8,4 +8,4 @@ These include
   kitchen.blend
   all the files in the interior/ folder
 
-These files are included with RenderToolbox3 with permission from Nextwave.
+These files are included with RenderToolbox with permission from Nextwave.
