@@ -2,9 +2,9 @@ RenderToolbox4
 ==============
 RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.
 
-![dragon model in 4 materials](https://raw.githubusercontent.com/RenderToolbox3/RenderToolbox4/gh-pages/ExampleScenes/Dragon/DragonMaterials%20(PBRT).png)
+![dragon model in 4 materials](https://raw.githubusercontent.com/RenderToolbox/RenderToolbox4/gh-pages/ExampleScenes/Dragon/DragonMaterials%20(PBRT).png)
 
-For more information, please see the [wiki](https://github.com/RenderToolbox3/RenderToolbox4/wiki).
+For more information, please see the [wiki](https://github.com/RenderToolbox/RenderToolbox4/wiki).
 
 # Installation
 RenderToolbox requires [Matlab](https://www.mathworks.com/products/matlab/), a few native system dependencies, and some Matlab toolboxes.
@@ -48,7 +48,7 @@ sudo apt-get install openexr
 ```
 
 ### Docker
-RenderToolbox uses [Docker](https://github.com/RenderToolbox3/RenderToolbox4/wiki/Docker) to distribute pre-built renderers and other tools.  Here's where you can [Get Docker](https://www.docker.com/products/overview) for Linux, OS X, or Windows.
+RenderToolbox uses [Docker](https://github.com/RenderToolbox/RenderToolbox4/wiki/Docker) to distribute pre-built renderers and other tools.  Here's where you can [Get Docker](https://www.docker.com/products/overview) for Linux, OS X, or Windows.
 
 ## Toolboxes
 The best way to get RenderToolbox and other required toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
@@ -67,9 +67,9 @@ The ToolboxToolbox will also create a configuration script which you can edit wi
 ```
 
 Here are some preferences you might wish to edit in this script:
- - which Docker images to use for rendering -- edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L47) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L76) for PBRT
- - where to store output files: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L27)
- - where to find local renderer executables, in case Docker is not available: edit [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L50) for Mitsuba, [here](https://github.com/RenderToolbox3/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L79) for PBRT
+ - which Docker images to use for rendering -- edit [here](https://github.com/RenderToolbox/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L47) for Mitsuba, [here](https://github.com/RenderToolbox/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L76) for PBRT
+ - where to store output files: edit [here](https://github.com/RenderToolbox/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L27)
+ - where to find local renderer executables, in case Docker is not available: edit [here](https://github.com/RenderToolbox/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L50) for Mitsuba, [here](https://github.com/RenderToolbox/RenderToolbox4/blob/master/rtbLocalConfigTemplate.m#L79) for PBRT
 
 Next time you do `tbUse('RenderToolbox4')` your custom preferences will be set up.
 
@@ -99,8 +99,8 @@ Your RenderToolbox4 installation seems to be working!
 RenderToolbox4 is released under the MIT License.  Please see LICENSE file for details.
 
 RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox4 Team.
- - [About Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/About-Us)
- - [Join Us](https://github.com/RenderToolbox3/RenderToolbox4/wiki/Join-Us)
+ - [About Us](https://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us)
+ - [Join Us](https://github.com/RenderToolbox/RenderToolbox4/wiki/Join-Us)
  
-![dragon model in 24 ColorChecker colors](https://raw.githubusercontent.com/RenderToolbox3/RenderToolbox4/gh-pages/ExampleScenes/Dragon/DragonColorChecker%20%28PBRT%29.png)
+![dragon model in 24 ColorChecker colors](https://raw.githubusercontent.com/RenderToolbox/RenderToolbox4/gh-pages/ExampleScenes/Dragon/DragonColorChecker%20%28PBRT%29.png)
 
