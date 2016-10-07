@@ -1,3 +1,3 @@
-This "Deprecated" folder contains files and folders that are considered out of date, as of RenderToolbox3, version 3 (spring, 2016).  Here is a little explanation and links to related wiki pages about new features to use instead (coming soon).
+This "Deprecated" folder contains files and folders that are considered out of date, as of RenderToolbox4.
 
-
+Please see what's new in [RenderToolbox4](https://github.com/RenderToolbox/RenderToolbox4/wiki/RenderToolbox4), and please consider migrating your code to the new style.

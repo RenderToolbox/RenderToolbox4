@@ -4,7 +4,7 @@ The scene contains a cube with rounded edges.  The rounding comes from a “subs
 
 In Blender it makes sense to keep the normal cube and the subsurf modifier as separate things.  This reduces the number of vertices that Blender needs to store for the cube.  It also makes it more convenient to modify the cube if you want—you can just treat it like a normal cube and let Blender worry about making the edges look round and pretty.  You can also fiddle with the subsurf modifier itself to change how much rounding Blender should do.
 
-But this only works in Blender.  Collada, RenderToolbox3, PBRT, and Mitsuba don’t have the same concept of subsurf modifier.  So when exporting the scene from Blender, you must “bake in” the rounded edges so that they become part of the cube’s vertex data.  This adds lots of vertices to the cube.
+But this only works in Blender.  Collada, RenderToolbox, PBRT, and Mitsuba don’t have the same concept of subsurf modifier.  So when exporting the scene from Blender, you must “bake in” the rounded edges so that they become part of the cube’s vertex data.  This adds lots of vertices to the cube.
 
 Here’s how to have it both ways.  When you export SpectralIllusion from Blender:
 

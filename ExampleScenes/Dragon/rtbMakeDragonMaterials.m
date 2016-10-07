@@ -18,7 +18,7 @@ hints.recipeName = mfilename();
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 10;
 isScale = true;
-for renderer = {'Mitsuba', 'PBRT'}
+for renderer = {'PBRT'}
     hints.renderer = renderer{1};
     
     nativeSceneFiles = rtbMakeSceneFiles(parentSceneFile, ...

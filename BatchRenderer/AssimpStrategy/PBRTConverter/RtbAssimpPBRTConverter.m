@@ -3,7 +3,7 @@ classdef RtbAssimpPBRTConverter < RtbConverter
     %
     
     properties
-        % RenderToolbox3 options struct, see rtbDefaultHints()
+        % RenderToolbox options struct, see rtbDefaultHints()
         hints;
         
         % default material for mexximp conversion

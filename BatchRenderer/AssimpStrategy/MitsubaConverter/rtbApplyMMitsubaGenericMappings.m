@@ -20,7 +20,7 @@ parser.parse(mitsubaScene, mappings);
 mitsubaScene = parser.Results.mitsubaScene;
 mappings = parser.Results.mappings;
 
-%% Select only RenderToolbox3 "Generic" mappings.
+%% Select only RenderToolbox "Generic" mappings.
 isGeneric = strcmp('Generic', {mappings.destination});
 genericMappings = mappings(isGeneric);
 nGenericMappings = numel(genericMappings);
@@ -69,7 +69,7 @@ for mm = 1:nGenericMappings
             % <shape id="LightY-mesh_0" type="serialized">
             %   <string name="filename" value="Dragon-001Unadjusted.serialized"/>
             %   <emitter id="LightY-mesh_0-area-light" type="area">
-            %     <spectrum filename="/home/ben/render/RenderToolbox3/RenderData/D65.spd" name="radiance"/>
+            %     <spectrum filename="D65.spd" name="radiance"/>
             %   </emitter>
             %   ...
             % </shape>
@@ -102,8 +102,8 @@ for mm = 1:nGenericMappings
             % ...
             % <bsdf id="Material-material" type="roughconductor">
             % 	<float name="alpha" value="0.4"/>
-            % 	<spectrum filename="/home/ben/render/RenderToolbox3/RenderData/PBRTMetals/Au.eta.spd" name="eta"/>
-            % 	<spectrum filename="/home/ben/render/RenderToolbox3/RenderData/PBRTMetals/Au.k.spd" name="k"/>
+            % 	<spectrum filename="Au.eta.spd" name="eta"/>
+            % 	<spectrum filename="Au.k.spd" name="k"/>
             % </bsdf>
             %
             % We rename the material because we will want existing shapes

@@ -2,7 +2,7 @@
 %%% About Us://github.com/DavidBrainard/RenderToolbox4/wiki/About-Us
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE.txt.
 %
-%% Render the MaterialSphere scene with 3 materials.
+%% Render the Interior scene with various lighting.
 
 %% Choose example files, make sure they're on the Matlab path.
 parentSceneFile = 'interio.dae';

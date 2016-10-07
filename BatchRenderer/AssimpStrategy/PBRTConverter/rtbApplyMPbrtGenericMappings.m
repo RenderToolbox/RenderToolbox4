@@ -20,7 +20,7 @@ parser.parse(pbrtScene, mappings);
 pbrtScene = parser.Results.pbrtScene;
 mappings = parser.Results.mappings;
 
-%% Select only RenderToolbox3 "Generic" mappings.
+%% Select only RenderToolbox "Generic" mappings.
 isGeneric = strcmp('Generic', {mappings.destination});
 genericMappings = mappings(isGeneric);
 nGenericMappings = numel(genericMappings);

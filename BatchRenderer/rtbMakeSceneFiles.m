@@ -7,15 +7,15 @@ function nativeScenes = rtbMakeSceneFiles(parentScene, varargin)
 %
 % scenes = rtbMakeSceneFiles(... 'conditionsFile', conditionsFile)
 % Specify the conditionsFile which specifies how many scenes to generate
-% and parameters for each scene.  See the RenderToolbox3 wiki for more
+% and parameters for each scene.  See the RenderToolbox wiki for more
 % about the conditions file format:
-%   https://github.com/RenderToolbox3/RenderToolbox3/wiki/Conditions-File-Format
+%   https://github.com/RenderToolbox/RenderToolbox4/wiki/Conditions-File-Format
 %
 % scenes = rtbMakeSceneFiles(... 'mappingsFile', mappingsFile)
 % Specify the mappingsFile which specifies how to map conditions file
 % variables and other constants to the parent scene.  See the
-% RenderToolbox3 wiki for more  about the mappings file format:
-%   https://github.com/RenderToolbox3/RenderToolbox3/wiki/Mappings-File-Format
+% RenderToolbox wiki for more  about the mappings file format:
+%   https://github.com/RenderToolbox/RenderToolbox4/wiki/Mappings-File-Format
 %
 % scenes = rtbMakeSceneFiles(... 'hints', hints)
 % Specify a struct of options that affect the process of generating
