@@ -191,6 +191,7 @@ b = lower(b);
 isMatch = (~isempty(strfind(aExt, bExt)) || ~isempty(strfind(bExt, aExt))) ...
     && (~isempty(strfind(aBase, bBase)) || ~isempty(strfind(bBase, aBase)));
 
+
 %% Strict matching for file names: b is the same as a, within reason.
 %   case insensitive
 %   4851-nor.jpg does not match 4851-normal.jpg

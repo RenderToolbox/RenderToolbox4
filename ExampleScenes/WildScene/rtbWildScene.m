@@ -28,12 +28,14 @@ clear;
 clc;
 pathHere = fileparts(which('rtbWildScene'));
 
+
 %% Choose a scene format -- how does the 3DS Max scene look?
 wildScene = fullfile(pathHere, 'millenium-falcon.3DS');
 scene = mexximpCleanImport(wildScene);
 
 % look at the vertices in a scatter plot
 mexximpSceneScatter(scene);
+
 
 %% Choose a better scene format -- the Wavefront Object.
 wildScene = fullfile(pathHere, 'millenium-falcon.obj');
@@ -42,12 +44,14 @@ scene = mexximpCleanImport(wildScene);
 % look at the vertices in a scatter plot
 mexximpSceneScatter(scene);
 
+
 %% Look at a struct "dump" of the scene
 disp(scene);
 
 % look at the struct in more detail
 %   nice utility from NC
 disp(displayNicelyFormattedStruct(scene, 'scene', '', 50));
+
 
 %% Add missing lights and camera.
 
@@ -63,6 +67,25 @@ scene = mexximpAddLanterns(scene);
 % look at the struct, now with lights and camera
 disp(displayNicelyFormattedStruct(scene, 'scene', '', 50));
 
+
+%% Fix broken texture paths.
+
+% obj version of the scene comes with an mtl material file
+% this file contains bad file paths for a Windows user named "glenn"
+% for example:
+disp(['Original path: ' scene.materials(2).properties(10).data]);
+
+% we can find and fix paths like this
+% by recursively fisiting fields of the scene struct
+% and doing some fuzzy matching on names
+scene = mexximpVisitStructFields(scene, @rtbResourcePath, ...
+    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
+    'visitArgs', {'resourceFolder', pathHere, 'toReplace', ''});
+
+% now we should have the file locally
+disp(['Local path: ' scene.materials(2).properties(10).data]);
+
+
 %% Choose batch processing options.
 hints.imageWidth = 320;
 hints.imageHeight = 240;
@@ -71,7 +94,12 @@ hints.recipeName = 'rtbWildScene';
 hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
+
 %% Render with Mitsuba.
+
+% fix broken texture paths
+
+% make a scene file and render it
 nativeSceneFiles = rtbMakeSceneFiles(scene, 'hints', hints);
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, 'hints', hints);
 
@@ -87,8 +115,12 @@ sRgb = rtbMakeMontage(radianceDataFiles, ...
     'hints', hints);
 rtbShowXYZAndSRGB([], sRgb, montageName);
 
+
 %% Choose a nicer viewing axis and render again.
-scene = mexximpCleanImport(wildScene);
+scene = mexximpCleanImport(wildScene, 'flipUVs', true);
+scene = mexximpVisitStructFields(scene, @rtbResourcePath, ...
+    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
+    'visitArgs', {'resourceFolder', pathHere, 'toReplace', ''});
 
 viewAxis = [-1 1 1];
 scene = mexximpCentralizeCamera(scene, 'viewAxis', viewAxis ./ norm(viewAxis));
