@@ -1,8 +1,8 @@
 function results = rtbTestAllExampleScenes(varargin)
-%% Run all "Make*" executive scripts in the ExampleScenes/ folder.
+%% Run all "rtbMake..." scripts in the ExampleScenes/ folder.
 %
 % results = rtbTestAllExampleScenes() renders example scenes by invoking
-% all of the "Make..." executive sripts found within the ExampleScenes/
+% all of the "rtbMake..." executive sripts found within the ExampleScenes/
 % folder
 %
 % Returns a struct with information about each executive script, such as
@@ -13,7 +13,6 @@ function results = rtbTestAllExampleScenes(varargin)
 % results:
 %   - outputRoot -- the workingFolder that contains test outputs
 %   - makeFunctions -- the execuive scripts that were run
-%   - hints -- default RenderToolbox4 option
 %   - results -- the returned struct of results about rendering scripts
 %
 % The mat-file will be saved in the working outputRoot folder.  It will
@@ -26,7 +25,7 @@ function results = rtbTestAllExampleScenes(varargin)
 %
 % rtbTestAllExampleScenes( ... 'makeFunctions', makeFunctions) specifies a
 % cell array of executive functions to run.  The default is to search the
-% ExampleScenes/ folder for files that begin with "Make".
+% ExampleScenes/ folder for m-files that begin with "rtbMake".
 %
 %%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
 %%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
@@ -39,23 +38,16 @@ parser.parse(varargin{:});
 outputRoot = parser.Results.outputRoot;
 makeFunctions = parser.Results.makeFunctions;
 
-% set global workingFolder preference so that scrupts can find it
-% make best effort to restore workingFolder at the end
-oldOutputRoot = getpref('RenderToolbox4', 'workingFolder');
-setpref('RenderToolbox4', 'workingFolder', outputRoot);
-hints = rtbDefaultHints();
+if ~isempty(outputRoot) && 7 ~= exist(outputRoot, 'dir')
+    mkdir(outputRoot);
+end
 
 % choose execitive scripts/functions to run
 if isempty(makeFunctions)
     % find all the m-functions named "Make*", in ExampleScenes/
-    makePattern = 'Make\w+\.m';
+    makePattern = 'rtbMake[\w]+\.m$';
     exampleRoot = fullfile(rtbRoot(), 'ExampleScenes');
     makeFunctions = rtbFindFiles('root', exampleRoot, 'filter', makePattern);
-    
-    % exclude functions that don't work yet
-    notWorkingPath = fullfile(exampleRoot, 'NotYetWorking');
-    notWorkingFunctions = rtbFindFiles('root', notWorkingPath, 'filter', makePattern);
-    makeFunctions = setdiff(makeFunctions, notWorkingFunctions);
 end
 
 % declare a struct for test results
@@ -65,25 +57,24 @@ results = struct( ...
     'error', [], ...
     'elapsed', []);
 
-% turn of warnings about scaling for this run, so as not
-% to alarm the user of the test program.
-warnState(1) = warning('off','RenderToolbox4:PBRTXMLIncorrectlyScaled');
-warnState(2) = warning('off','RenderToolbox4:DefaultParamsIncorrectlyScaled');
-
 % try to render each example scene
 testTic = tic();
 for ii = 1:numel(makeFunctions)
     
-    [makePath, makeName] = fileparts(makeFunctions{ii});
+    % set alternate workingFolder
+    oldOutputRoot = getpref('RenderToolbox4', 'workingFolder');
+    setpref('RenderToolbox4', 'workingFolder', outputRoot);
+    
+    % turn of warnings about scaling for the moment so as not to alarm user
+    warnState(1) = warning('off', 'RenderToolbox4:PBRTXMLIncorrectlyScaled');
+    warnState(2) = warning('off', 'RenderToolbox4:DefaultParamsIncorrectlyScaled');
     
     try
         % make the example scene!
-        evalin('base', 'clear');
-        evalin('base', ['run ' fullfile(makePath, makeName)]);
+        runIsolated(makeFunctions{ii});
         results(ii).isSuccess = true;
-        
     catch err
-        % trap the error
+        % trap any error
         results(ii).isSuccess = false;
         results(ii).error = err;
     end
@@ -93,27 +84,28 @@ for ii = 1:numel(makeFunctions)
     
     % keep track of timing
     results(ii).elapsed = toc(testTic);
+    
+    % restore warning state
+    for ww = 1:length(warnState)
+        warning(warnState(ww).state, warnState(ww).identifier);
+    end
+    
+    % restore working folder preference
+    setpref('RenderToolbox4', 'workingFolder', oldOutputRoot);
 end
 
-% restore warning state
-for ii = 1:length(warnState)
-    warning(warnState(ii).state,warnState(ii).identifier);
-end
-
-% restore working folder preference
-setpref('RenderToolbox4', 'workingFolder', oldOutputRoot);
 
 % how did it go?
 isExampleSuccess = [results.isSuccess];
 fprintf('\n%d scenes succeeded.\n\n', sum(isExampleSuccess));
 for ii = find(isExampleSuccess)
-    disp(sprintf('%d %s', ii, results(ii).makeFile))
+    fprintf('%d %s\n', ii, results(ii).makeFile);
 end
 
 fprintf('\n%d scenes failed.\n\n', sum(~isExampleSuccess));
 for ii = find(~isExampleSuccess)
     disp('----')
-    disp(sprintf('%d %s', ii, results(ii).makeFile))
+    fprintf('%d %s\n', ii, results(ii).makeFile);
     disp(results(ii).error)
     disp(' ')
 end
@@ -122,11 +114,14 @@ toc(testTic)
 
 
 %% Save lots of results to a .mat file.
-if ~isempty(outputRoot) && ~exist(outputRoot, 'dir')
-    mkdir(outputRoot);
-end
 baseName = mfilename();
 dateTime = datestr(now(), 30);
 resultsBase = sprintf('%s-%s', baseName, dateTime);
 resultsFile = fullfile(outputRoot, resultsBase);
-save(resultsFile, 'outputRoot', 'makeFunctions', 'results', 'hints');
+save(resultsFile);
+
+
+%% Run a script in an isolated workspace.
+function runIsolated(scriptPath)
+run(scriptPath);
+
