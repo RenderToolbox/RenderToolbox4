@@ -70,7 +70,6 @@ end
 
 %% Plot RGB, and promoted spectra.
 close all
-hints = rtbDefaultHints();
 RGBMarkers = {'x', 'o'};
 RGBOutMarkers = {'+', 'square'};
 spectrumMarkers = {'x', 'o'};
@@ -176,3 +175,10 @@ l = legend(axRGB, RGBLegend, 'Location', 'southeast');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
 l = legend(axSpectra, renderers, 'Location', 'southwest');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
+
+% save the figure as an image file
+figureFolder = rtbWorkingFolder( ...
+    'folderName', 'images', ...
+    'hints', hints);
+figureFile = fullfile(figureFolder, [hints.recipeName '.png']);
+saveas(fig, figureFile);
