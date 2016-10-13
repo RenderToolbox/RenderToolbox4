@@ -18,7 +18,7 @@ scene = rtbMakeTestScene('wallImage', wallImage);
 %% Export the new scene to Collada so we can sanity check it.
 %   ~/render/blender-2.77a-linux-glibc211-x86_64/blender-softwaregl
 format = 'collada';
-pathHere = fileparts(which('rtbSceneFromScratch'));
+pathHere = fileparts(which('rtbMakeSceneFromScratch'));
 colladaFile = fullfile(pathHere, 'rtbSceneFromScratch.dae');
 status = mexximpExport(scene, format, colladaFile, []);
 
@@ -26,7 +26,7 @@ status = mexximpExport(scene, format, colladaFile, []);
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.fov = 60 * pi() / 180;
-hints.recipeName = 'rtbSceneFromScratch';
+hints.recipeName = 'rtbMakeSceneFromScratch';
 hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
@@ -77,10 +77,7 @@ mappings{5}.properties(1).value = 'mccBabel-14.spd';
 
 % save a JSON mappings file
 mappingsFile = fullfile(pathHere, 'rtbScratchMappings.json');
-rtbWriteJson('', mappings, ...
-    'FileName', mappingsFile, ...
-    'ArrayIndent', 1, ...
-    'ArrayToStrut', 0);
+rtbWriteJson(mappings, 'fileName', mappingsFile);
 
 % make scene files
 nativeSceneFiles = rtbMakeSceneFiles(scene, ...
