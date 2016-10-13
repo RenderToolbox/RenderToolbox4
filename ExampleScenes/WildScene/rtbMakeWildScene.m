@@ -26,7 +26,7 @@
 
 clear;
 clc;
-pathHere = fileparts(which('rtbWildScene'));
+pathHere = fileparts(which('rtbMakeWildScene'));
 
 
 %% Choose a scene format -- how does the 3DS Max scene look?
@@ -87,10 +87,10 @@ disp(['Local path: ' scene.materials(2).properties(10).data]);
 
 
 %% Choose batch processing options.
-hints.imageWidth = 320;
-hints.imageHeight = 240;
+hints.imageWidth = 640;
+hints.imageHeight = 480;
 hints.fov = scene.cameras(1).horizontalFov;
-hints.recipeName = 'rtbWildScene';
+hints.recipeName = 'rtbMakeWildScene';
 hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
