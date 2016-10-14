@@ -105,6 +105,11 @@ unmatchedA = filesA(unmatchedIndex);
 [~, unmatchedIndex] = setdiff(matchTokensB, matchTokensA);
 unmatchedB = filesB(unmatchedIndex);
 
+if isempty(indexA) || isempty(indexB)
+    fprintf('Could not find any file matches.\n');
+    return;
+end
+
 % allocate an info struct for image comparisons
 filesA = {infoA.original};
 filesB = {infoB.original};
@@ -363,7 +368,12 @@ for ii = 1:n
         rendererName{ii}, fileName{ii});
     
     % build a token for matching across file sets
-    matchTokenBase = [recipeName{ii} '-' subfolderName{ii} '-' rendererName{ii} '-'];
+    if strncmp(recipeName{ii}, 'rtb', 3)
+        nameBase = recipeName{ii}(4:end);
+    else
+        nameBase = recipeName{ii};
+    end
+    matchTokenBase = [nameBase '-' subfolderName{ii} '-' rendererName{ii} '-'];
     if hasNumber(ii)
         matchToken{ii} = [matchTokenBase sprintf('%03d', fileNumber{ii})];
     else
