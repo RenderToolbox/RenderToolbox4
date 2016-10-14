@@ -171,9 +171,9 @@ set(fig, 'Position', [0 0 1000, 1000]);
 
 % put legends on the last axes
 %   move clear of plotted points
-l = legend(axRGB, RGBLegend, 'Location', 'southeast');
+l = legend(axRGB, RGBLegend, 'Location', 'northwest');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
-l = legend(axSpectra, renderers, 'Location', 'southwest');
+l = legend(axSpectra, renderers, 'Location', 'northwest');
 set(l, 'Position', get(l, 'Position') + [0 0.01 0 0]);
 
 % save the figure as an image file

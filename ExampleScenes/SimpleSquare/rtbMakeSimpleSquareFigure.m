@@ -356,3 +356,10 @@ h = 587;
 p = get(fig, 'Position');
 p(3:4) = [w h];
 set(fig, 'Position', p);
+
+%% Save the figure as an image file.
+figureFolder = rtbWorkingFolder( ...
+    'folderName', 'images', ...
+    'hints', hints);
+figureFile = fullfile(figureFolder, [hints.recipeName '.png']);
+saveas(fig, figureFile);
