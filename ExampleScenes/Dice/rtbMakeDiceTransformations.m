@@ -11,9 +11,9 @@ conditionsFile = 'DiceTransformationsConditions.txt';
 
 %% Choose batch renderer options.
 hints.fov = 49.13434 * pi() / 180;
-hints.imageWidth = 320;%640;
-hints.imageHeight = 240;%480;
-hints.recipeName = 'rtbMakeDice';
+hints.imageWidth = 640;
+hints.imageHeight = 480;
+hints.recipeName = 'rtbMakeDiceTransformations';
 
 %% Render with Mitsuba and PBRT.
 toneMapFactor = 100;

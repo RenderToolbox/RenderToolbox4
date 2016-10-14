@@ -39,8 +39,8 @@ if exist(spectrum, 'file')
     % open the file
     [fid, message] = fopen(spectrum, 'r');
     if fid < 0
-        warning(message);
-        return;
+        error('ReadSpectrum:openFileError', ...
+            'Could not open spectrum file: %s', message);
     end
     
     % scan the file for all numbers

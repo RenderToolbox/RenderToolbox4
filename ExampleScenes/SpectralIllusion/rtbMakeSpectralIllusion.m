@@ -57,7 +57,7 @@ rtbWriteSpectrumFile(wls, srf, targetSpectrumFile);
 targSpectrum = values{strcmp(names, 'targetColor')};
 destSpectrum = values{strcmp(names, 'destinationColor')};
 [targWls, targReflect] = rtbReadSpectrum(fullfile(resources, targSpectrum));
-[destWls, destReflect] = rtbReadSpectrum(fullfile(resources, destSpectrum));
+[destWls, destReflect] = rtbReadSpectrum(destSpectrum);
 
 f = figure('UserData', 'SpectralIllusion');
 axReflect = subplot(5, 1, 3, 'Parent', f);
