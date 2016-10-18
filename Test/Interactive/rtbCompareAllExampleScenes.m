@@ -547,6 +547,13 @@ scroller = uicontrol( ...
     'UserData', scrollerData);
 scrollSummaryAxes(scroller, []);
 
+% resize to fit image names
+w = 1000;
+p = get(f, 'Position');
+p(3) = w;
+set(f, 'Position', p);
+
+
 
 % Summarize a distribuition of data with a struct of stats.
 function summary = summarizeData(data)
