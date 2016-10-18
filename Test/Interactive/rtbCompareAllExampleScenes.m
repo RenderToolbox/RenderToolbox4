@@ -303,6 +303,7 @@ for ii = 1:nMatches
         figName = fullfile(imageCompPath, [imageName '.fig']);
         saveas(f, figName, 'fig');
         pngName = fullfile(imageCompPath, [imageName '.png']);
+        set(f, 'PaperPositionMode', 'auto');
         saveas(f, pngName, 'png');
         
         close(f);
@@ -546,13 +547,6 @@ scroller = uicontrol( ...
     'SliderStep', [1 2], ...
     'UserData', scrollerData);
 scrollSummaryAxes(scroller, []);
-
-% resize to fit image names
-w = 1000;
-p = get(f, 'Position');
-p(3) = w;
-set(f, 'Position', p);
-
 
 
 % Summarize a distribuition of data with a struct of stats.
