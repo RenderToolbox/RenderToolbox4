@@ -179,11 +179,11 @@ for mm = 1:nGenericMappings
                     
                 case 'anisoward'
                     element.pluginType = 'ward';
-                    element.setProperty('variant', 'string', 'ward');
+                    element.setProperty('variant', 'string', 'balanced');
                     setSpectrumOrTexture(element, mapping, ...
                         'diffuseReflectance', 'diffuseReflectance', 'spectrum', '300:0 800:0');
                     setSpectrumOrTexture(element, mapping, ...
-                        'specularReflectance', 'specularReflectance', 'spectrum', '300:0.5 800:0.5');
+                        'specularReflectance', 'specularReflectance', 'spectrum', '300:0.2 800:0.2');
                     element.setProperty('alphaU', 'float', ...
                         rtbGetMappingProperty(mapping, 'alphaU', 0.15));
                     element.setProperty('alphaV', 'float', ...
