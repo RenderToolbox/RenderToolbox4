@@ -29,14 +29,27 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 %   - 1 -- (default) plot a summary figure at the end
 %   - 2 -- plot a summary figure at the end and a detail figure for each comparison
 %
+% The summary figure will contain two plots:
+%
+% A "correlation" plot will show this correlation betweeen paired
+% multi-spectral images, with each image simply treated as a matrix of
+% numbers.
+%
+% A "relative diff" plot will show the relative differences between paired
+% pixel components, where raw diff is
+%   diff = |a-b|/a, where a/max(a) > .2
+% The diff is only calculated when the "a" value is not small, to avoid
+% unfair comparison due to large denominator.  For each pair of images, the
+% plot will show the mean and max of the diffs from all pixel components.
+%
 % rtbCompareAllExampleScenes( ... 'figureFolder', figureFolder) specifies
 % an output folder where to save figures used for visualization.  The
 % default is rtbWorkingFolder().
 %
-% This function is intended to help validate RenderToolbox4 installations
-% and detect bugs in the RenderToolbox4 code.  A potential use would
+% This function is intended to help validate RenderToolbox installations
+% and detect bugs in the RenderToolbox code.  A potential use would
 % compare renderings produced locally with archived renderings located at
-% GitHub.  For example:
+% Amazon S3.  For example:
 %   % produce renderings locally
 %   rtbTestAllExampleScenes('my/local/renderings');
 %
@@ -46,7 +59,7 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 %   workingFolderA = 'my/local/renderings/data';
 %   workingFolderA = 'my/local/archive/data';
 %   visualize = 1;
-%   matchInfo = rtbCompareAllExampleScenes(workingFolderA, workingFolderB, '', visualize);
+%   matchInfo = rtbCompareAllExampleScenes(workingFolderA, workingFolderB, 'visualize', visualize);
 %
 % Returns a struct array of info about each matched pair, including file
 % names and differneces between multispectral images (A minus B).
@@ -312,6 +325,8 @@ if visualize > 0
     imageName = sprintf('%s-summary', mfilename());
     figName = fullfile(figureFolder, [imageName '.fig']);
     saveas(f, figName, 'fig');
+    pngName = fullfile(figureFolder, [imageName '.png']);
+    saveas(f, pngName, 'png');
 end
 
 if visualize > 1
@@ -461,7 +476,7 @@ corr(corr < minCorr) = peggedCorr;
 
 names = {goodInfo.matchTokenA};
 nLines = numel(names);
-ax(1) = subplot(1, 2, 1, ...
+ax(1) = subplot(1, 3, 2, ...
     'Parent', f, ...
     'YTick', 1:nLines, ...
     'YTickLabel', names, ...
@@ -474,8 +489,7 @@ line(corr, 1:nLines, ...
     'LineStyle', 'none', ...
     'Marker', 'o', ...
     'Color', [0 0 1])
-title(ax(1), 'rendering correlation');
-xlabel(ax(1), 'corrcoef of pixel components A vs B');
+title(ax(1), 'correlation');
 
 % summarize mean and max subpixel differences
 maxDiff = 2.5;
@@ -489,7 +503,7 @@ maxes = [diffSummary.max];
 means = [diffSummary.mean];
 maxes(maxes > maxDiff) = peggedDiff;
 means(means > maxDiff) = peggedDiff;
-ax(2) = subplot(1, 2, 2, ...
+ax(2) = subplot(1, 3, 3, ...
     'Parent', f, ...
     'YTick', 1:nLines, ...
     'YTickLabel', 1:nLines, ...
@@ -509,10 +523,7 @@ line(means, 1:nLines, ...
     'Marker', 'o', ...
     'Color', [0 0 0])
 legend(ax(2), 'max', 'mean', 'Location', 'northeast');
-title(ax(2), 'extreme pixel components');
-label = sprintf('relative diff |A-B|/A, where A/max(A) > %.1f', ...
-    goodInfo(1).denominatorThreshold);
-xlabel(ax(2), label);
+title(ax(2), 'relative diff');
 
 % let the user scroll both axes at the same time
 nLinesAtATime = 25;
