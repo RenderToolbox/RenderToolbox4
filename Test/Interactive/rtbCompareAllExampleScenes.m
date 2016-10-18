@@ -325,8 +325,13 @@ if visualize > 0
     imageName = sprintf('%s-summary', mfilename());
     figName = fullfile(figureFolder, [imageName '.fig']);
     saveas(f, figName, 'fig');
+    
+    % some platforms can't pring uicontrols
+    controls = findobj(f, 'Type', 'uicontrol');
+    set(controls, 'Visible', 'off');
     pngName = fullfile(figureFolder, [imageName '.png']);
     saveas(f, pngName, 'png');
+    set(controls, 'Visible', 'on');
 end
 
 if visualize > 1
