@@ -10,14 +10,23 @@ function [gammaImage, rawImage, scaleFactor] = rtbXYZToSRGB(image, varargin)
 % for simple tone mapping -- luminance will be trncated above this factor
 % times the mean luminance.  The default is 0, don't do this tone mapping.
 %
-% rtbXYZToSRGB( ... 'toneMapMax', toneMapMax) specifies a threshold for an
-% even simpler tone mapping -- truncate luminance above this value.  The
-% default is 0, don't do this tone mapping.
+% sRGBImage = rtbXYZToSRGB( ... 'toneMapThreshold', toneMapThreshold)
+% specifies a simple tone mapping threshold.  Truncates lumininces above
+% the given toneMapThreshold.  The default is 0, don't truncate luminances.
+%
+% If toneMapFactor and toneMapThreshold are both supplied, toneMapThreshold
+% is used and toneMapFactor is ignored.
 %
 % rtbXYZToSRGB( ... 'isScale', isScale) specifies whether to scale the
 % gamma-corrected image.  If isScale is logical and true, the image will be
-% scaled by its maximum.  If isScale is a number, the image will be scaled
-% by this number.  The default is false, don't do any scaling.
+% scaled by its maximum.  The default is false, don't do any scaling.
+%
+% sRGBImage = rtbXYZToSRGB( ... 'scaleFactor', scaleFactor)
+% specifies a constant to scale the sRGB image.  The default is 0, don't
+% scale the image.
+%
+% If isScale and scaleFactor are both supplied, scaleFactor
+% is used and toneMapFactor is isScale.
 %
 % Returns a matrix of size [height width n] with gamma corrected sRGB color
 % data.  Also returns a matrix of the same size with uncorrected sRGB color
@@ -32,13 +41,15 @@ function [gammaImage, rawImage, scaleFactor] = rtbXYZToSRGB(image, varargin)
 parser = inputParser();
 parser.addRequired('image', @isnumeric);
 parser.addParameter('toneMapFactor', 0, @isnumeric);
-parser.addParameter('toneMapMax', 0, @isnumeric);
-parser.addParameter('isScale', false);
+parser.addParameter('toneMapThreshold', 0, @isnumeric);
+parser.addParameter('isScale', false, @islogical);
+parser.addParameter('scaleFactor', 0, @isnumeric);
 parser.parse(image, varargin{:});
 image = parser.Results.image;
 toneMapFactor = parser.Results.toneMapFactor;
-toneMapMax = parser.Results.toneMapMax;
+toneMapThreshold = parser.Results.toneMapThreshold;
 isScale = parser.Results.isScale;
+scaleFactor = parser.Results.scaleFactor;
 
 %% Convert XYZ to sRGB
 %
@@ -53,30 +64,25 @@ isScale = parser.Results.isScale;
 [XYZCalFormat,m,n] = ImageToCalFormat(image);
 
 % Tone map.  This is a very simple algorithm that truncates
-% luminance above a factor times the mean luminance.
-if (toneMapFactor > 0)
+% luminance above threshold.
+if (toneMapThreshold > 0)
+    XYZCalFormat = BasicToneMapCalFormat(XYZCalFormat, toneMapThreshold);
+elseif (toneMapFactor > 0)
     meanLuminance = mean(XYZCalFormat(2,:));
     maxLum = toneMapFactor * meanLuminance;
     XYZCalFormat = BasicToneMapCalFormat(XYZCalFormat, maxLum);
-end
-
-% Tone map again.  This is an even simpler algorithm
-% that truncates luminance above a fixed value.
-if (toneMapMax > 0)
-    XYZCalFormat = BasicToneMapCalFormat(XYZCalFormat, toneMapMax);
 end
 
 % Convert to sRGB
 %   may allow code to scale input max to output max.
 SRGBPrimaryCalFormat = XYZToSRGBPrimary(XYZCalFormat);
 
-if islogical(isScale)
-    scaleFactor = 1/max(SRGBPrimaryCalFormat(:));
-    SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
-else
-    scaleFactor = isScale;
+if scaleFactor > 0
     SRGBPrimaryCalFormat = SRGBPrimaryCalFormat .* scaleFactor;
     SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, false);
+elseif islogical(isScale)
+    scaleFactor = 1/max(SRGBPrimaryCalFormat(:));
+    SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
 end
 
 % Back to image plane format

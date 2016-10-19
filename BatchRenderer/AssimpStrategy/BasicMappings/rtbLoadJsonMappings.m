@@ -29,9 +29,4 @@ else
     originalMappings = {};
 end
 
-if ~iscell(originalMappings)
-    error('parseJsonMappings:invalidJson', ...
-        'Could not load mappings cell from JSON <%s>\n', fileName);
-end
-
 mappings = rtbValidateMappings(originalMappings);
