@@ -81,6 +81,8 @@ if scaleFactor > 0
     SRGBPrimaryCalFormat = SRGBPrimaryCalFormat .* scaleFactor;
     SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, false);
 elseif islogical(isScale)
+    % compute scale factor to return to the caller
+    % the actual scaling happens in SRGBGammaCorrect
     scaleFactor = 1/max(SRGBPrimaryCalFormat(:));
     SRGBCalFormat = SRGBGammaCorrect(SRGBPrimaryCalFormat, isScale);
 end
