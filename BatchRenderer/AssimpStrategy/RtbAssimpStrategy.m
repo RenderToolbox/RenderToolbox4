@@ -111,7 +111,9 @@ classdef RtbAssimpStrategy < RtbBatchRenderStrategy
         end
         
         function isFileCandidate = mightBeFile(string)
-            isFileCandidate = ischar(string) && 1 <= sum('.' == string);
+            isFileCandidate = ischar(string) ...
+                && ~isempty(string) ...
+                && ~isempty(strfind(string, '.'));
         end
     end
     
