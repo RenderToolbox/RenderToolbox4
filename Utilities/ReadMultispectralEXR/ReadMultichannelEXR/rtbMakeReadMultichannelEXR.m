@@ -22,9 +22,9 @@ function rtbMakeReadMultichannelEXR()
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 %% Choose the source and function files
-cd(fullfile(rtbRoot(), 'Utilities', 'ReadMultispectralEXR', 'rtbReadMultichannelEXR'));
-source = 'rtbReadMultichannelEXR.cpp';
-output = '-output rtbReadMultichannelEXR';
+cd(fullfile(rtbRoot(), 'Utilities', 'ReadMultispectralEXR', 'ReadMultichannelEXR'));
+source = 'ReadMultichannelEXR.cpp';
+output = '-output ReadMultichannelEXR';
 
 %% Choose library files to include and link with.
 INC = '-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
