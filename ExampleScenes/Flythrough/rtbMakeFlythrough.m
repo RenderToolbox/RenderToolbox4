@@ -3,19 +3,39 @@
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 %
 %% Fly the Millenium Falcon through a night club.
-clear;
+
+% TODO:
+%   falcon engine light
+%   club wall red neon strip light
+%   club fog
+%   various fun materials
+%   mitsuba scene remodeler
+%   path tracer?
 
 %% Choose example files.
-parentSceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'NightClub', 'stonetee.obj');
+clear;
+nightClubFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'NightClub', 'stonetee.obj');
+milleniumFalconFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon', 'millenium-falcon.obj');
 
-%% Add lights and camera.
-scene = mexximpCleanImport(parentSceneFile);
+%% Build a combined scene with lights and camera.
+nightClub = mexximpCleanImport(nightClubFile);
+falcon = mexximpCleanImport(milleniumFalconFile);
+falcon = mexximpVisitStructFields(falcon, @rtbResourcePath, ...
+    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
+    'visitArgs', {'resourceFolder', fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon'), 'toReplace', ''});
+
+falconSize = 50;
+insertTransform = mexximpScale(falconSize * [1 1 1]);
+scene = mexximpCombineScenes(nightClub, falcon, ...
+    'insertTransform', insertTransform, ...
+    'insertPrefix', 'falcon');
 scene = mexximpCentralizeCamera(scene, 'viewExterior', false);
 scene = mexximpAddLanterns(scene);
+[sceneBox, middlePoint] = mexximpSceneBox(scene);
 
 %% Choose batch renderer options.
-hints.imageWidth = 320;
-hints.imageHeight = 240;
+hints.imageWidth = 640;
+hints.imageHeight = 480;
 hints.fov = deg2rad(60);
 hints.recipeName = 'rtbMakeFlythrough';
 
@@ -23,70 +43,77 @@ hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughRemodeler;
 
-%% Choose some camera positions.
-nPositions = 60;
+%% Explore the scene in a figure.
 
-names = {'from', 'to', 'up'};
-nNames = numel(names);
-values = cell(nPositions, nNames);
+% left click points the camera
+% right click moves forward
+% middle click describes the click point
+%mexximpScenePreview(scene);
 
-[sceneBox, middlePoint] = mexximpSceneBox(scene);
-startTo = [110 63 -28];
-endTo = [10 1 -35];
-startFrom = middlePoint + [0 40 0]';
-endFrom = middlePoint - [0 30 0]';
-for pp = 1:nPositions
-    weight = (pp-1) / (nPositions - 1);
-    
-    % from
-    values{pp, 1} = startFrom * (1-weight) + endFrom * weight;
-    
-    % to
-    values{pp, 2} = startTo * (1-weight) + endTo * weight;
-    
-    % up
-    values{pp, 3} = [0 1 0];
-end
+%% Choose some waypoints for the camera and falcon movement.
+cameraPositionWaypoints = [68 80 57; 68 15 57; 68 15 57];
+cameraTargetWaypoints = [143 54 -44; -10 4 -69; -10 4 -69];
+cameraUpWaypoints = [0 1 0; 0 1 0; 0 1 0];
+cameraFrames = [1 5 6];
+
+falconPositionWaypoints = [ ...
+    143 54 -44; ...
+    124 81 -37; ...
+    -15 72 -41; ...
+    -59 63 -78; ...
+    -31 26 -67; ...
+    -10 4 -69];
+falconTargetWaypoints = [ ...
+    -150 49 -63; ...
+    7 95 -44; ...
+    -150 46 -129; ...
+    32 9 -99; ...
+    83 -20 -134; ...
+    250 4 40];
+falconUpWaypoints = [0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0];
+falconFrames = 1:6;
+
+
+%% Interpolate waypoints for several frames.
+nFrames = 6;
+
+cameraPosition = spline(cameraFrames, cameraPositionWaypoints', 1:nFrames);
+cameraTarget = spline(cameraFrames, cameraTargetWaypoints', 1:nFrames);
+cameraUp = spline(cameraFrames, cameraUpWaypoints', 1:nFrames);
+
+falconPosition = spline(falconFrames, falconPositionWaypoints', 1:nFrames);
+falconTarget = spline(falconFrames, falconTargetWaypoints', 1:nFrames);
+falconUp = spline(falconFrames, falconUpWaypoints', 1:nFrames);
+
+
+%% Write conditions for each frame.
+names = {'cameraPosition', 'cameraTarget', 'cameraUp', ...
+    'falconPosition', 'falconTarget', 'falconUp'};
+values = cell(nFrames, numel(names));
+values(:,1) = num2cell(cameraPosition, 1);
+values(:,2) = num2cell(cameraTarget, 1);
+values(:,3) = num2cell(cameraUp, 1);
+values(:,4) = num2cell(falconPosition, 1);
+values(:,5) = num2cell(falconTarget, 1);
+values(:,6) = num2cell(falconUp, 1);
 
 workingFolder = rtbWorkingFolder('hints', hints);
 conditionsFile = fullfile(workingFolder, 'FlythroughConditions.txt');
 rtbWriteConditionsFile(conditionsFile, names, values);
 
 
-%% Render.
+%% Make Scene files.
 nativeSceneFiles = rtbMakeSceneFiles(scene, ...
     'conditionsFile', conditionsFile, ...
     'hints', hints);
 
+%% Render and Show a montage.
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
     'hints', hints);
 
-%% Convert renderings to sRGB images.
-
-% choose one scale factor to use for all images
-rendering = load(radianceDataFiles{1});
-[~, ~, ~, scaleFactor] = rtbMultispectralToSRGB( ...
-    rendering.multispectralImage, ...
-    rendering.S, ...
+[SRGBMontage, XYZMontage] = ...
+    rtbMakeMontage(radianceDataFiles, ...
     'toneMapFactor', 10, ...
-    'isScale', true);
-
-frameCell = cell(1, nPositions);
-for ff = 1:nPositions
-    rendering = load(radianceDataFiles{ff});
-    
-    sRGBImage = rtbMultispectralToSRGB( ...
-        rendering.multispectralImage, ...
-        rendering.S, ...
-        'toneMapFactor', 10, ...
-        'scaleFactor', scaleFactor);
-    
-    frameCell{ff} = uint8(sRGBImage);
-end
-
-%% Display images like a movie.
-for ff = 1:nPositions
-    imshow(frameCell{ff});
-    pause(1/30);
-end
-
+    'isScale', true, ...
+    'hints', hints);
+rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.renderer));
