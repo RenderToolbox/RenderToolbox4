@@ -51,11 +51,6 @@ hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughRemod
 %mexximpScenePreview(scene);
 
 %% Choose some waypoints for the camera and falcon movement.
-cameraPositionWaypoints = [68 80 57; 68 15 57; 68 15 57];
-cameraTargetWaypoints = [143 54 -44; -10 4 -69; -10 4 -69];
-cameraUpWaypoints = [0 1 0; 0 1 0; 0 1 0];
-cameraFrames = [1 5 6];
-
 falconPositionWaypoints = [ ...
     143 54 -44; ...
     124 81 -37; ...
@@ -71,19 +66,30 @@ falconTargetWaypoints = [ ...
     83 -20 -134; ...
     250 4 40];
 falconUpWaypoints = [0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0];
-falconFrames = 1:6;
+falconFrames = linspace(0, 1, 6);
 
+cameraPositionWaypoints = [ ...
+    68 70 57; ...
+    68 60 57; ...
+    68 40 57; ...
+    68 20 57; ...
+    68 15 57; ...
+    68 15 57];
+cameraTargetWaypoints = falconPositionWaypoints;
+cameraUpWaypoints = falconUpWaypoints;
+cameraFrames = linspace(0, 1, 6);
 
 %% Interpolate waypoints for several frames.
-nFrames = 6;
+nFrames = 12;
+frames = linspace(0, 1, nFrames);
 
-cameraPosition = spline(cameraFrames, cameraPositionWaypoints', 1:nFrames);
-cameraTarget = spline(cameraFrames, cameraTargetWaypoints', 1:nFrames);
-cameraUp = spline(cameraFrames, cameraUpWaypoints', 1:nFrames);
+cameraPosition = spline(cameraFrames, cameraPositionWaypoints', frames);
+cameraTarget = spline(cameraFrames, cameraTargetWaypoints', frames);
+cameraUp = spline(cameraFrames, cameraUpWaypoints', frames);
 
-falconPosition = spline(falconFrames, falconPositionWaypoints', 1:nFrames);
-falconTarget = spline(falconFrames, falconTargetWaypoints', 1:nFrames);
-falconUp = spline(falconFrames, falconUpWaypoints', 1:nFrames);
+falconPosition = spline(falconFrames, falconPositionWaypoints', frames);
+falconTarget = spline(falconFrames, falconTargetWaypoints', frames);
+falconUp = spline(falconFrames, falconUpWaypoints', frames);
 
 
 %% Write conditions for each frame.
