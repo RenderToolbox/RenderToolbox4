@@ -5,11 +5,12 @@
 %% Fly the Millenium Falcon through a night club.
 
 % TODO:
+%   mitsuba scene remodeler
+%   special "bless" operation utils
 %   falcon engine light
 %   club wall red neon strip light
 %   club fog
 %   various fun materials
-%   mitsuba scene remodeler
 %   path tracer?
 
 %% Choose example files.
@@ -41,7 +42,8 @@ hints.recipeName = 'rtbMakeFlythrough';
 
 hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
-hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughRemodeler;
+hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughMexximpRemodeler;
+hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbFlythroughMitsubaRemodeler;
 
 %% Explore the scene in a figure.
 

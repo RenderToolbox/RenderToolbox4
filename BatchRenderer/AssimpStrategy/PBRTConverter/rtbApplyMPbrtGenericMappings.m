@@ -57,117 +57,15 @@ for mm = 1:nGenericMappings
     %% Apply Generic mappings special operations.
     switch mapping.operation
         case 'blessAsAreaLight'
-            % Turn an existing Object into an AreaLightSource
-            %
-            % We start with an Object declaration and invokation:
-            % # 1_LightX
-            % ObjectBegin "1_LightX"
-            %	NamedMaterial "1_ReflectorMaterial"
-            %	Include "pbrt-geometry/1_LightX.pbrt"
-            % ObjectEnd
-            % ...
-            % # 1_LightX
-            % AttributeBegin
-            %	ConcatTransform [-0.500001 0.000000 -0.866025 0.000000 0.000000 1.000000 0.000000 0.000000 0.866025 0.000000 -0.500001 0.000000 -11.000000 0.000000 11.000000 1.000000]
-            %	ObjectInstance "1_LightX"
-            % AttributeEnd
-            %
-            % We combine these into one Attribute with an AreaLightSource:
-            % AttributeBegin
-            % 	ConcatTransform [-0.500001 0.000000 -0.866025 0.000000 0.000000 1.000000 0.000000 0.000000 0.866025 0.000000 -0.500001 0.000000 -11.000000 0.000000 11.000000 1.000000]
-            %	AreaLightSource "diffuse"
-            %       "spectrum L" "D65.spd"
-            %       "integer nsamples" [8]
-            %	NamedMaterial "1_ReflectorMaterial"
-            %	Include "pbrt-geometry/1_LightX.pbrt"
-            % AttributeEnd
-            
-            % remove the original object declaration
-            object = pbrtScene.find('Object', ...
-                'name', element.name, ...
-                'remove', true);
-            
-            % locate the object instance attribute
-            attribute = pbrtScene.find('Attribute', 'name', element.name);
-            
-            % remove the original ObjectInstance invokation
-            attribute.find('ObjectInstance', ...
-                'remove', true);
-            
-            % declare the AreaLightSource
-            areaLight = MPbrtElement('AreaLightSource', ...
-                'name', element.name, ...
-                'type', 'diffuse');
-            areaLight.setParameter('L', 'spectrum', ...
-                rtbGetMappingProperty(mapping, 'intensity', '300:1 800:1'));
-            areaLight.setParameter('nsamples', 'integer', 8);
-            attribute.append(areaLight);
-            
-            % move over the original material
-            material = object.find('NamedMaterial');
-            attribute.append(material);
-            
-            % move over the original include file
-            include = object.find('Include');
-            attribute.append(include);
+            L = rtbGetMappingProperty(mapping, 'intensity', '300:1 800:1');
+            element = rtbMPbrtBlessAsAreaLight(element, pbrtScene, ...
+                'L', L);
             
         case 'blessAsBumpMap'
-            %% Turn an existing material into a bumpmap material.
-            %
-            % We start with a float imagemap texture and a material
-            % # texture earthTexture
-            % Texture "earthTexture" "float" "imagemap"
-            %	"string filename" "earthbump1k-stretch-rgb.exr"
-            %	"float gamma" [1]
-            %	"float maxanisotropy" [20]
-            %	"bool trilinear" "false"
-            %	"float udelta" [0.0]
-            %	"float uscale" [1.0]
-            %	"float vdelta" [0.0]
-            %	"float vscale" [1.0]
-            %	"string wrap" "repeat"
-            % ...
-            % # material Material-material
-            % MakeNamedMaterial "Material-material"
-            %   "string type" "matte"
-            %   "spectrum Kd" "mccBabel-11.spd"
-            %
-            % We enclose the texture in a "scale" texture so that we can
-            % apply a scale factor.  Then we add this scale texture to the
-            % existing material.  We also need to sort these elements
-            % because they depend on each other.
-            %
-            % Texture "earthTexture" "float" "imagemap" ...
-            %
-            % Texture "earthBumpMap-scaled" "float" "scale"
-            %    "texture tex1" "earthTexture"
-            %    "float tex2" [0.1]
-            %
-            % # material Material-material
-            % MakeNamedMaterial "Material-material"
-            %    "string type" "matte"
-            %    "spectrum Kd" "mccBabel-11.spd"
-            %    "texture bumpmap" "earthBumpMap-scaled"
-            
-            % locate the original texture
             textureName = rtbGetMappingProperty(mapping, 'texture', '');
-            originalTexture = pbrtScene.world.find('Texture', ...
-                'name', textureName);
-            
-            % wrap the original texture in a new scale texture
-            scaledTextureName = [originalTexture.name '_scaled'];
-            scaleTexture = MPbrtElement.texture(scaledTextureName, 'float', 'scale');
-            scaleTexture.setParameter('tex1', 'texture', originalTexture.name);
-            scaleTexture.setParameter('tex2', 'float', ...
-                rtbGetMappingProperty(mapping, 'scale', 1));
-            pbrtScene.world.prepend(scaleTexture);
-            
-            % move textures to the front, in dependency order
-            pbrtScene.world.prepend(scaleTexture);
-            pbrtScene.world.prepend(originalTexture);
-            
-            % add the scale texture to the blessed material
-            element.setParameter('bumpmap', 'texture', scaledTextureName);
+            scale = rtbGetMappingProperty(mapping, 'scale', 1);
+            element = rtbMPbrtBlessAsBumpMap(element, textureName, pbrtScene, ...
+                'scale', scale);
     end
     
     %% Apply Generic mappings properties as PBRT element parameters.
