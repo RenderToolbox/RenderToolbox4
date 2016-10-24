@@ -5,12 +5,8 @@
 %% Fly the Millenium Falcon through a night club.
 
 % TODO:
-%   mitsuba scene remodeler
-%   special "bless" operation utils
-%   falcon engine light
-%   club wall red neon strip light
-%   club fog
 %   various fun materials
+%   club fog
 %   path tracer?
 
 %% Choose example files.
@@ -18,12 +14,16 @@ clear;
 nightClubFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'NightClub', 'stonetee.obj');
 milleniumFalconFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon', 'millenium-falcon.obj');
 
+
 %% Build a combined scene with lights and camera.
 nightClub = mexximpCleanImport(nightClubFile);
 falcon = mexximpCleanImport(milleniumFalconFile);
 falcon = mexximpVisitStructFields(falcon, @rtbResourcePath, ...
     'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
-    'visitArgs', {'resourceFolder', fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon'), 'toReplace', ''});
+    'visitArgs', { ...
+    'resourceFolder', fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon'), ...
+    'toReplace', '', ...
+    'writeFullPaths', false});
 
 falconSize = 50;
 insertTransform = mexximpScale(falconSize * [1 1 1]);
@@ -34,9 +34,12 @@ scene = mexximpCentralizeCamera(scene, 'viewExterior', false);
 scene = mexximpAddLanterns(scene);
 [sceneBox, middlePoint] = mexximpSceneBox(scene);
 
+
 %% Choose batch renderer options.
-hints.imageWidth = 640;
-hints.imageHeight = 480;
+hints.whichConditions = 5;
+
+hints.imageWidth = 320;
+hints.imageHeight = 240;
 hints.fov = deg2rad(60);
 hints.recipeName = 'rtbMakeFlythrough';
 
@@ -45,12 +48,14 @@ hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughMexximpRemodeler;
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbFlythroughMitsubaRemodeler;
 
+
 %% Explore the scene in a figure.
 
 % left click points the camera
 % right click moves forward
 % middle click describes the click point
 %mexximpScenePreview(scene);
+
 
 %% Choose some waypoints for the camera and falcon movement.
 falconPositionWaypoints = [ ...
@@ -80,6 +85,7 @@ cameraPositionWaypoints = [ ...
 cameraTargetWaypoints = falconPositionWaypoints;
 cameraUpWaypoints = falconUpWaypoints;
 cameraFrames = linspace(0, 1, 6);
+
 
 %% Interpolate waypoints for several frames.
 nFrames = 12;
@@ -114,6 +120,7 @@ rtbWriteConditionsFile(conditionsFile, names, values);
 nativeSceneFiles = rtbMakeSceneFiles(scene, ...
     'conditionsFile', conditionsFile, ...
     'hints', hints);
+
 
 %% Render and Show a montage.
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
