@@ -12,8 +12,8 @@ integrator = nativeScene.find('integrator');
 integrator.pluginType = 'bdpt';
 
 sampler = nativeScene.find('sampler');
-sampler.pluginType = 'independent';
-sampler.setProperty('sampleCount', 'integer', 256);
+sampler.pluginType = 'ldsampler';
+sampler.setProperty('sampleCount', 'integer', 128);
 
 
 %% Let fog permeate the whole night club.
