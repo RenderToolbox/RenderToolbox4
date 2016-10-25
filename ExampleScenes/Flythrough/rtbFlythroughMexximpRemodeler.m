@@ -25,6 +25,6 @@ for nn = 1:numel(scene.rootNode.children)
     end
 end
 
-% for fun, preview each condition in matlab
-mexximpScenePreview(scene);
-drawnow();
+% for fun, preview each condition in a Matlab figure
+%mexximpScenePreview(scene);
+%drawnow();

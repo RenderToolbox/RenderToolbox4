@@ -2,12 +2,7 @@
 %%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 %
-%% Fly the Millenium Falcon through a night club.
-
-% TODO:
-%   various fun materials
-%   club fog
-%   path tracer?
+%% Fly the Millennium Falcon through a night club.
 
 %% Choose example files.
 clear;
@@ -31,12 +26,15 @@ scene = mexximpCombineScenes(nightClub, falcon, ...
     'insertTransform', insertTransform, ...
     'insertPrefix', 'falcon');
 scene = mexximpCentralizeCamera(scene, 'viewExterior', false);
-scene = mexximpAddLanterns(scene);
 [sceneBox, middlePoint] = mexximpSceneBox(scene);
 
 
+%% Explore the scene geometry in a Matlab figure.
+%mexximpScenePreview(scene);
+
+
 %% Choose batch renderer options.
-hints.whichConditions = 5;
+hints.whichConditions = [2 10];
 
 hints.imageWidth = 320;
 hints.imageHeight = 240;
@@ -47,14 +45,6 @@ hints.renderer = 'Mitsuba';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughMexximpRemodeler;
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbFlythroughMitsubaRemodeler;
-
-
-%% Explore the scene in a figure.
-
-% left click points the camera
-% right click moves forward
-% middle click describes the click point
-%mexximpScenePreview(scene);
 
 
 %% Choose some waypoints for the camera and falcon movement.
@@ -73,7 +63,7 @@ falconTargetWaypoints = [ ...
     83 -20 -134; ...
     250 4 40];
 falconUpWaypoints = [0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0; 0 1 0];
-falconFrames = linspace(0, 1, 6);
+falconWaypointFrames = linspace(0, 1, 6);
 
 cameraPositionWaypoints = [ ...
     68 70 57; ...
@@ -84,20 +74,20 @@ cameraPositionWaypoints = [ ...
     68 15 57];
 cameraTargetWaypoints = falconPositionWaypoints;
 cameraUpWaypoints = falconUpWaypoints;
-cameraFrames = linspace(0, 1, 6);
+cameraWaypointFrames = linspace(0, 1, 6);
 
 
 %% Interpolate waypoints for several frames.
 nFrames = 12;
 frames = linspace(0, 1, nFrames);
 
-cameraPosition = spline(cameraFrames, cameraPositionWaypoints', frames);
-cameraTarget = spline(cameraFrames, cameraTargetWaypoints', frames);
-cameraUp = spline(cameraFrames, cameraUpWaypoints', frames);
+cameraPosition = spline(cameraWaypointFrames, cameraPositionWaypoints', frames);
+cameraTarget = spline(cameraWaypointFrames, cameraTargetWaypoints', frames);
+cameraUp = spline(cameraWaypointFrames, cameraUpWaypoints', frames);
 
-falconPosition = spline(falconFrames, falconPositionWaypoints', frames);
-falconTarget = spline(falconFrames, falconTargetWaypoints', frames);
-falconUp = spline(falconFrames, falconUpWaypoints', frames);
+falconPosition = spline(falconWaypointFrames, falconPositionWaypoints', frames);
+falconTarget = spline(falconWaypointFrames, falconTargetWaypoints', frames);
+falconUp = spline(falconWaypointFrames, falconUpWaypoints', frames);
 
 
 %% Write conditions for each frame.
@@ -128,7 +118,7 @@ radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
 
 [SRGBMontage, XYZMontage] = ...
     rtbMakeMontage(radianceDataFiles, ...
-    'toneMapFactor', 10, ...
+    'toneMapFactor', 5, ...
     'isScale', true, ...
     'hints', hints);
 rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.renderer));
