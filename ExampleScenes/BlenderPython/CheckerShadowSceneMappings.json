@@ -228,7 +228,7 @@
             {
             	"name": "sampleCount",
             	"valueType": "integer",
-            	"value": 1024
+            	"value": 32
             }
         ]
 	}

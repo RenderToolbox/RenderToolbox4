@@ -9,8 +9,8 @@ parentSceneFile = 'CheckerShadowNoDimples.dae';
 mappingsFile    = 'CheckerShadowSceneMappings.json';
 
 %% Choose batch renderer options.
-hints.imageWidth = 1000;
-hints.imageHeight = 750;
+hints.imageWidth = 640;
+hints.imageHeight = 480;
 hints.fov = 36 * pi() / 180;
 hints.recipeName = 'rtbMakeCheckerShadowScene';
 hints.renderer = 'Mitsuba';
