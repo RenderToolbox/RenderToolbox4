@@ -1,5 +1,14 @@
 function [scene, mappings] = rtbFlythroughMexximpRemodeler(scene, mappings, names, conditionValues, conditionNumber)
 %% Remodel the mexximp scene based on conditions values.
+%
+% This is an example of how to modify the incoming mexximp scene directly,
+% with a "remodeler" hook funtion.  It modifies the scene struct that will
+% be used during subsequent processing and rendering.
+%
+% The function is called by the batch renderer when needed.  Various
+% parameters are passed in, like the mexximp scene, the native scene, and
+% names and values read from the conditions file.
+%
 
 % build a lookat for the camera
 cameraPosition = rtbGetNamedNumericValue(names, conditionValues, 'cameraPosition', []);
@@ -26,5 +35,5 @@ for nn = 1:numel(scene.rootNode.children)
 end
 
 % for fun, preview each condition in a Matlab figure
-%mexximpScenePreview(scene);
-%drawnow();
+mexximpScenePreview(scene);
+drawnow();

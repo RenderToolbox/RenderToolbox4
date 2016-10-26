@@ -1,10 +1,14 @@
 function nativeScene = rtbFlythroughMitsubaRemodeler(parentScene, nativeScene, mappings, names, conditionValues, conditionNumber)
 %% Remodel the mexximp scene based on conditions values.
 %
-% This is an example of how to modify the Mitsuba scene directly, with a
-% "remodeler" hook funtion.  The function is called by the batch renderer
-% when needed.  Various parameters are passed in, like the mexximp scene,
-% the native scene, and names and values read from the conditions file.
+% This is an example of how to modify the outgoing Mitsuba scene directly,
+% with a "remodeler" hook funtion.  It modifies the mMitsuba scene graph
+% just before the graph is written out to a Mistuba scene file.  This
+% function is able to specify arbitrary Mitsuba behaviors.
+%
+% The function is called by the batch renderer when needed.  Various
+% parameters are passed in, like the mexximp scene, the native scene, and
+% names and values read from the conditions file.
 %
 
 %% Choose integrator and sampler.
