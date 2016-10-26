@@ -3,23 +3,23 @@ function nativeScene = rtbFlythroughMitsubaRemodeler(parentScene, nativeScene, m
 %
 % This is an example of how to modify the Mitsuba scene directly, with a
 % "remodeler" hook funtion.  The function is called by the batch renderer
-% when needed.  Various parameters, like the original and native scenes,
-% and names and values read from the conditions file, are passed in.
+% when needed.  Various parameters are passed in, like the mexximp scene,
+% the native scene, and names and values read from the conditions file.
 %
 
 %% Choose integrator and sampler.
 integrator = nativeScene.find('integrator');
-integrator.pluginType = 'bdpt';
+integrator.pluginType = 'volpath';
 
 sampler = nativeScene.find('sampler');
 sampler.pluginType = 'ldsampler';
-sampler.setProperty('sampleCount', 'integer', 128);
+sampler.setProperty('sampleCount', 'integer', 64);
 
 
-%% Let fog permeate the whole night club.
+%% Create some moody fog.
 fog = MMitsubaElement('fog', 'medium', 'homogeneous');
-%fog.append(MMitsubaProperty.withValue('material', 'string', 'Shampoo'));
-fog.append(MMitsubaProperty.withValue('scale', 'float', 0.0001));
+fog.setProperty('material', 'string', 'Sugar Powder');
+fog.setProperty('scale', 'float', 0.001);
 nativeScene.prepend(fog);
 
 camera = nativeScene.find('Camera', 'type', 'sensor');
@@ -33,18 +33,19 @@ camera.append(MMitsubaProperty.withData('', 'ref', 'id', fog.id));
 % I chose a "blue led" spectrum by reading g
 engineShapeName = 'falcong_r_body';
 engineNumbers = [300 0, 400 0.1, 450 1, 470 0.1, 550 0.5, 700 0.1, 800 0];
-engineNumbers(2:2:end) = 0.1 * engineNumbers(2:2:end);
+engineNumbers(2:2:end) = engineNumbers(2:2:end);
 engineSpectrum = sprintf('%d:%f ', engineNumbers);
 
 % a red neon light around the club
 neonShapeNames = {'Box09_', 'Box10_', 'Box11_', 'Box12_'};
 neonNumbers = [300 0, 570 0 580 1 600 0.1 615 0.4 640 0.3 690 0.1 710 0.3 725 0.1 800 0];
-neonNumbers(2:2:end) = 0.0075 * neonNumbers(2:2:end);
+neonNumbers(2:2:end) = neonNumbers(2:2:end);
 neonSpectrum = sprintf('%d:%f ', neonNumbers);
 
-% harsh white lights on the wall
-wallShapeNames = {'Box25_', 'Box149_', 'Box151_', 'Box150_', 'Window'};
-wallSpectrum = 0.01;
+% soft white light on the ceiling
+%  because otherwise it's really hard to light the room!
+ceilingName = 'Box02_';
+ceilingSpectrum = 0.2;
 
 % identify meshes by name matching
 %   many objects are made of multiple meshes, so multiple matches
@@ -58,7 +59,10 @@ for nn = 1:nNested
     
     % engines
     if ~isempty(strfind(element.id, engineShapeName))
+        % bless this mesh as an area light emitter
         rtbMMitsubaBlessAsAreaLight(element, 'radiance', engineSpectrum);
+        
+        % connect the emmiter to the fog medium
         element.find('emitter').append(MMitsubaProperty.withData('', 'ref', 'id', fog.id));
         continue;
     end
@@ -73,14 +77,11 @@ for nn = 1:nNested
         end
     end
     
-    % white lights
-    for ss = 1:numel(wallShapeNames)
-        shapeName = wallShapeNames{ss};
-        if ~isempty(strfind(element.id, shapeName))
-            rtbMMitsubaBlessAsAreaLight(element, 'radiance', wallSpectrum);
-            element.find('emitter').append(MMitsubaProperty.withData('', 'ref', 'id', fog.id));
-            continue;
-        end
+    % back wall
+    if ~isempty(strfind(element.id, ceilingName))
+        rtbMMitsubaBlessAsAreaLight(element, 'radiance', ceilingSpectrum);
+        element.find('emitter').append(MMitsubaProperty.withData('', 'ref', 'id', fog.id));
+        continue;
     end
 end
 
