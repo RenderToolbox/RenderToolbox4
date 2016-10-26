@@ -11,7 +11,9 @@ function mitsubaScene = rtbApplyMMitsubaGenericMappings(mitsubaScene, mappings)
 %
 % mitsubaScene = rtbApplyMMitsubaGenericMappings(mitsubaScene, mappings)
 %
-% Copyright (c) 2016 mexximp Team
+%%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
+%%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
+%%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
 parser.addRequired('mitsubaScene', @isobject);
@@ -48,8 +50,7 @@ for mm = 1:nGenericMappings
     end
     
     %% Create/find/delete a scene element.
-    element = rtbApplyMMitsubaMappingOperation(mitsubaScene, mapping, ...
-        'type', type);
+    element = rtbApplyMMitsubaMappingOperation(mitsubaScene, mapping, 'type', type);
     if isempty(element)
         continue;
     end
@@ -57,115 +58,15 @@ for mm = 1:nGenericMappings
     %% Apply Generic mappings special operations.
     switch mapping.operation
         case 'blessAsAreaLight'
-            %% Turn an existing shape into an area emitter.
-            %
-            % We start with a shape declaration:
-            % <shape id="LightY-mesh_0" type="serialized">
-            %   <string name="filename" value="Dragon-001Unadjusted.serialized"/>
-            %   ...
-            % </shape>
-            %
-            % We add an emitter nested in the mesh
-            % <shape id="LightY-mesh_0" type="serialized">
-            %   <string name="filename" value="Dragon-001Unadjusted.serialized"/>
-            %   <emitter id="LightY-mesh_0-area-light" type="area">
-            %     <spectrum filename="D65.spd" name="radiance"/>
-            %   </emitter>
-            %   ...
-            % </shape>
-            
-            % the emitter
-            emitterId = [element.id '-emitter'];
-            emitter = MMitsubaElement(emitterId, 'emitter', 'area');
-            emitter.setProperty('radiance', 'spectrum', ...
-                rtbGetMappingProperty(mapping, 'intensity', '300:1 800:1'));
-            
-            % nested in the original shape
-            element.append(emitter);
+            radiance = rtbGetMappingProperty(mapping, 'intensity', '300:1 800:1');
+            element = rtbMMitsubaBlessAsAreaLight(element, ...
+                'radiance', radiance);
             
         case 'blessAsBumpMap'
-            %% Turn an existing material into a bumpmap material.
-            %
-            % We start with an existing texture and existing material.
-            %
-            % <texture id="earthTexture" type="bitmap">
-            %	<float name="gamma" value="1"/>
-            %	<float name="maxAnisotropy" value="20"/>
-            %	<float name="uoffset" value="0.0"/>
-            %	<float name="uscale" value="1.0"/>
-            %	<float name="voffset" value="0.0"/>
-            %	<float name="vscale" value="1.0"/>
-            %	<string name="filename" value="/home/ben/render/VirtualScenes/MiscellaneousData/Textures/earthbump1k-stretch-rgb.exr"/>
-            %	<string name="filterType" value="ewa"/>
-            %	<string name="wrapMode" value="repeat"/>
-            % </texture>
-            % ...
-            % <bsdf id="Material-material" type="roughconductor">
-            % 	<float name="alpha" value="0.4"/>
-            % 	<spectrum filename="Au.eta.spd" name="eta"/>
-            % 	<spectrum filename="Au.k.spd" name="k"/>
-            % </bsdf>
-            %
-            % We rename the material because we will want existing shapes
-            % to refer to a new material that we're about to make, instead
-            % of the original material.
-            %
-            % <bsdf id="Material-material-inner" type="roughconductor">
-            % 	...
-            % </bsdf>
-            %
-            % We wrap the texture in a "scale" texture so that we can apply
-            % a scale factor to the bumps.
-            %
-            % <texture id="earthBumpMap-scaled" type="scale">
-            %   <float name="scale" value="0.1"/>
-            %   <ref id="earthTexture" name="value"/>
-            % </texture>
-            %
-            % Finally, we make a new "bumpmap" material which wraps our
-            % scale texture and the renamed original material.  We use the
-            % id of the original material so that existing shapes will
-            % refer to this new, "blessed" material instead of the
-            % original.
-            
-            % locate and rename the original material
-            originalMaterialId = element.id;
-            innerMaterialId = [originalMaterialId '-inner'];
-            element.id = innerMaterialId;
-            
-            % locate the original texture
             textureName = rtbGetMappingProperty(mapping, 'texture', '');
-            originalTexture = mitsubaScene.find(textureName, ...
-                'type', 'texture');
-            
-            % wrap the original texture in a new scale texture
-            scaleTextureId = [originalTexture.id '-scaled'];
-            scaleTexture = MMitsubaElement(scaleTextureId, 'texture', 'scale');
-            scaleTexture.append(MMitsubaProperty.withData('', 'ref', ...
-                'id', originalTexture.id, ...
-                'name', 'value'));
-            scaleTexture.setProperty('scale', 'float', ...
-                rtbGetMappingProperty(mapping, 'scale', 1));
-            
-            % wrap original material and scaled texture in a "bumpmap" material
-            bumpmap = MMitsubaElement(originalMaterialId, 'bsdf', 'bumpmap');
-            bumpmap.append(MMitsubaProperty.withData('', 'ref', ...
-                'id', innerMaterialId, ...
-                'name', 'bsdf'));
-            bumpmap.append(MMitsubaProperty.withData('', 'ref', ...
-                'id', scaleTextureId, ...
-                'name', 'texture'));
-            
-            % move objects to front in the right order such that:
-            %   - things that are independent come first
-            %   - thigs that have "ref" properties come next
-            %   - elements of the same type are grouped together
-            %       because our XML writer will group them anyway,
-            %       and we want to choose which group comes first (textures)
-            mitsubaScene.prepend(bumpmap);
-            mitsubaScene.prepend(element);
-            mitsubaScene.prepend(scaleTexture);
-            mitsubaScene.prepend(originalTexture);
+            scale = rtbGetMappingProperty(mapping, 'scale', 1);
+            element = rtbMMitsubaBlessAsBumpMap(element, textureName, mitsubaScene, ...
+                'scale', scale);
     end
     
     %% Apply Generic mappings properties as PBRT element parameters.
@@ -257,6 +158,7 @@ for mm = 1:nGenericMappings
             end
     end
 end
+
 
 %% Set a spectrum or texture value to a property.
 function setSpectrumOrTexture(element, mapping, getName, setName, setType, defaultValue)
