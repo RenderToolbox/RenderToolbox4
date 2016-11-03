@@ -126,12 +126,19 @@ classdef RtbAssimpStrategy < RtbBatchRenderStrategy
             end
             
             % look carefully for the file
-            scenePath = fileparts(sceneFile);
+            [scenePath, ~, sceneExt] = fileparts(sceneFile);
             if isempty(scenePath)
                 fileInfo = rtbResolveFilePath(sceneFile, rtbWorkingFolder('hints', obj.hints));
                 sceneFile = fileInfo.absolutePath;
             end
-            scene = mexximpCleanImport(sceneFile, obj.importArgs{:});
+            
+            if strcmp('.mat', sceneExt)
+                % reload pre-imported scene
+                scene = mexximpLoad(sceneFile);
+            else
+                % import anew
+                scene = mexximpCleanImport(sceneFile, obj.importArgs{:});
+            end
         end
         
         function scene = remodelOnceBeforeAll(obj, scene)
