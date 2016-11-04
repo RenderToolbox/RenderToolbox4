@@ -28,7 +28,7 @@ end
 
 %% Locate the element.
 [pbrtName, nameMatcher] = mexximpCleanName(mapping.name, mapping.index);
-if isempty(pbrtName)
+if isempty(nameMatcher)
     searchPattern = '';
 else
     searchPattern = sprintf('^%s$|%s', pbrtName, nameMatcher);
