@@ -30,7 +30,7 @@ end
 
 % search for exact name by itself, or formatted index_name pattern
 [mitsubaId, idMatcher] = mexximpCleanName(mapping.name, mapping.index);
-if isempty(mitsubaId)
+if isempty(idMatcher)
     searchPattern = '';
 else
     searchPattern = sprintf('^%s$|%s', mitsubaId, idMatcher);
