@@ -26,7 +26,7 @@ parser = inputParser();
 parser.addRequired('recipe', @isstruct);
 parser.addParameter('toneMapFactor', 0, @isnumeric);
 parser.addParameter('isScale', false, @islogical);
-parser.parse(recipe);
+parser.parse(recipe, varargin{:});
 recipe = parser.Results.recipe;
 toneMapFactor = parser.Results.toneMapFactor;
 isScale = parser.Results.isScale;
