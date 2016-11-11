@@ -31,7 +31,7 @@ function [sRGBImage, XYZImage, rawRGBImage, scaleFactor] = rtbMultispectralToSRG
 % scale the image.
 %
 % If isScale and scaleFactor are both supplied, scaleFactor
-% is used and toneMapFactor is isScale.
+% is used and isScale is ignored.
 %
 % Returns a gamma-corrected sRGB image of size [height width 3].  Also
 % returns the intermediate XYZ image and the uncorrected RGB image, which
