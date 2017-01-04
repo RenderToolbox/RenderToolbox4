@@ -34,6 +34,7 @@ doAll = parser.Results.doAll;
 renderResults = [];
 comparison = [];
 
+
 %% Check working folder for write permission.
 workingFolder = rtbWorkingFolder();
 fprintf('Checking working folder:\n');
@@ -64,25 +65,13 @@ fclose(fid);
 delete(testFile);
 fprintf('  OK.\n');
 
-%% Check for Docker, the preferred way to render.
-fprintf('Checking for Docker...\n');
-[status, result] = system('docker ps');
-if 0 == status
-    fprintf('  OK.\n');
-else
-    fprintf('  Could not invoke Docker: %s.\n', result);
+
+%% Check for native system libs and executables.
+[status, ~, advice] = rtbCheckNativeDependencies();
+if 0 ~= status
+    error(advice);
 end
 
-%% Check for local install of Renderers.
-mitsuba = getpref('Mitsuba');
-if ismac()
-    checkExists(mitsuba.app, 'Checking for Mitsuba App...');
-else
-    checkExists(mitsuba.executable, 'Checking for Mitsuba Executable...');
-end
-
-pbrt = getpref('PBRT');
-checkExists(pbrt.executable, 'Checking for PBRT Executable...');
 
 %% Render some example scenes.
 if doAll
@@ -107,6 +96,7 @@ if all([renderResults.isSuccess])
     fprintf('\nYour RenderToolbox4 installation seems to be working!\n');
 end
 
+
 %% Compare renderings to reference renderings?
 if ~isempty(referenceRoot)
     localRoot = rtbWorkingFolder();
@@ -117,16 +107,4 @@ if ~isempty(referenceRoot)
 else
     fprintf('\nNo referenceRoot provided.  Local renderings\n');
     fprintf('will not be compared with reference renderings.\n');
-end
-
-
-%% Check whether something exists and print messages.
-function exists = checkExists(filePath, message)
-fprintf('%s\n', message);
-exists = 0 ~= exist(filePath, 'dir') || 0 ~= exist(filePath, 'file');
-if exists
-    fprintf('  Found %s\n', filePath);
-    fprintf('  OK.\n');
-else
-    fprintf('  Could not find %s\n', filePath);
 end
