@@ -16,8 +16,14 @@ function [status, result, advice] = rtbCheckNativeDependencies()
 
 
 %% Check for OpenEXR library, also known as IlmImf.
+if ismac()
+    % assume homebrew
+    findLibCommand = 'brew list | grep openexr';
+else
+    findLibCommand = 'ldconfig -p | grep libIlmImf';
+end
 openExr = checkSystem('OpenEXR', ...
-    'ldconfig -p | grep libIlmImf', ...
+    findLibCommand, ...
     'It looks like the OpenEXR library is not installed.  Please visit http://www.openexr.com/.  You might also try "sudo apt-get install openexr" or similar.');
 
 
