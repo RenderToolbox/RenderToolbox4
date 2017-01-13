@@ -15,6 +15,18 @@ classdef RtbAssimpPBRTConverter < RtbConverter
         % material parameter to receive specular reflectance data
         specularParameter;
         
+        % material parameter to receive glossy reflectance data
+        glossyParameter
+        
+        % material parameter to receive index of refraction
+        iorParameter
+        
+        % material parameter to receive roughness of the material
+        roughnessParameter
+        
+        % material parameter to receive opacity of the material
+        opacityParameter
+        
         % where to write output files, like scene or geometry
         outputFolder;
         
@@ -27,8 +39,14 @@ classdef RtbAssimpPBRTConverter < RtbConverter
     
     methods (Static)
         function material = defaultMaterial()
-            material = MPbrtElement.makeNamedMaterial('', 'matte');
+            material = MPbrtElement.makeNamedMaterial('', 'uber');
             material.setParameter('Kd', 'spectrum', '300:1 800:1');
+            material.setParameter('Ks', 'spectrum', '300:0 800:0');
+            material.setParameter('Kr', 'spectrum', '300:0 800:0');
+            material.setParameter('roughness','float',0.1);
+            material.setParameter('index','float',1.5);
+            material.setParameter('opacity', 'spectrum', '300:1 800:1');
+            
         end
     end
     
@@ -38,7 +56,11 @@ classdef RtbAssimpPBRTConverter < RtbConverter
             obj.hints = rtbDefaultHints(hints);
             obj.material = RtbAssimpPBRTConverter.defaultMaterial();
             obj.diffuseParameter = 'Kd';
-            obj.specularParameter = '';
+            obj.specularParameter = 'Ks';
+            obj.glossyParameter = 'Kr';
+            obj.iorParameter = 'index';
+            obj.roughnessParameter = 'roughness';
+            obj.opacityParameter = 'opacity';
             obj.outputFolder = rtbWorkingFolder('hints', obj.hints);
             obj.meshSubfolder = 'scenes/PBRT/pbrt-geometry';
             obj.rewriteMeshData = true;
@@ -118,6 +140,10 @@ classdef RtbAssimpPBRTConverter < RtbConverter
                 'materialDefault', obj.material, ...
                 'materialDiffuseParameter', obj.diffuseParameter, ...
                 'materialSpecularParameter', obj.specularParameter, ...
+                'materialGlossyParameter', obj.glossyParameter, ...
+                'materialIorParameter', obj.iorParameter, ...
+                'materialOpacityParameter', obj.opacityParameter, ...
+                'materialRoughnessParamter', obj.roughnessParameter, ...
                 'workingFolder', obj.outputFolder, ...
                 'meshSubfolder', obj.meshSubfolder, ...
                 'rewriteMeshData', obj.rewriteMeshData);
