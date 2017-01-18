@@ -27,10 +27,28 @@ openExr = checkSystem('OpenEXR', ...
     'It looks like the OpenEXR library is not installed.  Please visit http://www.openexr.com/.  You might also try "sudo apt-get install openexr" or similar.');
 
 
+%% OpenEXR is required.
+if 0 ~= openExr.status
+    status = openExr.status;
+    result = openExr.result;
+    advice = openExr.advice;
+    return;
+end
+
+
 %% Check for Docker, the preferred way to obtain renderers.
 docker = checkSystem('Docker', ...
     'docker ps', ...
     'It looks like Docker is not installed.  Please visit https://github.com/RenderToolbox/RenderToolbox4/wiki/Docker.');
+
+
+%% Docker can cover both renderers.
+if 0 == docker.status
+    status = 0;
+    result = 'OK.';
+    advice = '';
+    return;
+end
 
 
 %% Check for a local installation of the Mitsuba renderer.
@@ -43,24 +61,6 @@ mitsuba = checkSystem('Mitsuba', ...
 pbrt = checkSystem('PBRT', ...
     'which pbrt', ...
     'It looks like PBRT is not installed.  Please visit https://github.com/ydnality/pbrt-v2-spectral.  Or, consider installing Docker so that RenderToolbox can get PBRT for you.');
-
-
-%% OpenEXR is required.
-if 0 ~= openExr.status
-    status = openExr.status;
-    result = openExr.result;
-    advice = openExr.advice;
-    return;
-end
-
-
-%% Docker can cover both renderers.
-if 0 == docker.status
-    status = 0;
-    result = 'OK.';
-    advice = '';
-    return;
-end
 
 
 %% Check for both renderers.
