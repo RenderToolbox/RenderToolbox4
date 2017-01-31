@@ -2,7 +2,7 @@ classdef RtbExampleTests < matlab.unittest.TestCase
     % Execute some of the render toolbox examples.
     
     properties
-        outputRoot = fullfile(tempdir(), 'RtbExampleTests');
+        outputRoot = fullfile(rtbWorkingFolder(), 'RtbExampleTests');
     end
     
     methods (TestMethodSetup)
