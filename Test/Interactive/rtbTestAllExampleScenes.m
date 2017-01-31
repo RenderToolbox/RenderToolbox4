@@ -107,6 +107,7 @@ for ii = find(~isExampleSuccess)
     disp('----')
     fprintf('%d %s\n', ii, results(ii).makeFile);
     disp(results(ii).error)
+    disp(results(ii).error.message)
     disp(' ')
 end
 
