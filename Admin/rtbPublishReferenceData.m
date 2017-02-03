@@ -57,7 +57,7 @@ for ee = 1:nExamples
     % zip up the example
     archiveTemp = fullfile(tempRoot, [exampleName '.zip']);
     if ~dryRun
-        zip(archiveTemp, exampleDir);
+        zip(archiveTemp, '.', exampleDir);
     end
     
     % publish the zip
