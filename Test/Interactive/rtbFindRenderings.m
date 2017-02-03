@@ -63,11 +63,7 @@ for ff = 1:nFiles
     renderingsFolderIndex = find(isRenderingsFolder, 1, 'last');
     
     % recipe name comes just before renderingsFolderName
-    %   ignore "rtb" prefix if any
     recipeName = pathParts{renderingsFolderIndex - 1};
-    if strncmp(recipeName, 'rtb', 3)
-        recipeName = recipeName(4:end);
-    end
     
     % renderer name comes just after renderingsFolderName, if any
     if nPathParts > renderingsFolderIndex

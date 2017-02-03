@@ -26,5 +26,23 @@ parser.addParameter('imageName', '',@ischar);
 parser.addParameter('fileName', '', @ischar);
 parser.parse(varargin{:});
 
-% let the parser do all the work
+% let the parser do most of the work
 record = parser.Results;
+
+% format an identifier useful for comparing records with eg setdiff()
+recipeName = record.recipeName;
+if strncmp(recipeName, 'rtb', 3)
+    recipeName = recipeName(4:end);
+end
+
+if isempty(record.imageNumber)
+    record.identifier = sprintf('%s-%s-%s', ...
+        recipeName, ...
+        record.rendererName, ...
+        record.imageName);
+else
+    record.identifier = sprintf('%s-%s-%d', ...
+        recipeName, ...
+        record.rendererName, ...
+        record.imageNumber);
+end
