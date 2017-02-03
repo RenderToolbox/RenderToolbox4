@@ -61,7 +61,9 @@ for ee = 1:nExamples
     
     % zip up the example
     archiveTemp = fullfile(tempRoot, [exampleName '.zip']);
-    zip(archiveTemp, exampleDir);
+    if ~dryRun
+        zip(archiveTemp, exampleDir);
+    end
     
     % publish the zip
     artifactCell{ee} = publishFile(rdtConfig, archiveTemp, remotePath,...
