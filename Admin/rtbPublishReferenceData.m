@@ -43,11 +43,6 @@ if deployToolboxes
     tbUse({'RenderToolbox4', 'RemoteDataToolbox'});
 end
 
-if ~dryRun
-    rdtConfig = rdtConfiguration(rdtConfig);
-    rdtConfig = rdtCredentialsDialog(rdtConfig);
-end
-
 if 7 ~= exist(tempRoot, 'dir')
     mkdir(tempRoot);
 end
