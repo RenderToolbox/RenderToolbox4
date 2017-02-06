@@ -1,7 +1,7 @@
-function [comparisons, matchInfo] = rtbCompareManyRenderings(folderA, folderB, varargin)
+function [comparisons, matchInfo] = rtbCompareManyRecipes(folderA, folderB, varargin)
 %% Compare paris of renderings across two folders.
 %
-% comparisons = rtbCompareManyRenderings(folderA, folderB) finds rendering
+% comparisons = rtbCompareManyRecipes(folderA, folderB) finds rendering
 % data files in the given folderA and folderB and attempts to match up
 % pairs of renderings that came from the same recipe and renderer.
 % For each pair, computes difference images and statistics.
@@ -9,7 +9,7 @@ function [comparisons, matchInfo] = rtbCompareManyRenderings(folderA, folderB, v
 % Returns a struct array of image comparisons, as returned from
 % rtbCompareRenderings().
 %
-% rtbCompareManyRenderings( ... 'fetchReferenceData', fetchReferenceData)
+% rtbCompareManyRecipes( ... 'fetchReferenceData', fetchReferenceData)
 % specify whether to use Remote Data Toolbox to fetch reference data for
 % comparison.  The default is true, fetch reference data when there is a
 % recipe in folderA that was not found in folderB, and cache the fetched
