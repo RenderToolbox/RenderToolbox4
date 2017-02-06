@@ -10,6 +10,7 @@ function fig = rtbPlotRenderingComparison(comparison, varargin)
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('comparison', @isstruct);
 parser.addParameter('isScale', true, @islogical);
 parser.addParameter('toneMapFactor', 0, @isnumeric);
@@ -34,7 +35,10 @@ rgbBminusA = rtbMultispectralToSRGB(comparison.bMinusA, S, ...
 
 
 %% Make the plot.
-name = sprintf('RGB isScale %d toneMapFactor %.2f', isScale, toneMapFactor);
+name = sprintf('%s isScale %d toneMapFactor %.2f', ...
+    comparison.renderingA.identifier, ...
+    isScale, ...
+    toneMapFactor);
 set(fig, 'Name', name, ...
     'NumberTitle', 'off');
 

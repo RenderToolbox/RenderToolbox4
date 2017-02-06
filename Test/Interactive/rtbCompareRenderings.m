@@ -28,6 +28,7 @@ function comparison = rtbCompareRenderings(renderingA, renderingB, varargin)
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('renderingA', @isstruct);
 parser.addRequired('renderingB', @isstruct);
 parser.addParameter('denominatorThreshold', 0.2, @isnumeric);

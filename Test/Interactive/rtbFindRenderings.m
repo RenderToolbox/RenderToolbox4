@@ -32,6 +32,7 @@ function renderings = rtbFindRenderings(rootFolder, varargin)
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('rootFolder', @ischar);
 parser.addParameter('filter', '\.mat$', @ischar);
 parser.addParameter('renderingsFolderName', 'renderings', @ischar);
