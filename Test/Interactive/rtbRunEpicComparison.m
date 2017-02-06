@@ -1,7 +1,7 @@
-function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workingFolderA, workingFolderB, varargin)
+function [matchInfo, unmatchedA, unmatchedB] = rtbRunEpicComparison(workingFolderA, workingFolderB, varargin)
 %% Compare recipe renderings that were generated at different times.
 %
-% [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workingFolderA, workingFolderB)
+% [matchInfo, unmatchedA, unmatchedB] = rtbRunEpicComparison(workingFolderA, workingFolderB)
 % Finds 2 sets of rendering outputs: set A includes renderings located
 % under the given workingFolderA, set B includes renderings located
 % under workingFolderB.  Attempts to match up data files from both sets,
@@ -18,12 +18,12 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 %	- rendererName must be the name of a renderer, like "PBRT" or "Mitsuba"
 %	- fileName must be the name of a multi-spectral data file, such as "Dragon-001"
 %
-% rtbCompareAllExampleScenes( ... 'filterExpression', filterExpression)
+% rtbRunEpicComparison( ... 'filterExpression', filterExpression)
 % uses the given regular expression filterExpr'/home/ben/Desktop/testA'ession to select file paths.
 % Only data files whose paths match the expression will be compared.  The
 % default is to do no such filtering.
 %
-% rtbCompareAllExampleScenes( ... 'visualize', visualize) specifies the
+% rtbRunEpicComparison( ... 'visualize', visualize) specifies the
 % level of visualization to do during comparinsons.  The options are:
 %   - 0 -- don't plot anything
 %   - 1 -- (default) plot a summary figure at the end
@@ -42,7 +42,7 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 % unfair comparison due to large denominator.  For each pair of images, the
 % plot will show the mean and max of the diffs from all pixel components.
 %
-% rtbCompareAllExampleScenes( ... 'figureFolder', figureFolder) specifies
+% rtbRunEpicComparison( ... 'figureFolder', figureFolder) specifies
 % an output folder where to save figures used for visualization.  The
 % default is rtbWorkingFolder().
 %
@@ -51,7 +51,7 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 % compare renderings produced locally with archived renderings located at
 % Amazon S3.  For example:
 %   % produce renderings locally
-%   rtbTestAllExampleScenes('my/local/renderings');
+rtbRunEpicTest
 %
 %   % download archived renderings to 'my/local/archive'
 %
@@ -59,7 +59,7 @@ function [matchInfo, unmatchedA, unmatchedB] = rtbCompareAllExampleScenes(workin
 %   workingFolderA = 'my/local/renderings/data';
 %   workingFolderA = 'my/local/archive/data';
 %   visualize = 1;
-%   matchInfo = rtbCompareAllExampleScenes(workingFolderA, workingFolderB, 'visualize', visualize);
+%   matchInfo = rtbRunEpicComparison(workingFolderA, workingFolderB, 'visualize', visualize);
 %
 % Returns a struct array of info about each matched pair, including file
 % names and differneces between multispectral images (A minus B).

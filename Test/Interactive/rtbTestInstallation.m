@@ -77,7 +77,7 @@ end
 if doAll
     fprintf('\nTesting rendering with all example scripts.\n');
     fprintf('This might take a while.\n');
-    renderResults = rtbTestAllExampleScenes([], []);
+    renderResults = rtbRunEpicTest([], []);
     
 else
     testScenes = { ...
@@ -88,7 +88,7 @@ else
     
     fprintf('\nTesting rendering with %d example scripts.\n', numel(testScenes));
     fprintf('You should see several figures with rendered images.\n\n');
-    renderResults = rtbTestAllExampleScenes('makeFunctions', testScenes);
+    renderResults = rtbRunEpicTest('makeFunctions', testScenes);
     
 end
 
@@ -103,7 +103,7 @@ if ~isempty(referenceRoot)
     fprintf('\nComparing local renderings\n  %s\n', localRoot);
     fprintf('with reference renderings\n  %s\n', referenceRoot);
     fprintf('You should see several more figures.\n\n');
-    comparison = rtbCompareAllExampleScenes(localRoot, referenceRoot, '', 2);
+    comparison = rtbRunEpicComparison(localRoot, referenceRoot, '', 2);
 else
     fprintf('\nNo referenceRoot provided.  Local renderings\n');
     fprintf('will not be compared with reference renderings.\n');
