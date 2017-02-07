@@ -47,6 +47,7 @@ parser.addParameter('closeSummary', false, @islogical);
 parser.addParameter('plotImages', true, @islogical);
 parser.addParameter('closeImages', false, @islogical);
 parser.addParameter('figureFolder', '', @ischar);
+parser.addParameter('summaryName', 'epic-summary', @ischar);
 parser.parse(folderA, folderB, varargin{:});
 folderA = parser.Results.folderA;
 folderB = parser.Results.folderB;
@@ -55,6 +56,7 @@ closeSummary = parser.Results.closeSummary;
 plotImages = parser.Results.plotImages;
 closeImages = parser.Results.closeImages;
 figureFolder = parser.Results.figureFolder;
+summaryName = parser.Results.summaryName;
 
 figs = [];
 
@@ -78,7 +80,7 @@ if plotSummary
         varargin{:});
     
     if ~isempty(figureFolder);
-        imageFileName = fullfile(figureFolder, 'epic-summary');
+        imageFileName = fullfile(figureFolder, summaryName);
         saveFigure(summaryFig, imageFileName);
     end
     
