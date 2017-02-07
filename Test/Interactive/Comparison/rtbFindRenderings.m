@@ -32,6 +32,7 @@ function renderings = rtbFindRenderings(rootFolder, varargin)
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('rootFolder', @ischar);
 parser.addParameter('filter', '\.mat$', @ischar);
 parser.addParameter('renderingsFolderName', 'renderings', @ischar);
@@ -63,13 +64,23 @@ for ff = 1:nFiles
     renderingsFolderIndex = find(isRenderingsFolder, 1, 'last');
     
     % recipe name comes just before renderingsFolderName
-    recipeName = pathParts{renderingsFolderIndex - 1};
+    recipeNameIndex = renderingsFolderIndex - 1;
+    recipeName = pathParts{recipeNameIndex};
     
     % renderer name comes just after renderingsFolderName, if any
-    if nPathParts > renderingsFolderIndex
-        rendererName = pathParts{renderingsFolderIndex + 1};
+    rendererNameIndex = renderingsFolderIndex + 1;
+    if nPathParts >= rendererNameIndex
+        rendererName = pathParts{rendererNameIndex};
     else
         rendererName = '';
+    end
+    
+    % the path leading up to the recipeNamem, if any, is where it came from
+    sourceFolderIndices = 1:(recipeNameIndex-1);
+    if isempty(sourceFolderIndices)
+        sourceFolder = '';
+    else
+        sourceFolder = fullfile(pathParts{sourceFolderIndices});
     end
     
     renderingsCell{ff} = rtbRenderingRecord( ...
@@ -77,6 +88,7 @@ for ff = 1:nFiles
         'rendererName', rendererName, ...
         'imageNumber', imageNumber, ...
         'imageName', imageName, ...
-        'fileName', files{ff});
+        'fileName', files{ff}, ...
+        'sourceFolder', sourceFolder);
 end
 renderings = [renderingsCell{:}];

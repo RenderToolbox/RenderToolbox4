@@ -30,6 +30,7 @@ function [renderings, referenceRoot, artifact] = rtbFetchReferenceData(recipeNam
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('recipeName', @ischar);
 parser.addParameter('rdtConfig', 'render-toolbox');
 parser.addParameter('remotePath', 'reference-data', @ischar);
@@ -42,12 +43,17 @@ remotePath = parser.Results.remotePath;
 referenceVersion = parser.Results.referenceVersion;
 referenceRoot = parser.Results.referenceRoot;
 
-
 %% Get a whole recipe from the server.
 artifactPath = fullfile(remotePath, recipeName);
-[fileName, artifact] = rdtReadArtifact(rdtConfig, artifactPath, recipeName, ...
-    'version', referenceVersion, ...
-    'type', 'zip');
+try
+    [fileName, artifact] = rdtReadArtifact(rdtConfig, artifactPath, recipeName, ...
+        'version', referenceVersion, ...
+        'type', 'zip');
+catch err
+    renderings = [];
+    artifact = [];
+    return;
+end
 
 if isempty(fileName)
     renderings = [];
@@ -58,6 +64,9 @@ end
 
 %% Explode renderings it into the destination folder.
 destination = fullfile(referenceRoot, recipeName);
+if 7 ~= exist(destination, 'dir')
+    mkdir(destination);
+end
 unzip(fileName, destination);
 
 % scan for rendering records

@@ -1,7 +1,7 @@
-function results = rtbTestAllExampleScenes(varargin)
+function results = rtbRunEpicTest(varargin)
 %% Run all "rtbMake..." scripts in the ExampleScenes/ folder.
 %
-% results = rtbTestAllExampleScenes() renders example scenes by invoking
+% results = rtbRunEpicTest() renders example scenes by invoking
 % all of the "rtbMake..." executive sripts found within the ExampleScenes/
 % folder
 %
@@ -19,11 +19,11 @@ function results = rtbTestAllExampleScenes(varargin)
 % have a name that that includes the name of this m-file, plus the date and
 % time.
 %
-% rtbTestAllExampleScenes( ... 'outputRoot', outputRoot) specifies the
+% rtbRunEpicTest( ... 'outputRoot', outputRoot) specifies the
 % working folder where to put rendering outputs.  The default is from
 % rtbDefaultHints().
 %
-% rtbTestAllExampleScenes( ... 'makeFunctions', makeFunctions) specifies a
+% rtbRunEpicTest( ... 'makeFunctions', makeFunctions) specifies a
 % cell array of executive functions to run.  The default is to search the
 % ExampleScenes/ folder for m-files that begin with "rtbMake".
 %
