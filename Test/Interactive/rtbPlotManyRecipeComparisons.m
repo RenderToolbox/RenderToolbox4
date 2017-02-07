@@ -13,6 +13,7 @@ parser = inputParser();
 parser.KeepUnmatched = true;
 parser.addRequired('comparisons', @isstruct);
 parser.addParameter('fig', figure());
+parser.addParameter('figureWidth', 1000, @isnumeric);
 parser.addParameter('nRows', 25, @isnumeric);
 parser.addParameter('correlationMin', 0.8, @isnumeric);
 parser.addParameter('correlationStep', 0.05, @isnumeric);
@@ -21,6 +22,7 @@ parser.addParameter('errorStep', 0.5, @isnumeric);
 parser.parse(comparisons, varargin{:});
 comparisons = parser.Results.comparisons;
 fig = parser.Results.fig;
+figureWidth = parser.Results.figureWidth;
 nRows = parser.Results.nRows;
 correlationMin = parser.Results.correlationMin;
 correlationStep = parser.Results.correlationStep;
@@ -28,22 +30,26 @@ errorMax = parser.Results.errorMax;
 errorStep = parser.Results.errorStep;
 
 
-%% Summarize only good comparisons.
+%% Sort the summary by size of error.
 goodComparisons = comparisons([comparisons.isGoodComparison]);
+relNormDiff = [goodComparisons.relNormDiff];
+errorStat = [relNormDiff.max];
+[~, order] = sort(errorStat);
+goodComparisons = goodComparisons(order);
 
+
+%% Set up the figure.
 figureName = sprintf('Summary of %d rendering comparisons', ...
     numel(goodComparisons));
 set(fig, ...
     'Name', figureName, ...
     'NumberTitle', 'off');
 
-
-%% Sort the summary by size of error.
-relNormDiff = [goodComparisons.relNormDiff];
-errorStat = [relNormDiff.max];
-[~, order] = sort(errorStat);
-goodComparisons = goodComparisons(order);
-
+position = get(fig, 'Position');
+if position(3) < figureWidth
+    position(3) = figureWidth;
+    set(fig, 'Position', position);
+end
 
 %% Summary of correlation coefficients.
 correlationTicks = correlationMin : correlationStep : 1;
@@ -68,7 +74,14 @@ line(correlation, 1:nLines, ...
     'LineStyle', 'none', ...
     'Marker', 'o', ...
     'Color', [0 0 1])
-title(ax(1), 'correlation');
+xlabel(ax(1), 'correlation');
+
+
+%% Overall title.
+name = sprintf('%s vs %s', ...
+    goodComparisons(1).renderingA.sourceFolder, ...
+    goodComparisons(1).renderingB.sourceFolder);
+title(ax(1), name, 'Interpreter', 'none');
 
 
 %% Summary of mean and max subpixel differences.
@@ -101,7 +114,7 @@ line(means, 1:nLines, ...
     'Marker', 'o', ...
     'Color', [0 0 0])
 legend(ax(2), 'max', 'mean', 'Location', 'northeast');
-title(ax(2), 'relative diff');
+xlabel(ax(2), 'relative diff');
 
 
 %% Let the user scroll both axes at the same time.

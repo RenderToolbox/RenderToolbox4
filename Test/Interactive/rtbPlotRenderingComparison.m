@@ -46,10 +46,14 @@ set(fig, ...
 ax = subplot(2, 2, 2, 'Parent', fig);
 imshow(uint8(rgbA), 'Parent', ax);
 title(ax, 'A');
+xlabel(ax, comparison.renderingA.sourceFolder, ...
+    'Interpreter', 'none');
 
 ax = subplot(2, 2, 3, 'Parent', fig);
 imshow(uint8(rgbB), 'Parent', ax);
 title(ax, 'B');
+xlabel(ax, comparison.renderingB.sourceFolder, ...
+    'Interpreter', 'none');
 
 ax = subplot(2, 2, 1, 'Parent', fig);
 imshow(uint8(rgbAminusB), 'Parent', ax);

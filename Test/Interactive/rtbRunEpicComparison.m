@@ -45,7 +45,7 @@ parser.addRequired('folderB', @ischar);
 parser.addParameter('plotSummary', true, @islogical);
 parser.addParameter('closeSummary', false, @islogical);
 parser.addParameter('plotImages', false, @islogical);
-parser.addParameter('closeImages', true, @islogical);
+parser.addParameter('closeImages', false, @islogical);
 parser.addParameter('figureFolder', '', @ischar);
 parser.parse(folderA, folderB, varargin{:});
 folderA = parser.Results.folderA;
@@ -56,10 +56,54 @@ plotImages = parser.Results.plotImages;
 closeImages = parser.Results.closeImages;
 figureFolder = parser.Results.figureFolder;
 
-matchInfo = [];
-unmatchedA = {};
-unmatchedB = {};
+figs = [];
 
+
+%% Run the grand comparison.
+[comparisons, matchInfo] = rtbCompareManyRecipes(folderA, folderB, ...
+    varargin{:});
+
+
+%% Plot the summary.
+if plotSummary
+    summaryFig = rtbPlotManyRecipeComparisons(comparisons, ...
+        varargin{:});
+    
+    if ~isempty(figureFolder);
+        imageFileName = fullfile(figureFolder, 'epic-summary');
+        saveFigure(summaryFig, imageFileName);
+    end
+    
+    if closeSummary
+        close(summaryFig);
+    else
+        figs = [figs summaryFig];
+    end
+end
+
+
+%% Plot the detail images for each rendering.
+if plotImages
+    nComparisons = numel(comparisons);
+    imageFigs = cell(1, nComparisons);
+    for cc = 1:nComparisons
+        imageFig = rtbPlotRenderingComparison(comparisons(cc), ...
+            varargin{:});
+        
+        if ~isempty(figureFolder);
+            identifier = comparisons(cc).renderingA.identifier;
+            imageFileName = fullfile(figureFolder, identifier);
+            saveFigure(imageFig, imageFileName);
+        end
+        
+        if closeImages
+            close(imageFig);
+        else
+            imageFigs{cc} = imageFig;
+        end
+    end
+    figs = [figs imageFigs{:}];
+end
 
 
 %% Save a figure to file, watch out for things like uicontrols.
@@ -79,10 +123,10 @@ if 7 ~= exist(filePath, 'dir')
 end
 
 % save a png and a figure
-figName = fullfile(imageCompPath, [fileName '.fig']);
+figName = fullfile(filePath, [fileName '.fig']);
 saveas(fig, figName, 'fig');
 
-pngName = fullfile(imageCompPath, [fileName '.png']);
+pngName = fullfile(filePath, [fileName '.png']);
 set(fig, 'PaperPositionMode', 'auto');
 saveas(fig, pngName, 'png');
 
