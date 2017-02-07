@@ -24,6 +24,7 @@ parser.addParameter('rendererName', '', @ischar);
 parser.addParameter('imageNumber', [], @isnumeric);
 parser.addParameter('imageName', '',@ischar);
 parser.addParameter('fileName', '', @ischar);
+parser.addParameter('sourceFolder', '', @ischar);
 parser.parse(varargin{:});
 
 % let the parser do most of the work
