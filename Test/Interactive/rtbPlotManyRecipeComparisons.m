@@ -30,17 +30,9 @@ errorMax = parser.Results.errorMax;
 errorStep = parser.Results.errorStep;
 
 
-%% Sort the summary by size of error.
-goodComparisons = comparisons([comparisons.isGoodComparison]);
-relNormDiff = [goodComparisons.relNormDiff];
-errorStat = [relNormDiff.max];
-[~, order] = sort(errorStat);
-goodComparisons = goodComparisons(order);
-
-
 %% Set up the figure.
 figureName = sprintf('Summary of %d rendering comparisons', ...
-    numel(goodComparisons));
+    numel(comparisons));
 set(fig, ...
     'Name', figureName, ...
     'NumberTitle', 'off');
@@ -55,10 +47,10 @@ end
 correlationTicks = correlationMin : correlationStep : 1;
 correlationTickLabels = num2cell(correlationTicks);
 correlationTickLabels{1} = '<=';
-correlation = [goodComparisons.corrcoef];
+correlation = [comparisons.corrcoef];
 correlation(correlation < correlationMin) = correlationMin;
 
-renderingsA = [goodComparisons.renderingA];
+renderingsA = [comparisons.renderingA];
 names = {renderingsA.identifier};
 nLines = numel(names);
 ax(1) = subplot(1, 3, 2, ...
@@ -79,8 +71,8 @@ xlabel(ax(1), 'correlation');
 
 %% Overall title.
 name = sprintf('%s vs %s', ...
-    goodComparisons(1).renderingA.sourceFolder, ...
-    goodComparisons(1).renderingB.sourceFolder);
+    comparisons(1).renderingA.sourceFolder, ...
+    comparisons(1).renderingB.sourceFolder);
 title(ax(1), name, 'Interpreter', 'none');
 
 
@@ -89,7 +81,7 @@ errorTicks = 0 : errorStep : errorMax;
 errorTickLabels = num2cell(errorTicks);
 errorTickLabels{end} = '>=';
 
-relNormDiff = [goodComparisons.relNormDiff];
+relNormDiff = [comparisons.relNormDiff];
 maxes = [relNormDiff.max];
 means = [relNormDiff.mean];
 maxes(maxes > errorMax) = errorMax;

@@ -44,7 +44,7 @@ parser.addRequired('folderA', @ischar);
 parser.addRequired('folderB', @ischar);
 parser.addParameter('plotSummary', true, @islogical);
 parser.addParameter('closeSummary', false, @islogical);
-parser.addParameter('plotImages', false, @islogical);
+parser.addParameter('plotImages', true, @islogical);
 parser.addParameter('closeImages', false, @islogical);
 parser.addParameter('figureFolder', '', @ischar);
 parser.parse(folderA, folderB, varargin{:});
@@ -64,9 +64,17 @@ figs = [];
     varargin{:});
 
 
+%% Sort the summary by size of error.
+goodComparisons = comparisons([comparisons.isGoodComparison]);
+relNormDiff = [goodComparisons.relNormDiff];
+errorStat = [relNormDiff.max];
+[~, order] = sort(errorStat);
+goodComparisons = goodComparisons(order);
+
+
 %% Plot the summary.
 if plotSummary
-    summaryFig = rtbPlotManyRecipeComparisons(comparisons, ...
+    summaryFig = rtbPlotManyRecipeComparisons(goodComparisons, ...
         varargin{:});
     
     if ~isempty(figureFolder);
@@ -84,14 +92,14 @@ end
 
 %% Plot the detail images for each rendering.
 if plotImages
-    nComparisons = numel(comparisons);
+    nComparisons = numel(goodComparisons);
     imageFigs = cell(1, nComparisons);
     for cc = 1:nComparisons
-        imageFig = rtbPlotRenderingComparison(comparisons(cc), ...
+        imageFig = rtbPlotRenderingComparison(goodComparisons(cc), ...
             varargin{:});
         
         if ~isempty(figureFolder);
-            identifier = comparisons(cc).renderingA.identifier;
+            identifier = goodComparisons(cc).renderingA.identifier;
             imageFileName = fullfile(figureFolder, identifier);
             saveFigure(imageFig, imageFileName);
         end

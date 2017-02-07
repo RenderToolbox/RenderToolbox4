@@ -37,8 +37,25 @@ renderingA = parser.Results.renderingA;
 renderingB = parser.Results.renderingB;
 denominatorThreshold = parser.Results.denominatorThreshold;
 
+
+%% Consistent struct fields for output.
 comparison = parser.Results;
 comparison.error = '';
+comparison.samplingA = [];
+comparison.samplingB = [];
+comparison.isGoodComparison = false;
+comparison.subpixelsA = [];
+comparison.subpixelsB = [];
+comparison.normA = [];
+comparison.normB = [];
+comparison.normDiff = [];
+comparison.absNormDiff = [];
+comparison.relNormDiff = [];
+comparison.corrcoef = [];
+comparison.A = [];
+comparison.B = [];
+comparison.aMinusB = [];
+comparison.bMinusA = [];
 
 
 %% Load multispectral images.
@@ -66,6 +83,7 @@ else
     else
         comparison.error = ...
             'Neither data file A nor B has a multispectralImage.';
+        disp(comparison.error);
         return;
     end
 end

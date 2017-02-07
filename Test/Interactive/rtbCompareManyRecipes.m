@@ -48,17 +48,27 @@ for rr = 1:nRecipes
     recipeRenderingsA = renderingsA(isRecipeA);
     
     % fetch missing recipe for B?
-    isRecipeB = strcmp({renderingsB.recipeName}, recipeName);
+    if isempty(renderingsB)
+        isRecipeB = false;
+    else
+        isRecipeB = strcmp({renderingsB.recipeName}, recipeName);
+    end
+    
     if any(isRecipeB)
         recipeRenderingsB = renderingsB(isRecipeB);
     elseif fetchReferenceData
-        recipeRenderingsB = rtbFetchReferenceData(recipeName, varargin{:});
+        fprintf('  Fetching reference data to <%s>...\n', folderB);
+        recipeRenderingsB = rtbFetchReferenceData(recipeName, ...
+            'referenceRoot', folderB, ...
+            varargin{:});
         if isempty(recipeRenderingsB)
-            fprintf('  Could not fetch reference data for set B, skipping this recipe.\n');
+            fprintf('  ...could not fetch, skipping this recipe.\n');
             continue;
+        else
+            fprintf('  ...OK.\n');
         end
     else
-        fprintf('  Could not find local data for set B.  Skipping this recipe.\n');
+        fprintf('  Skipping recipe not found in <%s>.\n', folderB);
         continue;
     end
     
