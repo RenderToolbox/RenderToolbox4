@@ -1,3 +1,5 @@
+[![Build Status](http://50.112.42.141/buildStatus/icon?job=RenderToolbox4)](http://50.112.42.141/job/RenderToolbox4/)
+
 RenderToolbox4
 ==============
 RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.
