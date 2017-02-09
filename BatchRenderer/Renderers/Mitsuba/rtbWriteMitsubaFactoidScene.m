@@ -46,12 +46,19 @@ parser.addParameter('factoids', ...
     @iscellstr);
 parser.addParameter('factoidFormat', 'rgb', @ischar);
 parser.addParameter('singleSampling', true, @islogical);
+parser.addParameter('hints', rtbDefaultHints(), @isstruct);
 parser.parse(originalFile, varargin{:});
 originalFile = parser.Results.originalFile;
 factoidFile = parser.Results.factoidFile;
 factoids = parser.Results.factoids;
 factoidFormat = parser.Results.factoidFormat;
 singleSampling = parser.Results.singleSampling;
+hints = rtbDefaultHints(parser.Results.hints);
+
+% look carefully for the input file
+workingFolder = rtbWorkingFolder('hints', hints);
+fileInfo = rtbResolveFilePath(originalFile, workingFolder);
+originalFile = fileInfo.absolutePath;
 
 % default output like the input
 if isempty(factoidFile)

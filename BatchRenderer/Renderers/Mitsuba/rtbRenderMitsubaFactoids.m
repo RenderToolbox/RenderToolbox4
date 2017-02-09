@@ -43,6 +43,11 @@ if isempty(mitsuba)
     end
 end
 
+% look carefully for the input file
+workingFolder = rtbWorkingFolder('hints', hints);
+fileInfo = rtbResolveFilePath(sceneFile, workingFolder);
+sceneFile = fileInfo.absolutePath;
+
 
 %% Render the factoid scene.renderer = RtbMitsubaRenderer(hints);
 renderer = RtbMitsubaRenderer(hints);
@@ -68,9 +73,21 @@ for ii = 1:numel(sliceInfo)
         factoids.(factoidName).channels = {};
     end
     
+    % sort channels, which may arrive out of order
+    switch channelName
+        case 'R'
+            dataIndex = 1;
+        case 'G'
+            dataIndex = 2;
+        case 'B'
+            dataIndex = 3;
+        otherwise
+            dataIndex = numel(factoids.(factoidName).channels) + 1;
+    end
+    
     % insert data and channel name into output for this factoid
     slice = data(:,:,ii);
-    factoids.(factoidName).data(:,:,end+1) = slice;
-    factoids.(factoidName).channels{end+1} = channelName;
+    factoids.(factoidName).data(:, :, dataIndex) = slice;
+    factoids.(factoidName).channels{dataIndex} = channelName;
 end
 
