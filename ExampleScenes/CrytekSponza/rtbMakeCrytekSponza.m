@@ -43,13 +43,16 @@ cd(path);
 % When exporting as an OBJ Blender, we must keep the coordinate system
 % consistent. Nonetheless, there seems to still be a right/left flip in the
 % images right now.
-sceneFile = 'Data/scaledCrytek.obj';
+
+% The following scenefile must be a full path.
+sceneFile = fullfile(path,'Data','scaledCrytek.obj');
 
 % The import will convert the JPG texture files into EXR format if
 % necessary.
 [scene, elements] = mexximpCleanImport(sceneFile,...
     'flipUVs',true,...
-    'toReplace',{'jpg','png'},...
+    'imagemagicImage','hblasins/imagemagic-docker',...
+    'toReplace',{'jpg','tiff'},...
     'targetFormat','exr');
                                     
 %% Add a camera and move it to a starting position
@@ -68,10 +71,8 @@ cameraNodeSelector = strcmp(scene.cameras.name, {scene.rootNode.children.name});
 scene.rootNode.children(cameraNodeSelector).transformation = cameraTransform;
 
 %% Choose batch renderer options.
-hints.imageWidth = 600;
-hints.imageHeight = 400;
-% hints.imageWidth = 144;
-% hints.imageHeight = 88;
+hints.imageWidth = 144;
+hints.imageHeight = 88;
 hints.recipeName = 'rtbMakeCrytek';
 
 hints.renderer = 'PBRT';
@@ -95,7 +96,7 @@ rtbWriteSpectrumFile(wls, spd, fullfile(rtbWorkingFolder('hints', hints),'D65.sp
 
 
 nConditions = 3;
-pixelSamples = ones(1,nConditions).*4096;
+pixelSamples = ones(1,nConditions).*1024;
 lightRotateAxis = [1 0 0;...
                    1 0 0;...
                    1 0 0]';

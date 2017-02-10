@@ -25,7 +25,7 @@
 %
 % Size = [400x270]
 %   Condition 3 (only) --> 1024 pixel samples
-% Total Time: ~300 seconds
+% Total Time: ~400 seconds
 %
 % Size = [150x100]
 %   Condition 1 --> (4096 pixel samples)
@@ -60,12 +60,12 @@ cd(path);
 
 %% Load scene
 
-sponzaFile = 'Data/SponzaScaled-YForwardZUp.obj';
-
-[scene, elements] = mexximpCleanImport(sponzaFile,...
+% The following scenefile must be a full path.
+sceneFile = fullfile(path,'Data','SponzaScaled-YForwardZUp.obj');
+[scene, elements] = mexximpCleanImport(sceneFile,...
     'flipUVs',true,...
     'imagemagicImage','hblasins/imagemagic-docker',...
-    'toReplace',{'jpg'},...
+    'toReplace',{'jpg','tiff'},...
     'targetFormat','exr');
                                     
 
@@ -168,9 +168,9 @@ nativeSceneFiles = rtbMakeSceneFiles(scene,'hints', hints,'conditionsFile',condi
 
 %% Move lens file into resource folder.
 % TODO: Any chance we can do this automatically?
-
-rtbRoot = rtbsRootPath();
-lensFilePath = fullfile(rtbRoot,'SharedData','dgauss.50mm.dat');
+% rtbRoot = rtbsRootPath();
+% lensFilePath = fullfile(rtbRoot,'SharedData','dgauss.50mm.dat');
+lensFilePath = fullfile(path,'dgauss.50mm.dat'); 
 copyfile(lensFilePath, rtbWorkingFolder('hints', hints)); % Copy to main recipe folder (not Resources)
 
 %% Render!
