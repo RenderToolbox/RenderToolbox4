@@ -26,12 +26,24 @@
 
 clear;
 clc;
+
 pathHere = fileparts(which('rtbMakeWildScene'));
+
+%% Choose batch processing options.
+hints.imageWidth = 640;
+hints.imageHeight = 480;
+hints.recipeName = 'rtbMakeWildScene';
+hints.renderer = 'Mitsuba';
+hints.batchRenderStrategy = RtbAssimpStrategy(hints);
+
+resourceFolder = rtbWorkingFolder('hints', hints, ...
+    'folderName', 'resources');
 
 
 %% Choose a scene format -- how does the 3DS Max scene look?
 wildScene = fullfile(pathHere, 'millenium-falcon.3DS');
-scene = mexximpCleanImport(wildScene);
+scene = mexximpCleanImport(wildScene, ...
+    'workingFolder', resourceFolder);
 
 % look at the vertices in a scatter plot
 mexximpSceneScatter(scene);
@@ -39,7 +51,8 @@ mexximpSceneScatter(scene);
 
 %% Choose a better scene format -- the Wavefront Object.
 wildScene = fullfile(pathHere, 'millenium-falcon.obj');
-scene = mexximpCleanImport(wildScene);
+scene = mexximpCleanImport(wildScene, ...
+    'workingFolder', resourceFolder);
 
 % look at the vertices in a scatter plot
 mexximpSceneScatter(scene);
@@ -68,38 +81,10 @@ scene = mexximpAddLanterns(scene);
 disp(displayNicelyFormattedStruct(scene, 'scene', '', 50));
 
 
-%% Fix broken texture paths.
-
-% obj version of the scene comes with an mtl material file
-% this file contains bad file paths for a Windows user named "glenn"
-% for example:
-disp(['Original path: ' scene.materials(2).properties(10).data]);
-
-% we can find and fix paths like this
-% by recursively fisiting fields of the scene struct
-% and doing some fuzzy matching on names
-scene = mexximpVisitStructFields(scene, @rtbResourcePath, ...
-    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
-    'visitArgs', {'resourceFolder', pathHere, 'toReplace', ''});
-
-% now we should have the file locally
-disp(['Local path: ' scene.materials(2).properties(10).data]);
-
-
-%% Choose batch processing options.
-hints.imageWidth = 640;
-hints.imageHeight = 480;
-hints.fov = scene.cameras(1).horizontalFov;
-hints.recipeName = 'rtbMakeWildScene';
-hints.renderer = 'Mitsuba';
-hints.batchRenderStrategy = RtbAssimpStrategy(hints);
-
-
 %% Render with Mitsuba.
 
-% fix broken texture paths
-
 % make a scene file and render it
+hints.fov = scene.cameras(1).horizontalFov;
 nativeSceneFiles = rtbMakeSceneFiles(scene, 'hints', hints);
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, 'hints', hints);
 
@@ -117,11 +102,9 @@ rtbShowXYZAndSRGB([], sRgb, montageName);
 
 
 %% Choose a nicer viewing axis and render again.
-scene = mexximpCleanImport(wildScene, 'flipUVs', true);
-scene = mexximpVisitStructFields(scene, @rtbResourcePath, ...
-    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
-    'visitArgs', {'resourceFolder', pathHere, 'toReplace', ''});
-
+scene = mexximpCleanImport(wildScene, ...
+    'workingFolder', resourceFolder, ...
+    'flipUVs', true);
 viewAxis = [-1 1 1];
 scene = mexximpCentralizeCamera(scene, 'viewAxis', viewAxis ./ norm(viewAxis));
 scene = mexximpAddLanterns(scene);

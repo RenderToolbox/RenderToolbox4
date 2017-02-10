@@ -10,15 +10,26 @@ nightClubFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'NightClub', 
 millenniumFalconFile = fullfile(rtbRoot(), 'ExampleScenes', 'Flythrough', 'MilleniumFalcon', 'millenium-falcon.obj');
 
 
+%% Choose batch renderer options.
+hints.imageWidth = 320;
+hints.imageHeight = 240;
+hints.fov = deg2rad(60);
+hints.recipeName = 'rtbMakeFlythrough';
+
+hints.renderer = 'Mitsuba';
+hints.batchRenderStrategy = RtbAssimpStrategy(hints);
+hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughMexximpRemodeler;
+hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbFlythroughMitsubaRemodeler;
+
+resourceFolder = rtbWorkingFolder('hints', hints, ...
+    'folderName', 'resources');
+
+
 %% Build a combined scene with lights and camera.
-nightClub = mexximpCleanImport(nightClubFile);
-falcon = mexximpCleanImport(millenniumFalconFile);
-falcon = mexximpVisitStructFields(falcon, @rtbResourcePath, ...
-    'filterFunction', @RtbAssimpStrategy.mightBeFile, ...
-    'visitArgs', { ...
-    'resourceFolder', fileparts(millenniumFalconFile), ...
-    'toReplace', '', ...
-    'writeFullPaths', false});
+nightClub = mexximpCleanImport(nightClubFile, ...
+    'workingFolder', resourceFolder);
+falcon = mexximpCleanImport(millenniumFalconFile, ...
+    'workingFolder', resourceFolder);
 
 falconSize = 50;
 insertTransform = mexximpScale(falconSize * [1 1 1]);
@@ -31,18 +42,6 @@ scene = mexximpCentralizeCamera(scene, 'viewExterior', false);
 
 %% Explore the scene geometry in a Matlab figure.
 %mexximpScenePreview(scene);
-
-
-%% Choose batch renderer options.
-hints.imageWidth = 320;
-hints.imageHeight = 240;
-hints.fov = deg2rad(60);
-hints.recipeName = 'rtbMakeFlythrough';
-
-hints.renderer = 'Mitsuba';
-hints.batchRenderStrategy = RtbAssimpStrategy(hints);
-hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbFlythroughMexximpRemodeler;
-hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbFlythroughMitsubaRemodeler;
 
 
 %% Choose some waypoints for the camera and falcon movement.
@@ -105,6 +104,7 @@ rtbWriteConditionsFile(conditionsFile, names, values);
 
 
 %% Make Scene files.
+hints.whichConditions = 3;
 nativeSceneFiles = rtbMakeSceneFiles(scene, ...
     'conditionsFile', conditionsFile, ...
     'hints', hints);
