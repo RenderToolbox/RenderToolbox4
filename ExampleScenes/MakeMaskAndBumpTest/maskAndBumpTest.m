@@ -15,8 +15,10 @@ hints.renderer = 'PBRT';
 
 parentSceneFile = 'Data/crytekSmall.obj';
 scene = mexximpCleanImport(parentSceneFile,...
+    'flipUVs',true,...
     'toReplace',{'jpg','png'},...
     'targetFormat','exr');
+
 
 %% Add camera and lights
 
