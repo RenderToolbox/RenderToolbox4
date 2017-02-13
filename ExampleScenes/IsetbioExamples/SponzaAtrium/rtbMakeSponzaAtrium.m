@@ -51,22 +51,47 @@
 % TL
 
 %% Initialize
+
+% tbUse('isetbio')
+
 clear; close all;
 ieInit;
 
-% We must be in the same folder as this script
-[path,name,ext] = fileparts(mfilename('fullpath'));
-cd(path);
+%% Choose batch renderer options.
+hints.imageWidth = 150;
+hints.imageHeight = 100;
+hints.recipeName = 'rtbMakeSponzaAtrium';
+
+hints.renderer = 'PBRT';
+hints.batchRenderStrategy = RtbAssimpStrategy(hints);
+
+% We use "rtbSponzaPBRTRemodeler" to add all the parameters specific to
+% PBRT. These include the cameras (e.g. pinhole, realisticDiffraction),
+% number of pixel samples, and light spectra.
+% If we wanted to change things like camera position and move meshes
+% around, we would specify another file like "rtbSponzaMexximpRemodeler"
+% instead. 
+hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbSponzaPBRTRemodeler;
+
+% Change the docker container to our version of PBRT-spectral
+hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
+
+resourceFolder = rtbWorkingFolder( ...
+    'folderName', 'resources',...
+    'hints', hints);
 
 %% Load scene
 
 % The following scenefile must be a full path.
-sceneFile = fullfile(path,'Data','SponzaScaled-YForwardZUp.obj');
+sceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
+    'SponzaAtrium', 'Data', 'SponzaScaled-YForwardZUp.obj');
+
 [scene, elements] = mexximpCleanImport(sceneFile,...
     'flipUVs',true,...
     'imagemagicImage','hblasins/imagemagic-docker',...
     'toReplace',{'jpg','tiff'},...
-    'targetFormat','exr');
+    'targetFormat','exr', ...
+    'workingFolder', resourceFolder);
                                     
 
 %% Move camera to a new position (in millimeters)
@@ -86,47 +111,30 @@ cameraTransform = mexximpLookAt(from, to, up);
 cameraNodeSelector = strcmp(scene.cameras.name, {scene.rootNode.children.name});
 scene.rootNode.children(cameraNodeSelector).transformation = cameraTransform;
 
-%% Choose batch renderer options.
-hints.imageWidth = 400;
-hints.imageHeight = 270;
-hints.recipeName = 'rtbMakeSponza';
-
-hints.renderer = 'PBRT';
-hints.batchRenderStrategy = RtbAssimpStrategy(hints);
-
-% We use "rtbSponzaPBRTRemodeler" to add all the parameters specific to
-% PBRT. These include the cameras (e.g. pinhole, realisticDiffraction),
-% number of pixel samples, and light spectra.
-% If we wanted to change things like camera position and move meshes
-% around, we would specify another file like "rtbSponzaMexximpRemodeler"
-% instead. 
-hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbSponzaPBRTRemodeler;
-
-% Change the docker container to our version of PBRT-spectral
-hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
-
 %% Write the spectrum files.
+
+workingFolder = rtbWorkingFolder('hints', hints);
 
 % Get basis CIE daylight basis vectors
 cieInfo = load('B_cieday');
 
 % Load up D65
 [wls,spd] = rtbReadSpectrum('D65.spd');
-rtbWriteSpectrumFile(wls, spd, fullfile(rtbWorkingFolder('hints', hints),'D65.spd'));
+rtbWriteSpectrumFile(wls, spd, fullfile(workingFolder, 'D65.spd'));
 
 % Make a bright yellow sun
 temp = 4000;
 scale = 1;
 spd = scale * GenerateCIEDay(temp, cieInfo.B_cieday);
 wls = SToWls(cieInfo.S_cieday);
-rtbWriteSpectrumFile(wls, spd, fullfile(rtbWorkingFolder('hints', hints),'BrightYellowSun.spd'));
+rtbWriteSpectrumFile(wls, spd, fullfile(workingFolder, 'BrightYellowSun.spd'));
 
 % Make a dimmer blue sky
 temp = 10000;
 scale = 0.001;
 spd = scale * GenerateCIEDay(temp, cieInfo.B_cieday);
 wls = SToWls(cieInfo.S_cieday);
-rtbWriteSpectrumFile(wls, spd, fullfile(rtbWorkingFolder('hints', hints),'DimBlueSky.spd'));
+rtbWriteSpectrumFile(wls, spd, fullfile(workingFolder, 'DimBlueSky.spd'));
 
 %% Write conditions and generate scene files
 
@@ -157,9 +165,6 @@ values(1,:) = {'BrightYellowSun.spd',0,'pinhole',1024};
 
 % Write the parameters in a conditions file. 
 conditionsFile = 'SponzaConditions.txt';
-resourceFolder = rtbWorkingFolder( ...
-    'folderName', 'resources',...
-    'hints', hints);
 conditionsPath = fullfile(resourceFolder, conditionsFile);
 rtbWriteConditionsFile(conditionsPath, names, values);
 
@@ -168,10 +173,9 @@ nativeSceneFiles = rtbMakeSceneFiles(scene,'hints', hints,'conditionsFile',condi
 
 %% Move lens file into resource folder.
 % TODO: Any chance we can do this automatically?
-% rtbRoot = rtbsRootPath();
-% lensFilePath = fullfile(rtbRoot,'SharedData','dgauss.50mm.dat');
-lensFilePath = fullfile(path,'dgauss.50mm.dat'); 
-copyfile(lensFilePath, rtbWorkingFolder('hints', hints)); % Copy to main recipe folder (not Resources)
+lensFilePath = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
+    'SponzaAtrium', 'dgauss.50mm.dat'); 
+copyfile(lensFilePath, workingFolder);
 
 %% Render!
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
