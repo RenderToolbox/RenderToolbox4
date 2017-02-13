@@ -1,5 +1,5 @@
 %% Render a vase to test mask and bump textures.
-% This vase is from the Crytek scene. It has opacity and bump textures. 
+% This vase is from the Crytek scene. It has opacity and bump textures.
 
 %% Choose batch renderer options.
 clear;
@@ -7,17 +7,22 @@ clear;
 hints.imageWidth = 320;
 hints.imageHeight = 240;
 hints.fov = deg2rad(5);
-hints.recipeName = 'maskAndBumpTest';
+hints.recipeName = 'OpacityAndBumpTest';
 
 hints.renderer = 'PBRT';
 
+resources = rtbWorkingFolder( ...
+    'folderName', 'resources', ...
+    'hints', hints);
+
 %% Load the test scene.
 
-parentSceneFile = 'Data/crytekSmall.obj';
+parentSceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'OpacityAndBumpTest', 'Data', 'crytekSmall.obj');
 scene = mexximpCleanImport(parentSceneFile,...
     'flipUVs',true,...
     'toReplace',{'jpg','png'},...
-    'targetFormat','exr');
+    'targetFormat','exr', ...
+    'workingFolder', resources);
 
 
 %% Add camera and lights
