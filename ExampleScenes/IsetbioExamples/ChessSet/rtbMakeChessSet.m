@@ -30,7 +30,7 @@
 % WARNING: Be sure to remove the radiometric scale factor when displaying
 % the metadata images. The scale factor is unnecessary (and a bit arbitrary
 % to begin with) since PBRT is configured to output the metadata numbers
-% directly. 
+% directly.
 
 % Approximate time to render
 % Size = [200x200]
@@ -41,31 +41,10 @@
 
 %% Initialize
 
+% tbUse('isetbio')
+
 tic
 ieInit;
-
-% We must be in the same folder as this script
-[path,name,ext] = fileparts(mfilename('fullpath'));
-cd(path);
-
-%% Load scene
-
-% When exporting as an OBJ Blender, we must keep the coordinate system
-% consistent. Right now I always export with YForward/ZUp and a scaling
-% factor of 1000 (to convert to mm) - if the scene was original in meters.
-% Nonetheless, there seems to still be a right/left flip in the images
-% right now.
-
-% The following scenefile must be a full path.
-sceneFile = fullfile(path,'Data','ChessSetNoAreaLight.obj');
-[scene, elements] = mexximpCleanImport(sceneFile,...
-    'flipUVs',true,...
-    'imagemagicImage','hblasins/imagemagic-docker',...
-    'toReplace',{'jpg','tiff'},...
-    'targetFormat','exr');
-
-% Add a camera
-scene = mexximpCentralizeCamera(scene);
 
 %% Choose batch renderer options.
 hints.imageWidth = 200;
@@ -84,17 +63,40 @@ hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbChessSetP
 % Change the docker container to our version of PBRT-spectral
 hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
 
-%% Copy environment map over to working folder
-
 resourceFolder = rtbWorkingFolder( ...
     'folderName', 'resources',...
     'hints', hints);
-envMapPath = 'Data/studio007small.exr';
-copyfile(envMapPath, resourceFolder); % Copy to main recipe folder
+
+%% Load scene
+
+% When exporting as an OBJ Blender, we must keep the coordinate system
+% consistent. Right now I always export with YForward/ZUp and a scaling
+% factor of 1000 (to convert to mm) - if the scene was original in meters.
+% Nonetheless, there seems to still be a right/left flip in the images
+% right now.
+
+% The following scenefile must be a full path.
+sceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
+    'ChessSet', 'Data', 'ChessSetNoAreaLight.obj');
+[scene, elements] = mexximpCleanImport(sceneFile,...
+    'flipUVs',true,...
+    'imagemagicImage','hblasins/imagemagic-docker',...
+    'toReplace',{'jpg','tiff'},...
+    'targetFormat','exr', ...
+    'workingFolder', resourceFolder);
+
+% Add a camera
+scene = mexximpCentralizeCamera(scene);
+
+% copy environment map over to main recipe folder
+envMapPath = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
+    'ChessSet', 'Data', 'studio007small.exr');
+copyfile(envMapPath, resourceFolder);
+
 
 %% Write conditions and generate scene files
 
-% We will render four images. 
+% We will render four images.
 metadataType = {'depth','material','mesh','radiance'};
 
 nConditions = length(metadataType);
@@ -131,8 +133,8 @@ for i = 1:nConditions
     
     % Get rid of the radiometric scale factor
     % If we don't do this, it will interfere with the metadata output,
-    % since those values do not need to be scaled. 
-    photons = imageData.multispectralImage./imageData.radiometricScaleFactor; 
+    % since those values do not need to be scaled.
+    photons = imageData.multispectralImage./imageData.radiometricScaleFactor;
     
     % Name the OI according to which metadata we rendered
     oiName = sprintf('%s_%s',hints.recipeName,metadataType{i});
@@ -162,8 +164,8 @@ for i = 1:nConditions
     elseif(strcmp(metadataType{i},'depth'))
         
         %%% ---Depth Image--- %%%
-       
-        depthMap = photons(:,:,1); 
+        
+        depthMap = photons(:,:,1);
         fig1 = imagesc(depthMap); colorbar; colormap(flipud(gray));
         axis image; axis off;
         title('Depth Map')
@@ -188,7 +190,7 @@ for i = 1:nConditions
         
         % This, however, means it will not correspond to the metadata text
         % file output for the mesh. One should use the actual meshData mat
-        % for that. 
+        % for that.
         
         meshData = photons(:,:,1);
         uniqueValues = unique(meshData(:));
@@ -210,7 +212,3 @@ end
 oiWindow;
 
 toc
-
-
-
-
