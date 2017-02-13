@@ -41,10 +41,13 @@ classdef RtbExampleTests < matlab.unittest.TestCase
                 testCase.referenceRoot, ...
                 'fetchReferenceData', true);
             testCase.assertTrue(all([comparisons.isGoodComparison]));
-            testCase.assertTrue(all([comparisons.corrcoef] > 0.75));
-            relNormDiffs = [comparisons.relNormDiff];
-            testCase.assertTrue(all([relNormDiffs.max] < 2.5));
-            testCase.assertTrue(all([relNormDiffs.mean] < 2.5));
+            
+            % Skip check for correlation and pixel differences.
+            % Because this scene doesn't specify its own materials, it is
+            % sensitive to the default material import behaviors of Assimp,
+            % mexximp, mMitsuba, and mPbrt.  So correlations and pixel
+            % differences may be large, even though the coordinate systems
+            % check out fine (which is the point of this example).
         end
         
         function testDragon(testCase)
