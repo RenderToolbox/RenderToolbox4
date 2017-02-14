@@ -47,10 +47,17 @@ hints.recipeName = 'CrytekSponza';
 hints.renderer = 'PBRT';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
+% camera params we need to share between the remodeler and iset, below
+cameraInfo.filmdiag = 20;
+cameraInfo.filmdistance = 20;
+
 % This function modifies general scene paraemters
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbCrytekMexximpRemodeler;
+
 % This function modifies PBRT specific parameters
-hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbCrytekPBRTRemodeler;
+%   append the cameraInfo to the expected RTB parameters
+pbrtRemodelerFunction = @(varargin) rtbCrytekPBRTRemodeler(varargin{:}, cameraInfo);
+hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = pbrtRemodelerFunction;
 
 % Change the docker container to our version of PBRT-spectral
 hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
@@ -145,12 +152,8 @@ radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
 
 %% View as an OI
 
-% TODO: Ideally, we want to use BuildOI here. Unfortunately, we don't have
-% the "oiParameters" structure anymore. In RTB4, this structure held
-% information about the film distance, diagonal, etc. We could then use
-% this information to fill in parameter info in the OI, such as the
-% F-number or the FOV. Now all that info is held in the remodeler. How
-% should we move that info out from the remodeler into the oi?
+% TODO: use cameraInfo struct to build correct optics for optical image,
+% below.
 
 renderingsFolder = rtbWorkingFolder( ...
     'folderName', 'renderings',...

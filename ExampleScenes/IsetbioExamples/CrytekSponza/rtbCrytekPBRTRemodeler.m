@@ -1,4 +1,4 @@
-function nativeScene = rtbCrytekPBRTRemodeler(parentScene,nativeScene,mappings,names,conditionValues,conditionNumber)
+function nativeScene = rtbCrytekPBRTRemodeler(parentScene,nativeScene,mappings,names,conditionValues,conditionNumber,cameraInfo)
 
 % The function is called by the batch renderer when needed.  Various
 % parameters are passed in, like the mexximp scene, the native scene, and
@@ -24,8 +24,8 @@ sampler.setParameter('pixelsamples', 'integer', numSamples);
 
 camera =  nativeScene.find('Camera');
 camera.type = 'pinhole';
-camera.setParameter('filmdiag', 'float', 20);
-camera.setParameter('filmdistance', 'float', 20);
+camera.setParameter('filmdiag', 'float', cameraInfo.filmdiag);
+camera.setParameter('filmdistance', 'float', cameraInfo.filmdistance);
     
 %% Promote the area light mesh into an actual area light. 
 % Assign appropriate spectrum based on the conditionValues
