@@ -40,6 +40,7 @@ function [comparisons, matchInfo, figs] = rtbRunEpicComparison(folderA, folderB,
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addRequired('folderA', @ischar);
 parser.addRequired('folderB', @ischar);
 parser.addParameter('plotSummary', true, @islogical);
