@@ -58,6 +58,7 @@ if 7 ~= exist(tempRoot, 'dir')
 end
 
 % iterate subfolders of referenceRoot for example names
+fprintf('Looking for examples in <%s>:', referenceRoot);
 [exampleNames, nExamples] = subfolderNames(referenceRoot);
 artifactCell = cell(1, nExamples);
 for ee = 1:nExamples
@@ -76,6 +77,7 @@ for ee = 1:nExamples
 end
 artifacts = [artifactCell{:}];
 
+
 function [names, nNames] = subfolderNames(parentPath)
 parentDir = dir(parentPath);
 parentDir = parentDir(3:end);
@@ -87,7 +89,7 @@ function artifact = publishFile(rdtConfig, fileName, remotePath, exampleName, ve
 
 % describe the example
 artifactPath = fullfile(remotePath, exampleName);
-description = sprintf('version <%s> example <%s>', versionName, exampleName);
+description = sprintf('  version <%s> example <%s>', versionName, exampleName);
 disp(description);
 
 if dryRun
