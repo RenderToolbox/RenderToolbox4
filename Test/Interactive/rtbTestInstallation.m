@@ -77,7 +77,7 @@ end
 if doAll
     fprintf('\nTesting rendering with all example scripts.\n');
     fprintf('This might take a while.\n');
-    renderResults = rtbRunEpicTest([], []);
+    renderResults = rtbRunEpicExamples([], []);
     
 else
     testScenes = { ...
@@ -88,7 +88,7 @@ else
     
     fprintf('\nTesting rendering with %d example scripts.\n', numel(testScenes));
     fprintf('You should see several figures with rendered images.\n\n');
-    renderResults = rtbRunEpicTest('makeFunctions', testScenes);
+    renderResults = rtbRunEpicExamples('makeFunctions', testScenes);
     
 end
 
