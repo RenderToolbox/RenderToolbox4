@@ -24,20 +24,30 @@ function artifacts = rtbPublishReferenceData(varargin)
 
 parser = inputParser();
 parser.addParameter('rdtConfig', 'render-toolbox');
+parser.addParameter('rdtUsername', '');
+parser.addParameter('rdtPassword', '');
 parser.addParameter('referenceRoot', pwd(), @ischar);
 parser.addParameter('tempRoot', fullfile(tempdir(), 'rtbPublishReferenceData'), @ischar);
 parser.addParameter('referenceVersion', 'test', @ischar);
 parser.addParameter('remotePath', 'reference-data', @ischar);
-parser.addParameter('deployToolboxes', true, @islogical);
+parser.addParameter('deployToolboxes', false, @islogical);
 parser.addParameter('dryRun', true, @islogical);
 parser.parse(varargin{:});
 rdtConfig = parser.Results.rdtConfig;
+rdtUsername = parser.Results.rdtUsername;
+rdtPassword = parser.Results.rdtPassword;
 referenceRoot = parser.Results.referenceRoot;
 tempRoot = parser.Results.tempRoot;
 referenceVersion = parser.Results.referenceVersion;
 remotePath = parser.Results.remotePath;
 deployToolboxes = parser.Results.deployToolboxes;
 dryRun = parser.Results.dryRun;
+
+if ~isempty(rdtUsername) && ~isempty(rdtPassword)
+    rdtConfig = rdtConfiguration(rdtConfig);
+    rdtConfig.username = rdtUsername;
+    rdtConfig.password = rdtPassword;
+end
 
 if deployToolboxes
     tbUse({'RenderToolbox4', 'RemoteDataToolbox'});
@@ -48,6 +58,7 @@ if 7 ~= exist(tempRoot, 'dir')
 end
 
 % iterate subfolders of referenceRoot for example names
+fprintf('Looking for examples in <%s>:', referenceRoot);
 [exampleNames, nExamples] = subfolderNames(referenceRoot);
 artifactCell = cell(1, nExamples);
 for ee = 1:nExamples
@@ -66,6 +77,7 @@ for ee = 1:nExamples
 end
 artifacts = [artifactCell{:}];
 
+
 function [names, nNames] = subfolderNames(parentPath)
 parentDir = dir(parentPath);
 parentDir = parentDir(3:end);
@@ -77,7 +89,7 @@ function artifact = publishFile(rdtConfig, fileName, remotePath, exampleName, ve
 
 % describe the example
 artifactPath = fullfile(remotePath, exampleName);
-description = sprintf('version <%s> example <%s>', versionName, exampleName);
+description = sprintf('  version <%s> example <%s>', versionName, exampleName);
 disp(description);
 
 if dryRun
