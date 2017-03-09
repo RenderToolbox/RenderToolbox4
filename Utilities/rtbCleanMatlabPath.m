@@ -14,8 +14,8 @@ function rtbCleanMatlabPath()
 pathString = path();
 
 % remove .svn and .git folders
-pathString = RemoveMatchingPaths(pathString, '.svn');
-pathString = RemoveMatchingPaths(pathString, '.git');
+pathString = rtbRemoveMatchingPaths(pathString, '.svn');
+pathString = rtbRemoveMatchingPaths(pathString, '.git');
 
 % set the cleaned-up path
 path(pathString);
