@@ -33,11 +33,18 @@ end
 % more efficient.
 sampler = nativeScene.find('Sampler');
 if(strcmp(integrator.type,'metadata'))
+    
+    sampler = nativeScene.find('Sampler');
     sampler.type = 'stratified';
     sampler.setParameter('jitter','bool','false')
-    sampler.setParameter('pixelsamples','integer',8);
     sampler.setParameter('xsamples','integer',1);
     sampler.setParameter('ysamples','integer',1);
+    
+    filter = nativeScene.find('PixelFilter');
+    filter.type = 'box';
+    filter.setParameter('xwidth','float',0.5);
+    filter.setParameter('ywidth','float',0.5);
+
 else
     % Change the number of samples according to the conditions
     sampler.setParameter('pixelsamples', 'integer', numSamples);
