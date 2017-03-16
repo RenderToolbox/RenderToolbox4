@@ -131,7 +131,7 @@ classdef RtbAssimpPBRTConverter < RtbConverter
             defaultMappings{mm}.destination = 'mexximp';
             defaultMappings{mm}.properties(1).name = 'transformation';
             defaultMappings{mm}.properties(1).valueType = 'matrix';
-            defaultMappings{mm}.properties(1).value = mexximpScale([-1 1 1]);
+            defaultMappings{mm}.properties(1).value = mexximpScale([1 1 1]);
             defaultMappings{mm}.properties(1).operation = 'value * oldValue';
         end
         
