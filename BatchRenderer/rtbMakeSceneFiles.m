@@ -101,6 +101,15 @@ makeScenesTick = tic();
 
 if hints.isParallel
     % distributed "parfor" loop
+    
+    [status, nCores] = system('nproc');
+    
+    if status == 0
+        cluster = parcluster();
+        cluster.NumWorkers = str2double(nCores) - 1;
+        parpool(cluster,cluster.NumWorkers);
+    end
+    
     parfor cc = 1:nConditions
         % choose variable values for this condition
         if isempty(values)
@@ -113,6 +122,9 @@ if hints.isParallel
         nativeScenes{cc} = makeSceneForCondition(strategy, ...
             scene, mappings, cc, names, conditionValues, hints);
     end
+    
+    delete(gcp);
+    
 else
     % local "for" loop
     for cc = 1:nConditions
