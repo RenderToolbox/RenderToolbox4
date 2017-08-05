@@ -2,7 +2,7 @@
 
 RenderToolbox4
 ==============
-RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers. 
+RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.
 
 The current version of RenderToolbox is RenderToolbox4.  See what's new in [[RenderToolbox4]].  See also the previous version, [RenderToolbox3](https://github.com/RenderToolbox/RenderToolbox3).  RenderToolbox3 is now deprecated in favor of RenderToolbox4.  RenderToolbox4 should be compatible with older RenderToolbox3 code.
 
