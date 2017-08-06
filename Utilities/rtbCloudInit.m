@@ -30,7 +30,7 @@ cmd = sprintf('gcloud container clusters list --filter=%s',clusterName);
 
 if isempty(result)
     % we need to create a new cluster
-    instanceType = hints.batchRenderStrategy.renderer.instanceyType;
+    instanceType = hints.batchRenderStrategy.renderer.instanceType;
     
     cmd = sprintf('gcloud container clusters create %s --num-nodes=1 --max-nodes-per-pool=100 --machine-type=%s --zone=%s',...
         clusterName, instanceType, timeZone);
@@ -39,14 +39,15 @@ if isempty(result)
         cmd = sprintf('%s --preemptible',cmd);
     end
     
-    minNodes = hints.batchRenderStrategy.renderer.minNodes;
-    maxNodes = hints.batchRenderStrategy.renderer.maxNodes;
+    minNodes = hints.batchRenderStrategy.renderer.minInstances;
+    maxNodes = hints.batchRenderStrategy.renderer.maxInstances;
     
     if hints.batchRenderStrategy.renderer.autoscaling,
-        cmd = sprintf('%s --enable-autoscaling --min-nodes=%i --max-nodes==%i',...
+        cmd = sprintf('%s --enable-autoscaling --min-nodes=%i --max-nodes=%i',...
             cmd, minNodes, maxNodes);
     end
-    system(cmd)
+    [~, result] = system(cmd);
+    fprintf('%s\n',result);
 end
 
 % Once the container cluster is created one neds to get credentials, so
@@ -65,11 +66,29 @@ system(cmd);
 cmd = 'kubectl get jobs | grep cleanup';
 [~, result] = system(cmd);
 
-if isempty(result)
-    cmd = 'kubectl run cleanup --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs $(kubectl get jobs | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 600; done''';
+if isempty(strfind(result,'cleanup'))
+    cmd = 'kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs $(kubectl get jobs | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 600; done''';
     system(cmd);
 end
 
+
+
+%% Push the docker rendering image to the projec
+% gcloud container images list --repository=gcr.io/primal-surfer-140120
+[containerDir, containerName] = fileparts(hints.batchRenderStrategy.renderer.pbrt.dockerImage);
+
+cmd = sprintf('gcloud container images list --repository=%s | grep %s',containerDir, containerName);
+[~, result] = system(cmd);
+
+if isempty(result)
+    % We need to copy the container to gcloud 
+    cmd = sprintf('docker pull hblasins/%s',containerName);
+    system(cmd);
+    cmd = sprintf('docker tag hblasins/%s %s/%s',containerName, containerDir, containerName);
+    system(cmd);
+    cmd = sprintf('gcloud docker -- push %s/%s',containerDir, containerName);
+    system(cmd);
+end
 
 end
 

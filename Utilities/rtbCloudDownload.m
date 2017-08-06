@@ -9,6 +9,19 @@ if strcmp(hints.renderer,'PBRTCloud') == 0
     return;
 end
 
+% Check if the rendering is completed
+validRecipeName = hints.recipeName;
+validRecipeName(ismember(validRecipeName,' -')) = '';
+validRecipeName = lower(validRecipeName);
+
+cmd = sprintf('kubectl get jobs | grep %s',validRecipeName);
+[~, result] = system(cmd);
+
+if ~isempty(result);
+    error('Rendering not completed!');
+end
+
+
 sourceDir = fullfile(hints.batchRenderStrategy.renderer.cloudFolder,'renderings',hints.renderer);
 destDir = rtbWorkingFolder('folderName','renderings',...
     'rendererSpecific',true,...
