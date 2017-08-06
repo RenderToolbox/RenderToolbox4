@@ -24,6 +24,17 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
         
         % where to put scenes before rendering
         workingFolder;
+        
+        % Variables specific to cloud provider
+        provider = 'Google';
+        clusterName = 'rtb4';
+        zone = 'us-central1-a';
+        instanceType = 'n1-highcpu-32';
+        minInstances = 1;
+        maxInstances = 10;
+        preemptible = true;
+        autoscaling = true;
+        
     end
     
     methods

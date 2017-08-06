@@ -17,7 +17,7 @@ allFilesAndFolders = sprintf('%s ./resources ./scenes',allFiles);
 
 currentPath = pwd;
 cd(hints.batchRenderStrategy.renderer.workingFolder);
-cmd = sprintf('zip -r %s/%s %s',hints.batchRenderStrategy.renderer.workingFolder,fileName,allFilesAndFolders);
+cmd = sprintf('zip -r %s/%s %s -x *.jpg *.png',hints.batchRenderStrategy.renderer.workingFolder,fileName,allFilesAndFolders);
 system(cmd);
 cd(currentPath);
 
