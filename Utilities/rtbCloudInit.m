@@ -67,7 +67,7 @@ cmd = 'kubectl get jobs | grep cleanup';
 [~, result] = system(cmd);
 
 if isempty(strfind(result,'cleanup'))
-    cmd = 'kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs $(kubectl get jobs | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 600; done''';
+    cmd = 'kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs $(kubectl get jobs --all-namespaces | awk ''"''"''$4=="1" {print $2}''"''"''); echo "Deleted jobs"; sleep 600; done''';
     system(cmd);
 end
 

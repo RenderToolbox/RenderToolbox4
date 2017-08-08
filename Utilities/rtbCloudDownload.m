@@ -14,7 +14,9 @@ validRecipeName = hints.recipeName;
 validRecipeName(ismember(validRecipeName,' -')) = '';
 validRecipeName = lower(validRecipeName);
 
-cmd = sprintf('kubectl get jobs | grep %s',validRecipeName);
+namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
+
+cmd = sprintf('kubectl get jobs --namespace=%s | grep %s',namespace,validRecipeName);
 [~, result] = system(cmd);
 
 if ~isempty(result);

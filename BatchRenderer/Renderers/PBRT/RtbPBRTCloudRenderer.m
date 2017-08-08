@@ -34,6 +34,7 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
         maxInstances = 10;
         preemptible = true;
         autoscaling = true;
+        kubectlNamespace = '';
         
     end
     
@@ -48,6 +49,7 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
                 'rendererSpecific', true, ...
                 'hints', obj.hints);
             obj.workingFolder = rtbWorkingFolder('hints', obj.hints);
+            obj.kubectlNamespace = getenv('USER');
         end
         
         function info = versionInfo(obj)
@@ -90,12 +92,21 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
                 inFile,...
                 outFile);
             %}
-            
+                        
             % First delete all jobs that have been successfully completed.
             % Otherwise the nodes just accumulate the data and fill in the
             % disk space...
-            kubeCmd = 'kubectl delete job $(kubectl get jobs | awk ''$3=="1" {print $1}'')';
+            % This has been replaced by a global cleanup job.
+            % kubeCmd = sprintf('kubectl delete job $(kubectl get jobs --namespace=%s | awk ''$3=="1" {print $1}'')',namespace);
+            % [status, result] = system(kubeCmd);
+            
+            kubeCmd = sprintf('kubectl get namespaces | grep %s',obj.kubectlNamespace);
             [status, result] = system(kubeCmd);
+            
+            if isempty(result)
+               kubeCmd = sprintf('kubectl create namespace %s',obj.kubectlNamespace);
+               [status, result] = system(kubeCmd);
+            end
             
             
             jobName = lower([obj.hints.recipeName imageName]);
@@ -104,7 +115,7 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
             
             % Kubernetess does not allow two jobs with the same name.
             % We need to delete the old one first
-            kubeCmd = sprintf('kubectl delete job %s',jobName);
+            kubeCmd = sprintf('kubectl delete job --namespace=%s %s',obj.kubectlNamespace,jobName);
             [status, result] = system(kubeCmd);
             
             
@@ -113,9 +124,10 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
 
             
             % Before we can issue a new one
-            kubeCmd = sprintf('kubectl run %s --image=%s --restart=OnFailure --limits cpu=%im  -- ./syncAndRender.sh ''%s'' "%s" "%s" "%s" "%s" "%s"',...
+            kubeCmd = sprintf('kubectl run %s --image=%s --namespace=%s --restart=OnFailure --limits cpu=%im  -- ./syncAndRender.sh ''%s'' "%s" "%s" "%s" "%s" "%s"',...
                 jobName,...
                 obj.pbrt.dockerImage,...
+                obj.kubectlNamespace,...
                 (nCores-0.9)*1000,...
                 processedToken,...
                 obj.cloudFolder,...
