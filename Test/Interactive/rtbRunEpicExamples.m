@@ -1,7 +1,7 @@
-function results = rtbRunEpicTest(varargin)
+function results = rtbRunEpicExamples(varargin)
 %% Run all "rtbMake..." scripts in the ExampleScenes/ folder.
 %
-% results = rtbRunEpicTest() renders example scenes by invoking
+% results = rtbRunEpicExamples() renders example scenes by invoking
 % all of the "rtbMake..." executive sripts found within the ExampleScenes/
 % folder
 %
@@ -19,11 +19,11 @@ function results = rtbRunEpicTest(varargin)
 % have a name that that includes the name of this m-file, plus the date and
 % time.
 %
-% rtbRunEpicTest( ... 'outputRoot', outputRoot) specifies the
+% rtbRunEpicExamples( ... 'outputRoot', outputRoot) specifies the
 % working folder where to put rendering outputs.  The default is from
 % rtbDefaultHints().
 %
-% rtbRunEpicTest( ... 'makeFunctions', makeFunctions) specifies a
+% rtbRunEpicExamples( ... 'makeFunctions', makeFunctions) specifies a
 % cell array of executive functions to run.  The default is to search the
 % ExampleScenes/ folder for m-files that begin with "rtbMake".
 %
@@ -32,6 +32,7 @@ function results = rtbRunEpicTest(varargin)
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
 parser = inputParser();
+parser.KeepUnmatched = true;
 parser.addParameter('outputRoot', rtbWorkingFolder(), @ischar);
 parser.addParameter('makeFunctions', {}, @iscellstr);
 parser.parse(varargin{:});
