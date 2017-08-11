@@ -5,12 +5,10 @@
 
 %% Initialize.
 
-% tbUse('isetbio');
-
+% tbUse('isetbio','reset','as-is');
 close all;
 clear;
 clc;
-
 ieInit;
 
 
@@ -18,7 +16,6 @@ ieInit;
 filmDiag = 20;
 targetDistance = 5000;
 nSamples = 256;
-
 
 %% Choose Batch Render Options.
 hints.imageWidth = 320;
@@ -29,7 +26,7 @@ hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbMakeCarMexximpRemodeller;
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbMakeCarPBRTRemodeller;
 
-% change the docker container
+% Change the docker container
 hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
 
 parentSceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
@@ -93,7 +90,6 @@ for d=1:length(daylight)
 end
 
 rtbWriteConditionsFile(conditionsFile,names,values);
-
 nativeSceneFiles = rtbMakeSceneFiles(scene, 'hints', hints, ...
     'conditionsFile',conditionsFile);
 
