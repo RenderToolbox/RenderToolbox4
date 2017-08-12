@@ -1,26 +1,46 @@
 function rtbCloudInit( hints )
-
-% This function sets up the Container engine on google cloud.
-% We assume that you have goocle cloud SDK installed on your system and
-% that you have set up the sdk by running:
+% Sets up the container engine on a google cloud instance via kubernetes
+%
+% We assume that you have google cloud SDK installed on your system and that you
+% have set up the sdk by running
 % 
-% gcloud init
+%    gcloud init
 %
+% We assume you have set up your account services and credentials as per the
+% NN_camera_generalization wiki page description.  This has been tested on Linux
+% systems (only?) or mainly.
 %
+% This routine
+%
+%  * creates a cluster to run the container
+%  * sets up kubectl to manage the rtb4 cluster
+%  * If you don't have the docker image in your project repository, it will copy
+% it there.
+%  * If the job runs successfully, it cleans up the stored data
+%
+% See also - Functions to upload and download the data
+%            rtbCloudDownload, rtbCloudUpload.
+% 
+% Examples:  s_differentLensesCloud.m in NN_Camera_Generalization
+%
+% HB, SCIENSTANFORD 2017
 
+%% Check the variables
 if strcmp(hints.renderer,'PBRTCloud') == 0
+    % Not using the cloud.
     return;
 end
 
 if ~strcmpi(hints.batchRenderStrategy.renderer.provider,'google')
+    % Some day, alibaba
     error('Only Google Cloud is supported\n');
 end
 
-% First we set up a container cluster
-% This command sets up a cluster of high-cpu, 32 core, preemptible machines
-% Autoscaling is enabled so if you aren't using all the resources the
-% unnecessary machines are killed (to save you money).
+%% Set up a container cluster (default name is rtb4)
 
+% By default, this command sets up a cluster of high-cpu, 32 core, preemptible
+% machines.Autoscaling is enabled so if you aren't using all the resources the
+% unnecessary machines are killed (to save you money).
 
 clusterName = hints.batchRenderStrategy.renderer.clusterName;
 timeZone = hints.batchRenderStrategy.renderer.zone;
@@ -50,19 +70,23 @@ if isempty(result)
     fprintf('%s\n',result);
 end
 
-% Once the container cluster is created one neds to get credentials, so
-% that kubectl comands are executed on that particualr cluster.
+%% Once the container cluster is created get your user credentials.
+
+% This defines the container-cluster where your kubectl commands will be
+% executed.
+
 cmd = sprintf('gcloud container clusters get-credentials %s --zone=%s',...
     clusterName,timeZone);
 system(cmd);
 
+%% Cleanup
 
 % A cleanup-job
 % The Container Cluster stores the completed jobs, and they use up
 % resources (disk space, memory). We are going to run a simple service that
 % periodically lists all succesfully completed jobs and removes them from
 % the engine.
-namespace = hints.batchRenderStraregy.renderer.kubectlNamespace;
+namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
 
 cmd = sprintf('kubectl get jobs --namespace=%s | grep cleanup',namespace);
 [~, result] = system(cmd);
@@ -74,14 +98,17 @@ if isempty(strfind(result,'cleanup'))
 end
 
 
+%% Push the docker rendering image to the project
 
-%% Push the docker rendering image to the projec
-% gcloud container images list --repository=gcr.io/primal-surfer-140120
 [containerDir, containerName] = fileparts(hints.batchRenderStrategy.renderer.pbrt.dockerImage);
 
+% Check whether you have the necessary container
 cmd = sprintf('gcloud container images list --repository=%s | grep %s',containerDir, containerName);
 [~, result] = system(cmd);
 
+% If you don't, it goes to work getting the container, tag it, and push it to
+% the cloud.  This should really be on the RenderToolbox4 docker hub account in
+% the future.
 if isempty(result)
     % We need to copy the container to gcloud 
     cmd = sprintf('docker pull hblasins/%s',containerName);

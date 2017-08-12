@@ -1,5 +1,5 @@
 classdef RtbPBRTCloudRenderer < RtbRenderer
-    %% Implementation for rendering with Mitsuba.
+    %% Implementation for rendering with PBRT
     
     properties
         % RenderToolbox4 options struct, see rtbDefaultHints()
