@@ -67,7 +67,9 @@ cmd = 'kubectl get jobs | grep cleanup';
 [~, result] = system(cmd);
 
 if isempty(strfind(result,'cleanup'))
-    cmd = 'kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs $(kubectl get jobs --all-namespaces | awk ''"''"''$4=="1" {print $2}''"''"''); echo "Deleted jobs"; sleep 600; done''';
+    namespace = hints.batchRenderStraregy.renderer.kubectlNamespace;
+    cmd = sprintf('kubectl run %scleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs --namespace=%s $(kubectl get jobs --namespace=%s | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 30; done''',...
+        namespace,namespace,namespace);
     system(cmd);
 end
 
