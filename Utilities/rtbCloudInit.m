@@ -92,8 +92,8 @@ cmd = sprintf('kubectl get jobs --namespace=%s | grep cleanup',namespace);
 [~, result] = system(cmd);
 
 if isempty(strfind(result,'cleanup'))
-    cmd = sprintf('kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs --namespace=%s $(kubectl get jobs --namespace=%s | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 30; done''',...
-        namespace,namespace);
+    cmd = sprintf('kubectl run cleanup --limits cpu=500m --namespace=%s --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs --namespace=%s $(kubectl get jobs --namespace=%s | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 30; done''',...
+        namespace,namespace,namespace);
     system(cmd);
 end
 
