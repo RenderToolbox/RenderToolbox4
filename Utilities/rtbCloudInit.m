@@ -55,14 +55,14 @@ if isempty(result)
     cmd = sprintf('gcloud container clusters create %s --num-nodes=1 --max-nodes-per-pool=100 --machine-type=%s --zone=%s',...
         clusterName, instanceType, timeZone);
     
-    if hints.batchRenderStrategy.renderer.preemptible,
+    if hints.batchRenderStrategy.renderer.preemptible
         cmd = sprintf('%s --preemptible',cmd);
     end
     
     minNodes = hints.batchRenderStrategy.renderer.minInstances;
     maxNodes = hints.batchRenderStrategy.renderer.maxInstances;
     
-    if hints.batchRenderStrategy.renderer.autoscaling,
+    if hints.batchRenderStrategy.renderer.autoscaling
         cmd = sprintf('%s --enable-autoscaling --min-nodes=%i --max-nodes=%i',...
             cmd, minNodes, maxNodes);
     end
@@ -88,6 +88,15 @@ system(cmd);
 % the engine.
 namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
 
+% Check if a namespace for a user exists, if it doesn't create one.
+cmd = sprintf('kubectl get namespaces | grep %s',namespace);
+[~, result] = system(cmd);
+if isempty(result)
+    cmd = sprintf('kubectl create namespace %s',namespace);
+    system(cmd);
+end
+
+% Create a cleanup job in the user namespace.
 cmd = sprintf('kubectl get jobs --namespace=%s | grep cleanup',namespace);
 [~, result] = system(cmd);
 
