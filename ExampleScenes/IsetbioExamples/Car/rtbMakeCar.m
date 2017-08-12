@@ -6,7 +6,10 @@
 % 
 % 08/12/17  dhb  Made isetbio stuff conditional on isetbio being installed.
 %                Write out a png of the image in any case.
-%                Somce cosmetic changes.
+%                Some cosmetic changes.
+%                Rename rtbMakeCar... helper functions to rtbCar....  rtbMake...
+%                  has a special status for our examples, and should be used only
+%                  as the prefix for top level directories.
 
 %% Initialize.
 %
@@ -27,8 +30,8 @@ hints.imageHeight = 240;
 hints.renderer = 'PBRT';
 hints.recipeName = 'Car';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
-hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbMakeCarMexximpRemodeller;
-hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbMakeCarPBRTRemodeller;
+hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbCarMexximpRemodeller;
+hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbCarPBRTRemodeller;
 
 parentSceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
     'Car', 'Models', 'Mercedes SLS', 'sls_amg.obj');
@@ -113,8 +116,7 @@ if (exist('ieInit','file'))
     % Initialize isetbio
     ieInit;
     
-    % Create the optical image.  May want to worry about  energy to quantal
-    % units conversion here.
+    % Create the optical image.
     for i=1:length(radianceDataFiles)
         radianceData = load(radianceDataFiles{i});
         photons = radianceData.multispectralImage;
