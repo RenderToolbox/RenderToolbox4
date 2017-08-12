@@ -27,12 +27,10 @@ parser.parse(outputRoot, referenceRoot);
 outputRoot = parser.Results.outputRoot;
 referenceRoot = parser.Results.referenceRoot;
 
-
 %% Run the epic example set.
 results = rtbRunEpicExamples( ...
     'outputRoot', outputRoot, ...
     varargin{:});
-
 
 %% Run the epic comparison.
 [comparisons, matchInfo, figs] = rtbRunEpicComparison( ...
