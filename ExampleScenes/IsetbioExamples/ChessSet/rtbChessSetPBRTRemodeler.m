@@ -1,8 +1,11 @@
-function nativeScene = rtb360PBRTRemodeler(parentScene,nativeScene,mappings,names,conditionValues,conditionNumber)
-
+function nativeScene = rtbChessSetPBRTRemodeler(parentScene,nativeScene,mappings,names,conditionValues,conditionNumber)
+%%rtbChessSetPBRTRemodeler
+%
 % The function is called by the batch renderer when needed.  Various
 % parameters are passed in, like the mexximp scene, the native scene, and
 % names and values read from the conditions file.
+
+% 08/12/17  dhb  Make function name in function match its filename.
 
 %% Get condition values
 
