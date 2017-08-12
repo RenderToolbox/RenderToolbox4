@@ -1,5 +1,6 @@
 function [scene, mappings] = rtbCrytekMexximpRemodeler(scene, mappings, names, conditionValues, conditionNumber)
-
+%%rtbCrytekMexximpRemodeler
+%
 % This is an example of how to modify the incoming mexximp scene directly,
 % with a "remodeler" hook funtion.  It modifies the scene struct that will
 % be used during subsequent processing and rendering.
