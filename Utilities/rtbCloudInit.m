@@ -62,14 +62,14 @@ system(cmd);
 % resources (disk space, memory). We are going to run a simple service that
 % periodically lists all succesfully completed jobs and removes them from
 % the engine.
+namespace = hints.batchRenderStraregy.renderer.kubectlNamespace;
 
-cmd = 'kubectl get jobs | grep cleanup';
+cmd = sprintf('kubectl get jobs --namespace=%s | grep cleanup',namespace);
 [~, result] = system(cmd);
 
 if isempty(strfind(result,'cleanup'))
-    namespace = hints.batchRenderStraregy.renderer.kubectlNamespace;
-    cmd = sprintf('kubectl run %scleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs --namespace=%s $(kubectl get jobs --namespace=%s | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 30; done''',...
-        namespace,namespace,namespace);
+    cmd = sprintf('kubectl run cleanup --limits cpu=500m --restart=OnFailure --image=google/cloud-sdk -- /bin/bash -c ''while true; do echo "Starting"; kubectl delete jobs --namespace=%s $(kubectl get jobs --namespace=%s | awk ''"''"''$3=="1" {print $1}''"''"''); echo "Deleted jobs"; sleep 30; done''',...
+        namespace,namespace);
     system(cmd);
 end
 
