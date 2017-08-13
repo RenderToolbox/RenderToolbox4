@@ -1,4 +1,18 @@
-%% Compare lens renderings of different cars
+%% Illustrates google cloud platform usage
+%
+%  Reads in a small object (millenial falcon).
+%  Sets up a camera array
+%  Places the object with respect to the cameras
+%  Calls batch render on the cloud
+%
+% Uses - rtbCloudInit, rtbCloudUpload, rtbCloudDownload
+% Uses - rtbHintsInit, rtbCamerasInit, rtbCamerasPlace
+% Uses - local remodelers.  More discussion here.
+%
+% For this to run, you must have set up a google cloud account, have appropriate
+% permissions, and have kubectl installed.  Instructions for this should be on
+% the RenderToolbox4 web-site.  Soon, we hope.  Now a bunch of it is on the
+% NN_Camera_Generalization web site.
 %
 % BW, Henryk Blasinski, SCIEN Stanford, 2017
 
@@ -19,15 +33,18 @@ gcloud = true;
 % you could use this:
 %   zone   = 'us-west1-b';
 % and then set a 'zone' parameter below.
+p.addParameter('remodelerAfter', @MexximpRemodellerMultipleObj,@(x)(isequal(class(x),'function_handle')));
+p.addParameter('remodelerConvertAfter', @PBRTRemodeller,@(x)(isequal(class(x),'function_handle')));
 
 % Should have a validity check.  Surprising that we have the tokenPath early in
 % the ordering within this nnHintsInit routine
 % Small image size for debugging.
-hints = nnHintsInit('imageWidth',160,'imageHeight',120,...
+hints = rtbHintsInit('imageWidth',160,'imageHeight',120,...
     'recipeName','cloud-example',...
     'tokenPath',tokenPath,...
     'gcloud',gcloud,...
-    'mexximpRemodeler', @MexximpRemodellerMultipleObj);
+    'remodelerConvertAfter',@remodelerPBRTCloudExample,...
+    'remodelerAfter', @remodelerCloudExample);
 
 %% Open the GCP
 rtbCloudInit(hints);
@@ -37,7 +54,7 @@ sceneFile = which('millenium-falcon.obj');
 
 % Camera set to be 50 meters from an object distance
 % This could be an array of cameras.
-cameras = nnGenCameras('type',{'pinhole'},...
+cameras = rtbCamerasInit('type',{'pinhole'},...
     'mode',{'radiance'},...
     'distance',50);
 
@@ -59,18 +76,6 @@ d65 = illuminantGet(il,'photons');
 rtbWriteSpectrumFile(wave,d65,fullfile(resourceFolder,'D65.spd'));
 
 %% Build the scene
-
-% dragonFile = which('Dragon.blend');
-% dragonScene = mexximpCleanImport(dragonFile,...
-%     'ignoreRootTransform',true,...
-%     'flipUVs',true,...
-%     'imagemagicImage','hblasins/imagemagic-docker',...
-%     'toReplace',{'jpg','png','tga'},...
-%     'options','-gamma 0.45',...
-%     'targetFormat','exr',...
-%     'makeLeftHanded',true,...
-%     'flipWindingOrder',true,...
-%     'workingFolder',resourceFolder);
 
 % Import the millenial faclon, which is small
 mfScene = mexximpCleanImport(sceneFile,...
@@ -100,7 +105,7 @@ objectArrangements = {objects(1), objects(2)};
 % lookAt and film distance variables.  Other slots are copied from the camera
 % object itself.  The placedCameras combine the different object arrangements
 % and cameras. The output is placedCameras{nCameras}(nArrangements).
-placedCameras = nnPlaceCameras(cameras,objectArrangements);
+placedCameras = rtbCamerasPlace(cameras,objectArrangements);
 
 %% Make values used for the Conditions file.
 %

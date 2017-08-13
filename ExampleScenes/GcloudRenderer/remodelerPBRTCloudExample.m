@@ -1,4 +1,4 @@
-function [ nativeScene ] = PBRTRemodeller( parentScene, nativeScene, mappings, names, conditionValues, conditionNumbers )
+function [ nativeScene ] = remodelerPBRTCloudExample( parentScene, nativeScene, mappings, names, conditionValues, conditionNumbers )
 % Attaches PBRT-specific constructs to the PBRT scene
 %
 %  

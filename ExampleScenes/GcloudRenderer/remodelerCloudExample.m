@@ -1,4 +1,4 @@
-function [ scene, mappings ] = MexximpRemodellerMultipleObj( scene, mappings, names, conditionValues, conditionNumber )
+function [ scene, mappings ] = remodelerCloudExample( scene, mappings, names, conditionValues, conditionNumber )
 % Remodeler used usually in remodelPerConditionAfterFunction
 %
 %
