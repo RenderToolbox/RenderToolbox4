@@ -1,6 +1,17 @@
-function [ scene, mappings ] = remodelerCloudExample( scene, mappings, names, conditionValues, conditionNumber )
+function [scene, mappings] = remodelerCloudExample(scene, mappings, names, conditionValues, conditionNumber )
 % Remodeler used usually in remodelPerConditionAfterFunction
 %
+% Typically, this is referred to by a function handle in the hints slot
+%  hints.batchRenderStrategy.remodelPerConditionAfterFunction = ...
+%      @remodelerPBRTCloudExample
+%
+%
+% Inputs
+%   scene           - Assimp scene with a camera attached
+%   mappings -
+%   names           - From conditions file
+%   conditionValues - Values for the conditions file
+%   conditionNumber - Not yet used
 %
 % Typically pointed to by
 %    hints.batchRenderStrategy.remodelPerConditionAfterFunction
@@ -11,25 +22,31 @@ function [ scene, mappings ] = remodelerCloudExample( scene, mappings, names, co
 % HB, SCIEN STanford, 2017
 
 %% PROGRAMMING TODO
-%   The 1000 is just annoying and makes units better but we need a general fix.
-%   Maybe because we are using millimeters everywhere.
+% The 1000 is just annoying and makes units better but we need a general fix.
+% Maybe because we are using millimeters everywhere.
 
-% Where the light is coming from
-shadowDirection = rtbGetNamedNumericValue(names,conditionValues,'shadowDirection',[]);
+%% Look for specific names in the conditions and acting
 
-% 
+% Location (in meters) of the camera in the scene
 cameraPosition = rtbGetNamedNumericValue(names,conditionValues,'position',[]);
 
-%
+% Direction the camera is looking at
 cameraLookAt = rtbGetNamedNumericValue(names,conditionValues,'lookAt',[]);
 
+% Pan tilt and roll
 cameraPTR = rtbGetNamedNumericValue(names,conditionValues,'PTR',[0 0 0]);
 
+% Object position file
 objMovementFile = rtbGetNamedValue(names,conditionValues,'objPosFile','');
 
 
 %% Add a camera
+
+% The scene does not yet have a camera.  
 scene = mexximpCentralizeCamera(scene);
+
+[~, sceneMiddlePoint] = mexximpSceneBox(scene);
+
 lookUp = [0 0 -1];
 cameraLookDir = cameraLookAt - cameraPosition;
 cameraPTR = deg2rad(cameraPTR);
@@ -56,7 +73,6 @@ for i=1:length(scene.rootNode.children)
             scene.rootNode.children(i).transformation = scene.rootNode.children(i).transformation*...
            mexximpRotate([0 0 -1],deg2rad(orientation))*mexximpTranslate(position);
         end
-       
    end
 end
 
@@ -65,7 +81,7 @@ ambient = mexximpConstants('light');
 ambient.position = [0 0 0]';
 ambient.type = 'directional';
 ambient.name = 'SunLight';
-ambient.lookAtDirection = shadowDirection(:);
+ambient.lookAtDirection = sceneMiddlePoint;  % Direction the light points to
 ambient.ambientColor = 10000*[1 1 1]';
 ambient.diffuseColor = 10000*[1 1 1]';
 ambient.specularColor = 10000*[1 1 1]';

@@ -1,5 +1,10 @@
-function [ cameras ] = nnPlaceCameras( cameras, objects )
+function [ cameras ] = rtbCamerasPlace( cameras, objects )
+% Assign camera values so that they are looking at the object position
+%
+%
+% HB SCIEN Stanford, 2017
 
+% Maybe we can get rid of this somehow
 global lensDir
 
 nArrangements = length(objects);

@@ -33,8 +33,6 @@ gcloud = true;
 % you could use this:
 %   zone   = 'us-west1-b';
 % and then set a 'zone' parameter below.
-p.addParameter('remodelerAfter', @MexximpRemodellerMultipleObj,@(x)(isequal(class(x),'function_handle')));
-p.addParameter('remodelerConvertAfter', @PBRTRemodeller,@(x)(isequal(class(x),'function_handle')));
 
 % Should have a validity check.  Surprising that we have the tokenPath early in
 % the ordering within this nnHintsInit routine
@@ -46,17 +44,29 @@ hints = rtbHintsInit('imageWidth',160,'imageHeight',120,...
     'remodelerConvertAfter',@remodelerPBRTCloudExample,...
     'remodelerAfter', @remodelerCloudExample);
 
-%% Open the GCP
-rtbCloudInit(hints);
+%% Open the GCP - maybe wait until rendering time?
+
+fprintf('Initializing gcloud');
+[gs,kube] = rtbCloudInit(hints);
+
+
+%% Delete any radiance data files from google cloud
+
+remoteRadianceFiles = gs.ls('cloud-example/renderings/PBRTCloud');
+for ii=1:length(remoteRadianceFiles)
+    gs.rm(remoteRadianceFiles{ii});
+end
 
 %% Full path to the object we are going to render
 sceneFile = which('millenium-falcon.obj');
 
+% Is there a way to make this be a camera ob
 % Camera set to be 50 meters from an object distance
 % This could be an array of cameras.
-cameras = rtbCamerasInit('type',{'pinhole'},...
+cameras = rtbCamerasInit('type',{'lens'},...
     'mode',{'radiance'},...
-    'distance',50);
+    'distance',25);
+nCameras = length(cameras);
 
 % Set up the work space
 resourceFolder = rtbWorkingFolder('folderName','resources',...
@@ -77,7 +87,10 @@ rtbWriteSpectrumFile(wave,d65,fullfile(resourceFolder,'D65.spd'));
 
 %% Build the scene
 
-% Import the millenial faclon, which is small
+% Import the millenial faclon, which is small.  mfScene is a struct that
+% includes information about the object that will be converted into PBRT format
+% for rendering.  Perhaps it should be called an objectFile, rather than a scene
+% file.
 mfScene = mexximpCleanImport(sceneFile,...
     'ignoreRootTransform',true,...
     'flipUVs',true,...
@@ -89,16 +102,21 @@ mfScene = mexximpCleanImport(sceneFile,...
     'flipWindingOrder',true,...
     'workingFolder',resourceFolder);
 
-%% Initiate two poses 
+%% Initiate some positions 
+clear objects
 
 objects(2).prefix   = '';    % Note that spaces or : are not allowed
-objects(2).position = [10 10 0];
+objects(2).position = [0 0 0];
 objects(2).orientation = 30;
 objects(2).bndbox = mat2str(mexximpSceneBox(mfScene));
+% objects(2) = objects(3);
+% objects(2).position = [-5 -5 0];
 objects(1) = objects(2);
-objects(1).orientation = 60;
-
-objectArrangements = {objects(1), objects(2)};
+objects(1).position = [0 0 10];
+objectArrangements = cell(length(objects),1);
+for ii=1:length(objects)
+    objectArrangements{ii} = objects(ii);
+end
 
 % For each fixed configuration of the objects, we render a series of images for
 % different camera properties. For example, this function sets particularly the position,
@@ -111,6 +129,8 @@ placedCameras = rtbCamerasPlace(cameras,objectArrangements);
 %
 % Parameters are placed in a struct that will be gridded for the
 % conditions.
+%
+% Look at other method for building up the conditions file.
 
 % These are the variable names used in the conditionsFile.  
 %  See
@@ -145,7 +165,7 @@ for m=1:length(objectArrangements)
         for i=2:(length(names)-1)
             values(cntr,i) = {currentCameras(c).(names{i})};
         end
-        values(cntr,length(names)-1) = {objectArrangementFile};
+        values(cntr,length(names)) = {objectArrangementFile};
         
         if strcmp(currentCameras(c).mode,'radiance')
             sceneId = sceneId+1;
@@ -155,7 +175,10 @@ for m=1:length(objectArrangements)
     
 end
 
+%%
 rtbWriteConditionsFile(conditionsFile,names,values);
+% strategy = RtbAssimpStrategy(hints);
+% [names, values] = strategy.loadConditions(conditionsFile);
 % edit(conditionsFile);
 
 %% Generate files and render
@@ -163,8 +186,10 @@ rtbWriteConditionsFile(conditionsFile,names,values);
 % PBRT automatically scales the number of processes to equal the
 % number of cores.
 %
-nativeSceneFiles = rtbMakeSceneFiles(scene, 'hints', hints,...
+nativeSceneFiles = rtbMakeSceneFiles(mfScene, 'hints', hints,...
     'conditionsFile',conditionsFile);
+
+%% Maybe Cloud init here
 
 fprintf('Uploading data to gcloud\n');
 rtbCloudUpload(hints, nativeSceneFiles);
@@ -175,10 +200,12 @@ fprintf('Batch rendering %d files\n',length(nativeSceneFiles));
 rtbBatchRender(nativeSceneFiles, 'hints', hints);
 fprintf('Jobs initiated\n');
 
+%% Download, but check when ready
+
 radianceDataFiles = [];
 while isempty(radianceDataFiles)
     radianceDataFiles = rtbCloudDownload(hints);
-    pause(10);
+    pause(20);
 end
 
 % We aren't saving the radianceDataFiles for all the conditions.
@@ -189,26 +216,38 @@ end
 % irradiance to a reasonable level here.
 %
 % load('radianceDataFiles');
-%%
+%% The camera object could be the ISET camera object
+%
+% Maybe implement opticsCreate('pbrt') and attach this to the OI.  Then run if
+% optics.type is 'pbrt' at the beginning call pbrtGet/Set
+% 
+% Figure out a plan to make the cameras and arrangement be clear either from the
+% radianceDataFiles or the list or something.
+
 fprintf('Creating OI\n');
-for i=1:length(radianceDataFiles)
+fov = 45;
+meanIlluminance = 10;  % Lux
+%
+
+for i=1:1 %slength(radianceDataFiles)
     % chdir(fullfile(nnGenRootPath,'local'));
     % save('radianceDataFiles','radianceDataFiles');
     
     radianceData = load(radianceDataFiles{i});
+    thisCamera = placedCameras{i}(1);
     
     % Create an oi and set the parameters
     clear oiParams;
-    oiParams.optics_name = lensType{lt};
+    oiParams.optics_name = thisCamera.type ;
     oiParams.optics_model = 'diffractionlimited';
     oiParams.fov = fov;
-    switch ieParamFormat(lensType{lt})
+    switch ieParamFormat(thisCamera.type)
         case 'pinhole'
             oiParams.optics_fnumber = 999;
         otherwise
-            oiParams.optics_fnumber = fNumber(lt);
+            oiParams.optics_fnumber = thisCamera.fNumber;
     end
-    oiParams.optics_focalLength = filmDistanceVec(lt)*1e-3; % In meters
+    oiParams.optics_focalLength = thisCamera.filmDistance*1e-3; % In meters
     [~, label] = fileparts(radianceDataFiles{i});
     oiParams.name = label;
     

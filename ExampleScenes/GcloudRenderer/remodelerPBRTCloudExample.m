@@ -1,11 +1,29 @@
 function [ nativeScene ] = remodelerPBRTCloudExample( parentScene, nativeScene, mappings, names, conditionValues, conditionNumbers )
 % Attaches PBRT-specific constructs to the PBRT scene
 %
-%  
+% Typically, this is referred to by a function handle in the hints slot
+%  hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = ...
+%      @remodelerPBRTCloudExample
 %
-% We start with an assimp scene, then we need to take the assimp representation
-% and add (or change) the PBRT representations to create the new scene in proper
-% PBRT format
+% This is called from within rtbMakeSceneFiles
+%
+% Inputs:
+%   parentScene      - Not yet used
+%   nativeScene      - An object representing a scene (context and objects)
+%   mappings         - Not yet used
+%   names
+%   conditionValues
+%   conditionNumbers - Not yet used
+%
+% Return
+%   nativeScene      - A structure conforming to PBRT requirements
+%
+% Logic
+%
+%  At a certain point in the RenderToolbox work, we have built an assimp scene.
+%  We  convert the assimp representation using basic tools, but we are permitted
+%  to add (or change) the PBRT representations to create the new scene in proper
+%  PBRT format.
 %
 % For example, assimp has no notion of spectrum.  So, we add the spectral
 % information here.
@@ -15,17 +33,20 @@ function [ nativeScene ] = remodelerPBRTCloudExample( parentScene, nativeScene, 
 %
 % HB
 
-%% 
-cameraType = rtbGetNamedValue(names,conditionValues,'cameraType',[]);
-lensType = rtbGetNamedValue(names,conditionValues,'lensType',[]);
-mode = rtbGetNamedValue(names,conditionValues,'mode',[]);
+%% Pull out information from the condition values
+
+% These are the values saved in the Conditions.txt file.
+cameraType = rtbGetNamedValue(names,conditionValues,'type',[]);
+lensType   = rtbGetNamedValue(names,conditionValues,'lens',[]);
+mode       = rtbGetNamedValue(names,conditionValues,'mode',[]);
 pixelSamples = rtbGetNamedNumericValue(names,conditionValues,'pixelSamples',[]);
-filmDist = rtbGetNamedNumericValue(names,conditionValues,'filmDist',[]);
-filmDiag = rtbGetNamedNumericValue(names,conditionValues,'filmDiag',[]);
-microlensDim = rtbGetNamedNumericValue(names,conditionValues,'microlensDim',[0, 0]);
-fNumber = rtbGetNamedNumericValue(names,conditionValues,'fNumber',[]);
+filmDist     = rtbGetNamedNumericValue(names,conditionValues,'filmDistance',[]);
+filmDiag     = rtbGetNamedNumericValue(names,conditionValues,'filmDiagonal',[]);
+microlensDim = rtbGetNamedNumericValue(names,conditionValues,'microlens',[0, 0]);
+fNumber      = rtbGetNamedNumericValue(names,conditionValues,'fNumber',[]);
 fog = 0;
-diffraction = rtbGetNamedValue(names,conditionValues,'diffraction','true');
+
+diffraction         = rtbGetNamedValue(names,conditionValues,'diffraction','true');
 chromaticAberration = rtbGetNamedValue(names,conditionValues,'chromaticAberration','false');
 
 %{

@@ -1,4 +1,4 @@
-function rtbCloudInit( hints )
+function [gs, kube] = rtbCloudInit( hints )
 % Sets up the container engine on a google cloud instance via kubernetes
 %
 % We assume that you have google cloud SDK installed on your system and that you
@@ -30,6 +30,12 @@ if strcmp(hints.renderer,'PBRTCloud') == 0
     % Not using the cloud.
     return;
 end
+
+namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
+
+% gs = gcloud('bucket',yourBucket);
+gs   = gcloud;
+kube = kubernetes(namespace);
 
 if ~strcmpi(hints.batchRenderStrategy.renderer.provider,'google')
     % Some day, alibaba
@@ -86,7 +92,6 @@ system(cmd);
 % resources (disk space, memory). We are going to run a simple service that
 % periodically lists all succesfully completed jobs and removes them from
 % the engine.
-namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
 
 % Check if a namespace for a user exists, if it doesn't create one.
 cmd = sprintf('kubectl get namespaces | grep %s',namespace);
