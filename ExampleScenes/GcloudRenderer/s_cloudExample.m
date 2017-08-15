@@ -105,10 +105,14 @@ mfScene = mexximpCleanImport(sceneFile,...
 %% Initiate some positions 
 clear objects
 
+% Not sure how I set the camera to look at the middle of the bounding box of the
+% object.
 objects(2).prefix   = '';    % Note that spaces or : are not allowed
 objects(2).position = [0 0 0];
 objects(2).orientation = 30;
-objects(2).bndbox = mat2str(mexximpSceneBox(mfScene));
+% [xmin xmax; ymin ymax; zmin zmax],
+[box3D , midPoint] = mexximpSceneBox(mfScene);
+objects(2).bndbox = mat2str(box3D);
 % objects(2) = objects(3);
 % objects(2).position = [-5 -5 0];
 objects(1) = objects(2);
