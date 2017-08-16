@@ -37,7 +37,7 @@ gcloud = true;
 % Should have a validity check.  Surprising that we have the tokenPath early in
 % the ordering within this nnHintsInit routine
 % Small image size for debugging.
-hints = rtbHintsInit('imageWidth',160,'imageHeight',120,...
+hints = rtbHintsInit('imageWidth',640,'imageHeight',480,...
     'recipeName','cloud-example',...
     'tokenPath',tokenPath,...
     'gcloud',gcloud,...
@@ -49,23 +49,26 @@ hints = rtbHintsInit('imageWidth',160,'imageHeight',120,...
 fprintf('Initializing gcloud');
 [gs,kube] = rtbCloudInit(hints);
 
-
-%% Delete any radiance data files from google cloud
-
-remoteRadianceFiles = gs.ls('cloud-example/renderings/PBRTCloud');
-for ii=1:length(remoteRadianceFiles)
-    gs.rm(remoteRadianceFiles{ii});
+%% Delete radiance data files from google cloud and local
+if gcloud
+    % Build the directories from the hints
+    remoteRadianceFiles = gs.ls('cloud-example/renderings/PBRTCloud');
+    for ii=1:length(remoteRadianceFiles)
+        gs.rm(remoteRadianceFiles{ii});
+    end
 end
+delete('/scratch/wandell/render_toolbox/cloud-example/renderings/PBRTCloud/*radiance*');
 
 %% Full path to the object we are going to render
-sceneFile = which('millenium-falcon.obj');
+sceneFile = which('Dragon.blend');
 
 % Is there a way to make this be a camera ob
 % Camera set to be 50 meters from an object distance
 % This could be an array of cameras.
 cameras = rtbCamerasInit('type',{'lens'},...
     'mode',{'radiance'},...
-    'distance',25);
+    'distance',25,...
+    'pixelSamples',512);
 nCameras = length(cameras);
 
 % Set up the work space
@@ -105,28 +108,39 @@ mfScene = mexximpCleanImport(sceneFile,...
 %% Initiate some positions 
 clear objects
 
-% Not sure how I set the camera to look at the middle of the bounding box of the
-% object.
+% Find the current bounding box of the object, which is set below.  The midPoint
+% is not yet used.
+[box3D , midPoint] = mexximpSceneBox(mfScene);
+
 objects(2).prefix   = '';    % Note that spaces or : are not allowed
-objects(2).position = [0 0 0];
+objects(2).position = [0 50 50];
 objects(2).orientation = 30;
 % [xmin xmax; ymin ymax; zmin zmax],
-[box3D , midPoint] = mexximpSceneBox(mfScene);
 objects(2).bndbox = mat2str(box3D);
 % objects(2) = objects(3);
 % objects(2).position = [-5 -5 0];
 objects(1) = objects(2);
-objects(1).position = [0 0 10];
+objects(1).orientation = 60;
+
+% Assemble the objects into a cell array of object arrangements
 objectArrangements = cell(length(objects),1);
 for ii=1:length(objects)
     objectArrangements{ii} = objects(ii);
 end
 
 % For each fixed configuration of the objects, we render a series of images for
-% different camera properties. For example, this function sets particularly the position,
-% lookAt and film distance variables.  Other slots are copied from the camera
-% object itself.  The placedCameras combine the different object arrangements
-% and cameras. The output is placedCameras{nCameras}(nArrangements).
+% different camera properties. This function sets the camera position, lookAt
+% and film distance variables for each combination of camera and object
+% arrangements. Other slots in placedCameras are copied from the cameras object.
+%
+% I am confused about what camera.position means.  From following the code, it
+% might mean the position of the object that camera is looking at.
+%
+% Also, the camera has a position and also a height.  The position is 3D and the
+% height is one number that in this cases matches the 3rd dimension of the
+% position. 
+%
+% The dimensions of this variable are placedCameras{nCameras}(nArrangements).
 placedCameras = rtbCamerasPlace(cameras,objectArrangements);
 
 %% Make values used for the Conditions file.
@@ -206,10 +220,14 @@ fprintf('Jobs initiated\n');
 
 %% Download, but check when ready
 
+% To get rid of the Warning and to speed things up, we should follow the
+% Installation instructions on this page.
+% https://cloud.google.com/storage/docs/gsutil/addlhelp/CRC32CandInstallingcrcmod
+%
 radianceDataFiles = [];
 while isempty(radianceDataFiles)
     radianceDataFiles = rtbCloudDownload(hints);
-    pause(20);
+    pause(30);
 end
 
 % We aren't saving the radianceDataFiles for all the conditions.
@@ -233,7 +251,7 @@ fov = 45;
 meanIlluminance = 10;  % Lux
 %
 
-for i=1:1 %slength(radianceDataFiles)
+for i=1:length(radianceDataFiles)
     % chdir(fullfile(nnGenRootPath,'local'));
     % save('radianceDataFiles','radianceDataFiles');
     

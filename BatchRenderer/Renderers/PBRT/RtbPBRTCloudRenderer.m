@@ -1,5 +1,8 @@
 classdef RtbPBRTCloudRenderer < RtbRenderer
     %% Implementation for rendering with PBRT
+    % This could use a few more comments.
+    %
+    % HB Scien Stanford 2017
     
     properties
         % RenderToolbox4 options struct, see rtbDefaultHints()
@@ -40,6 +43,8 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
     
     methods
         function obj = RtbPBRTCloudRenderer(hints)
+            % Some of these should be parameters
+            
             obj.hints = rtbDefaultHints(hints);
             obj.pbrt = getpref('PBRT');
             obj.tokenPath = hints.tokenPath;
