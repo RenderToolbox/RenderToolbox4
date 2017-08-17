@@ -41,7 +41,7 @@ if ~isempty(result)
     disp(result);
     C = textscan(result,'%s %s %s %s');
     for ii=1:length(C{1})
-        if strcmp(C{1}{ii},namespace) && ~isequal(str2double(C{3}{ii}),1)
+        if ~isequal(str2double(C{3}{ii}),1)
             fprintf('Job %d is not complete\n',ii);
             return;
         end
