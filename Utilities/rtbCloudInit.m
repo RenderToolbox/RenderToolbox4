@@ -34,8 +34,11 @@ end
 namespace = hints.batchRenderStrategy.renderer.kubectlNamespace;
 
 % gs = gcloud('bucket',yourBucket);
-gs   = gcloud;
-kube = kubernetes(namespace);
+% gs   = gcloud;
+% kube = kubernetes(namespace);
+
+gs = [];
+kube = [];
 
 if ~strcmpi(hints.batchRenderStrategy.renderer.provider,'google')
     % Some day, alibaba
