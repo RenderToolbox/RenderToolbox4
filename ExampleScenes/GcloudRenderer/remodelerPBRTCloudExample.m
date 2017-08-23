@@ -49,23 +49,9 @@ fog = 0;
 diffraction         = rtbGetNamedValue(names,conditionValues,'diffraction','true');
 chromaticAberration = rtbGetNamedValue(names,conditionValues,'chromaticAberration','false');
 
-%{
-scale = MPbrtElement('Scale');
-scale.identifier = 'Scale';
-scale.valueType='raw';
-scale.value = [-1 1 1];
-nativeScene.overall.prepend(scale);
-%}
 
 light = nativeScene.world.find('LightSource','name','1_SunLight');
 light.setParameter('L','spectrum','resources/D65.spd');
-
-environmentLight = MPbrtElement('LightSource','type','infinite');
-environmentLight.setParameter('nsamples','integer',32);
-environmentLight.setParameter('mapname','string','resources/sky_lightblueFixed_ud.exr');
-environmentLight.setParameter('scale','color',1000*[1 1 1]);
-
-nativeScene.world.append(environmentLight);
 
 % Depending on the camera type we may need to set different parameters.  If a
 % lens type, then uses the default.

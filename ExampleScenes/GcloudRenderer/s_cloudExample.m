@@ -21,11 +21,8 @@
 % Initialize ISET related variables
 ieInit;
 
-% Sets up related to the car renderings and local directory tree
-% Maybe should be called nnDirectories
-nnConstants;
-
-tokenPath = '/home/wandell/gcloud/primalsurfer-token.json'; % Path to a storage admin access key 
+% tokenPath = '/home/wandell/gcloud/primalsurfer-token.json'; % Path to a storage admin access key 
+tokenPath = fullfile('/','home','hblasins','docker','StorageAdmin.json');
 gcloud = true;
 
 % Different labs might want to use the GCP in different zones.
@@ -50,25 +47,27 @@ fprintf('Initializing gcloud');
 [gs,kube] = rtbCloudInit(hints);
 
 %% Delete radiance data files from google cloud and local
+%{
 if gcloud
     % Build the directories from the hints
-    remoteRadianceFiles = gs.ls('cloud-example/renderings/PBRTCloud');
+    remoteRadianceFiles = gs.ls(fullfile(hints.recipeName,'renderings','PBRTCloud'));
     for ii=1:length(remoteRadianceFiles)
         gs.rm(remoteRadianceFiles{ii});
     end
 end
-delete('/scratch/wandell/render_toolbox/cloud-example/renderings/PBRTCloud/*radiance*');
-
+delete(fullfile(rtbWorkingFolder('hints',hints,'folderName','renderings','rendererSpecific',true),'*radiance*'));
+%}
 %% Full path to the object we are going to render
-sceneFile = which('Dragon.blend');
+sceneFile = fullfile(rtbRoot,'ExampleScenes','Flythrough','MilleniumFalcon','millenium-falcon.obj');
 
 % Is there a way to make this be a camera ob
 % Camera set to be 50 meters from an object distance
 % This could be an array of cameras.
-cameras = rtbCamerasInit('type',{'lens'},...
+cameras = rtbCamerasInit('type',{'pinhole'},...
     'mode',{'radiance'},...
-    'distance',25,...
-    'pixelSamples',512);
+    'PTR',{[0 -40 0]},...
+    'distance',5,...
+    'pixelSamples',32);
 nCameras = length(cameras);
 
 % Set up the work space
@@ -78,7 +77,7 @@ resourceFolder = rtbWorkingFolder('folderName','resources',...
 
 % Copy all the lens files for all the cameras into the work space
 for ii=1:length(cameras)
-    lensFile = fullfile(lensDir,strcat(cameras(ii).lens,'.dat'));
+    lensFile = fullfile(rtbRoot,'RenderData','Lenses',strcat(cameras(ii).lens,'.dat'));
     copyfile(lensFile,resourceFolder);
 end
 
@@ -106,21 +105,14 @@ mfScene = mexximpCleanImport(sceneFile,...
     'workingFolder',resourceFolder);
 
 %% Initiate some positions 
-clear objects
 
 % Find the current bounding box of the object, which is set below.  The midPoint
 % is not yet used.
-[box3D , midPoint] = mexximpSceneBox(mfScene);
+objects(1).prefix   = ''; 
+objects(1).position = [0 0 0];
+objects(1).orientation = 30;
+objects(1).bndbox = mexximpSceneBox(mfScene);
 
-objects(2).prefix   = '';    % Note that spaces or : are not allowed
-objects(2).position = [0 50 50];
-objects(2).orientation = 30;
-% [xmin xmax; ymin ymax; zmin zmax],
-objects(2).bndbox = mat2str(box3D);
-% objects(2) = objects(3);
-% objects(2).position = [-5 -5 0];
-objects(1) = objects(2);
-objects(1).orientation = 60;
 
 % Assemble the objects into a cell array of object arrangements
 objectArrangements = cell(length(objects),1);
@@ -155,13 +147,13 @@ placedCameras = rtbCamerasPlace(cameras,objectArrangements);
 %  https://github.com/RenderToolbox/RenderToolbox4/wiki/Conditions-File-
 % Some of these are standard.  Some are selected here.
 conditionsFile = fullfile(resourceFolder,'Conditions.txt');
-names = cat(1,'imageName',fieldnames(placedCameras{1}),'objPosFile');
-values = cell(1,length(names));
+names = cat(1,'imageName','objPosFile',fieldnames(placedCameras{1}));
 
-% Think about this
-cntr = 1;
 sceneId=1;  % Why not
 for m=1:length(objectArrangements)
+    
+    values = cell(1,length(names));
+    cntr = 1;
     
     % Create the name for the JSON file and save it
     objectArrangementFile = fullfile(resourceFolder,sprintf('Arrangement_%i.json',m)); 
@@ -169,10 +161,7 @@ for m=1:length(objectArrangements)
     
     currentCameras = placedCameras{m};  % An array of cameras
     
-    % At this point, we now set up the parameters for the remodeler.  The
-    % remodeler name is in 
-    %  hints.batchRenderStrategy.remodelPerConditionAfterFunction
-    %
+    
     for c=1:length(placedCameras{m});
         
         % The scene output file name.  Mode determines the type, from radiance,
@@ -180,24 +169,20 @@ for m=1:length(objectArrangements)
         fName = sprintf('%03i_%s',sceneId,currentCameras(c).mode);
         
         values(cntr,1) = {fName};
-        for i=2:(length(names)-1)
+        values(cntr,2) = {objectArrangementFile};
+        
+        for i=3:(length(names))
             values(cntr,i) = {currentCameras(c).(names{i})};
         end
-        values(cntr,length(names)) = {objectArrangementFile};
-        
-        if strcmp(currentCameras(c).mode,'radiance')
-            sceneId = sceneId+1;
-        end
+                
         cntr = cntr + 1;
+        sceneId = sceneId + 1;
     end
     
 end
 
 %%
 rtbWriteConditionsFile(conditionsFile,names,values);
-% strategy = RtbAssimpStrategy(hints);
-% [names, values] = strategy.loadConditions(conditionsFile);
-% edit(conditionsFile);
 
 %% Generate files and render
 % We parallelize scene generation, not the rendering because
@@ -209,14 +194,10 @@ nativeSceneFiles = rtbMakeSceneFiles(mfScene, 'hints', hints,...
 
 %% Maybe Cloud init here
 
-fprintf('Uploading data to gcloud\n');
 rtbCloudUpload(hints, nativeSceneFiles);
-fprintf('Data uploaded\n');
 
 %%
-fprintf('Batch rendering %d files\n',length(nativeSceneFiles));
 rtbBatchRender(nativeSceneFiles, 'hints', hints);
-fprintf('Jobs initiated\n');
 
 %% Download, but check when ready
 
@@ -246,73 +227,27 @@ end
 % Figure out a plan to make the cameras and arrangement be clear either from the
 % radianceDataFiles or the list or something.
 
-fprintf('Creating OI\n');
-fov = 45;
-meanIlluminance = 10;  % Lux
-%
-
 for i=1:length(radianceDataFiles)
-    % chdir(fullfile(nnGenRootPath,'local'));
-    % save('radianceDataFiles','radianceDataFiles');
     
     radianceData = load(radianceDataFiles{i});
-    thisCamera = placedCameras{i}(1);
     
     % Create an oi and set the parameters
-    clear oiParams;
-    oiParams.optics_name = thisCamera.type ;
-    oiParams.optics_model = 'diffractionlimited';
-    oiParams.fov = fov;
-    switch ieParamFormat(thisCamera.type)
-        case 'pinhole'
-            oiParams.optics_fnumber = 999;
-        otherwise
-            oiParams.optics_fnumber = thisCamera.fNumber;
-    end
-    oiParams.optics_focalLength = thisCamera.filmDistance*1e-3; % In meters
+    oiParams.lensType = values{i,strcmp(names,'lens')};
+    oiParams.filmDistance = values{i,strcmp(names,'filmDistance')};
+    oiParams.filmDiag = values{i,strcmp(names,'filmDiagonal')};
+        
     [~, label] = fileparts(radianceDataFiles{i});
     oiParams.name = label;
     
-    oi = buildOi(radianceData.multispectralImage, [], oiParams);
-    
-    oi = oiAdjustIlluminance(oi,meanIlluminance);
+    oi = buildOi(radianceData.multispectralImage,[],oiParams);
+    oi = oiAdjustIlluminance(oi,100);
     
     ieAddObject(oi);
     oiWindow;
     
 end
 
-%% Save out the oi if you like
-if 0
-    chdir(fullfile(nnGenRootPath,'local','tmp'));
-    oiNames = vcGetObjectNames('oi');
-    for ii=1:length(oiNames)
-        thisOI = ieGetObject('oi',ii);
-        save([oiNames{ii},'.mat'],'thisOI');
-    end
-end
 
-%%
-if 0
-    %% Experiment with different camera renderings
-    oi   = ieGetObject('oi');
-    fov  = oiGet(oi,'fov');
-    oi   = oiAdjustIlluminance(oi,10);   % The illuminance values are very small
-    
-    % Big sensor
-    sensor = sensorCreate;
-    sensor = sensorSet(sensor,'fov',fov);
-    
-    sensor = sensorCompute(sensor,oi);
-    ieAddObject(sensor); sensorWindow;
-    
-    ip = ipCreate;
-    ip = ipCompute(ip,sensor);
-    ieAddObject(ip); ipWindow;
-    
-end
-
-%%
 
 
 
