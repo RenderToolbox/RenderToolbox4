@@ -1,49 +1,52 @@
 %% Render the Crytek version of the Sponza Atrium using RTB4
-
+%
 % This script renders the Sponza Atrium (Crytek version) at three different
 % camera positions using a pinhole camera.
-
+%
 % Once rendered, it saves each multispectral image as an ISET optical image
 % and uses ISET to display the oi's.
-
+%
 % The Crytek model was imported into Blender, an Area Light mesh was added,
 % and then exported as an OBJ file. The scene was organized in meter units
 % in Blender, and then scaled by 10^3 during OBJ export so the units are
 % now in millimeters.
-
+%
 % This scene could definitely be improved with some specular textures. I
 % believe there might be a model with specularity somewhere online, in the
 % future let's download that version and load it up into our pipeline.
-
+%
+% This example runs with PBRT, but proabably not with Mitsuba.
+%
 % Approximate times to render:
 %
 % Size = [144x88]
 % Pinhole, 1024 pixel samples
 % Total time = 170 seconds
-
+%
 % Size = [400x266]
 % Pinhole, 1024 pixel samples
 % Total time = 870 seconds
-
+%
 % Size = [600x400]
 % Pinhole, 4096 pixel samples
 % Total time = 6963 seconds ~ 2 hours
 
-% TL
+% Trisha Lian
+% 
+% 08/12/17  dhb  Made isetbio stuff conditional on isetbio being installed.
+%                Write out a png of the image in any case.
+%                Some cosmetic changes.
 
 %% Initialize
-
-% tbUse('isetbio')
-
+%
+% If you want to use isetbio and have TbTb installed, but not isetbio, type:
+%    tbUse('isetbio','reset','as-is');
 clear; close all;
-ieInit;
-
 
 %% Choose batch renderer options.
 hints.imageWidth = 144;
 hints.imageHeight = 88;
 hints.recipeName = 'CrytekSponza';
-
 hints.renderer = 'PBRT';
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
@@ -150,40 +153,56 @@ nativeSceneFiles = rtbMakeSceneFiles(scene,'hints', hints,'conditionsFile',condi
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
     'hints', hints);
 
-%% View as an OI
 
+%% Images for display
+%
+% The different rendered images come with different scales,
+% so a montage doesn't work very well.  This just produces
+% an output image for the 4th one, which is the nice rendered
+% chess set.
+toneMapFactor = 10;
+isScale = true;
+[SRGBMontage, XYZMontage] = ...
+    rtbMakeMontage(radianceDataFiles, ...
+    'toneMapFactor', toneMapFactor, ...
+    'isScale', isScale, ...
+    'hints', hints);
+rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.renderer));
+
+%% Display as an isetbio optical image, if isetbio is available
+%
 % TODO: use cameraInfo struct to build correct optics for optical image,
 % below.
-
-renderingsFolder = rtbWorkingFolder( ...
-    'folderName', 'renderings',...
-    'hints', hints);
-
-% Load in rendered data
-for i = 1:nConditions
+if (exist('ieInit','file'))
+    ieInit;
     
-    radianceData = load(radianceDataFiles{i});
-    photons = radianceData.multispectralImage;
+    renderingsFolder = rtbWorkingFolder( ...
+        'folderName', 'renderings',...
+        'hints', hints);
     
-    oiName = sprintf('%s_%i',hints.recipeName,i);
-    
-    % Create an oi
-    oi = oiCreate;
-    oi = initDefaultSpectrum(oi);
-    oi = oiSet(oi, 'photons', single(photons));
-    oi = oiSet(oi,'name',oiName);
-    
-    vcAddAndSelectObject(oi);
-    
-    % Save oi
-    % TODO: Save rendering parameters in oi?
-    save(fullfile(renderingsFolder,sprintf('oi%i',i)),'oi');
-    
-    % Save RGB images
-    rgb = oiGet(oi,'rgb');
-    imwrite(rgb,sprintf('%s.png',oiName))
-    
+    % Load in rendered data
+    for i = 1:nConditions
+        
+        radianceData = load(radianceDataFiles{i});
+        photons = radianceData.multispectralImage;
+        
+        oiName = sprintf('%s_%i',hints.recipeName,i);
+        
+        % Create an oi
+        oi = oiCreate;
+        oi = initDefaultSpectrum(oi);
+        oi = oiSet(oi, 'photons', single(photons));
+        oi = oiSet(oi,'name',oiName);
+        vcAddAndSelectObject(oi);
+        
+        % Save oi
+        % TODO: Save rendering parameters in oi?
+        save(fullfile(renderingsFolder,sprintf('oi%i',i)),'oi');
+        
+        % Save RGB images
+        rgb = oiGet(oi,'rgb');
+        imwrite(rgb,sprintf('%s.png',oiName))
+        
+    end
+    oiWindow;
 end
-
-oiWindow;
-
