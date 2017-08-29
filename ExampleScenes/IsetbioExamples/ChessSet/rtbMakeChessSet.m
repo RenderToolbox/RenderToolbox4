@@ -51,6 +51,9 @@
 %    tbUse('isetbio','reset','as-is');
 clear; close all;
 
+ieDockerConfig;
+ieDockerTest;
+
 %% Choose batch renderer options.
 hints.imageWidth = 200;
 hints.imageHeight = 200;
@@ -140,6 +143,7 @@ rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.re
 %% Display as an isetbio optical image, if isetbio is available
 if (exist('ieInit','file'))
     
+    ieSessionSet('initclear',false);
     ieInit;
     renderingsFolder = rtbWorkingFolder( ...
         'folderName', 'renderings',...

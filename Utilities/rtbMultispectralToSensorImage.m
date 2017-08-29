@@ -11,10 +11,11 @@ function sensorImage = rtbMultispectralToSensorImage(multispectralData, imageS, 
 % Power per Unit Wavelength.
 %
 % matchingFunction may have one of two forms.  It may be a matrix with
-% size [nChannels, nMatchingSpecralSamples].  When matchingFunction
+% size [nChannels, nMatchingSpectralSamples].  When matchingFunction
 % is a matrix, matchingS must be provided as a description of the
-% matching function spectral sampling, in the form [start delta
-% nMatchingSpecralSamples].
+% matching function spectral sampling, in the form 
+%
+%   [start delta  nMatchingSpectralSamples]
 %
 % matchingFunction may also be the name of a Psychtoolbox colorimetric
 % data file that contains a matrix of matching function data and an "S"
