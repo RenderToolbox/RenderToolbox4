@@ -73,7 +73,7 @@ if isempty(outPath)
         'hints', hints);
 end
 
-SRGBMontage = [];
+% SRGBMontage = [];
 XYZMontage = [];
 
 %% Pick the montage dimensions.
