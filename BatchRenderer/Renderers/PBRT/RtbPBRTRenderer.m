@@ -59,10 +59,8 @@ classdef RtbPBRTRenderer < RtbRenderer
                     'workingFolder', obj.workingFolder, ...
                     'hints', obj.hints);
             else
-                pbrtPath = fileparts(fullfile(obj.pbrt.app, obj.pbrt.executable));
-                renderCommand = sprintf('%s="%s" "%s%s"%s', ...
-                    obj.pbrt.libraryPathName, ...
-                    obj.pbrt.libraryPath, ...
+                pbrtPath = fileparts(obj.pbrt.executable);
+                renderCommand = sprintf('%s%s%s', ...
                     pbrtPath, ...
                     filesep(), ...
                     renderCommand);
@@ -74,7 +72,16 @@ classdef RtbPBRTRenderer < RtbRenderer
             end
             
             sampling = obj.pbrt.S;
-            image = rtbReadDAT(outFile, 'maxPlanes', sampling(3));
+
+            if(exist(outFile,'file') == 0)
+                % Because of the cameras renderer in PBRT, there's a chance
+                % that the output file will not exist. In this case, we
+                % won't read anything. 
+                warning('Output .dat file does not exist. Radiance image set to zero.')
+                image = zeros(obj.hints.imageHeight, obj.hints.imageWidth, sampling(3));
+            else
+                image = rtbReadDAT(outFile, 'maxPlanes', sampling(3));
+            end
         end
         
         function [radianceImage, scaleFactor] = toRadiance(obj, image, sampling, nativeScene)

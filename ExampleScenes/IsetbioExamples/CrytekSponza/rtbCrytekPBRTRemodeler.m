@@ -1,5 +1,6 @@
 function nativeScene = rtbCrytekPBRTRemodeler(parentScene,nativeScene,mappings,names,conditionValues,conditionNumber,cameraInfo)
-
+%%rtbCrytekPBRTRemodeler
+%
 % The function is called by the batch renderer when needed.  Various
 % parameters are passed in, like the mexximp scene, the native scene, and
 % names and values read from the conditions file.

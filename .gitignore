@@ -4,7 +4,10 @@
 *.mexw64
 /.DS_Store
 .DS_Store
-*.m~
+*~
 *.log
 dna.txt
-
+RenderToolbox4.wiki/*
+mexximp/*
+mPbrt/*
+testResults.tap

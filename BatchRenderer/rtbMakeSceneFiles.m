@@ -117,6 +117,7 @@ if hints.isParallel
         else
             conditionValues = values(cc,:);
         end
+        fprintf('Making scene for condition %i.\n', cc);
         
         % make a the scene file for this condition
         nativeScenes{cc} = makeSceneForCondition(strategy, ...
