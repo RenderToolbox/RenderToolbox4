@@ -4,6 +4,12 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
     %
     % HB Scien Stanford 2017
     
+    properties (Access = private)
+        currentDataFileName = [];
+        dataFileName = 'data';
+        dataFileCounter = 1;
+    end
+    
     properties
         % RenderToolbox4 options struct, see rtbDefaultHints()
         hints = [];
@@ -17,7 +23,6 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
         
         % Cloud folder
         cloudFolder;
-        dataFileName = 'data.zip';
         
         % Local folder in the docker image
         localFolder = 'WorkDir';
@@ -63,6 +68,12 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
             catch err
                 info = err;
             end
+        end
+        
+        function name = getDataFileName(obj)
+            name = sprintf('%s-%i.zip',obj.dataFileName,obj.dataFileCounter);
+            obj.currentDataFileName = name;
+            obj.dataFileCounter = obj.dataFileCounter + 1;
         end
         
         function [status, result, image, sampling, imageName] = render(obj, nativeScene)
@@ -137,7 +148,7 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
                 processedToken,...
                 obj.cloudFolder,...
                 workFolder,...
-                obj.dataFileName,...
+                obj.currentDataFileName,...
                 inFile,...
                 outFile);
             

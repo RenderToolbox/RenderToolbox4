@@ -10,7 +10,7 @@ if strcmp(hints.renderer,'PBRTCloud') == 0
     return;
 end
 
-fileName = hints.batchRenderStrategy.renderer.dataFileName;
+fileName = hints.batchRenderStrategy.renderer.getDataFileName;
 allFiles = cell2mat(strcat(nativeSceneFiles,{' '}));
 
 allFilesAndFolders = sprintf('%s ./resources ./scenes',allFiles);
