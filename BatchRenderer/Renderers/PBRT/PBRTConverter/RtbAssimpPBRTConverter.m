@@ -35,6 +35,7 @@ classdef RtbAssimpPBRTConverter < RtbConverter
         
         % whether to overwrite/update existing mesh files
         rewriteMeshData;
+        
     end
     
     methods (Static)
@@ -64,6 +65,7 @@ classdef RtbAssimpPBRTConverter < RtbConverter
             obj.outputFolder = rtbWorkingFolder('hints', obj.hints);
             obj.meshSubfolder = 'scenes/PBRT/pbrt-geometry';
             obj.rewriteMeshData = true;
+            obj.writeMeshFileOnce = false;
         end
         
         function defaultMappings = loadDefaultMappings(obj, varargin)
@@ -136,6 +138,7 @@ classdef RtbAssimpPBRTConverter < RtbConverter
         end
         
         function nativeScene = startConversion(obj, parentScene, mappings, names, conditionValues, conditionNumber)
+            
             nativeScene = mPbrtImportMexximp(parentScene, ...
                 'materialDefault', obj.material, ...
                 'materialDiffuseParameter', obj.diffuseParameter, ...
