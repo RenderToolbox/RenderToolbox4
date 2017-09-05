@@ -55,14 +55,14 @@ sudo apt-get install openexr
 RenderToolbox uses [Docker](https://github.com/RenderToolbox/RenderToolbox4/wiki/Docker) to distribute pre-built renderers and other tools.  Here's where you can [Get Docker](https://www.docker.com/products/overview) for Linux, OS X, or Windows.
 
 ## Toolboxes
-The best way to get RenderToolbox and other required toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
+Once you've installed the above dependencies, the best way to get RenderToolbox and other required toolboxes is to use the [ToolboxToolbox](https://github.com/ToolboxHub/ToolboxToolbox).
 
 If you have the ToolboxToolbox, then getting RenderToolbox becomes a one-liner:
 ```
 tbUse('RenderToolbox4');
 ```
 
-This will download necessary Matlab toolboxes and Docker images for RenderToolbox.  The first time through, this may take a while.
+This will download necessary Matlab toolboxes and Docker images for RenderToolbox, and set up your Matlab path for use with RenderToolbox. The first time through, this may take a while.
 
 ## Preferences
 The ToolboxToolbox will also create a configuration script which you can edit with local preferences.  This script will be named `RenderToolbox4.m`.  The default folder would be in your Matlab [userpath](https://www.mathworks.com/help/matlab/ref/userpath.html).  For example: 
