@@ -97,6 +97,7 @@ for f=1:length(fNames)
     save(matFileName{f}, 'multispectralImage', 'S', 'radiometricScaleFactor', ...
     'hints', 'scene', 'versionInfo', 'commandResult');
     
+    
 end
 
 

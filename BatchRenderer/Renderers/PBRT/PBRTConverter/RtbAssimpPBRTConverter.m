@@ -65,7 +65,6 @@ classdef RtbAssimpPBRTConverter < RtbConverter
             obj.outputFolder = rtbWorkingFolder('hints', obj.hints);
             obj.meshSubfolder = 'scenes/PBRT/pbrt-geometry';
             obj.rewriteMeshData = true;
-            obj.writeMeshFileOnce = false;
         end
         
         function defaultMappings = loadDefaultMappings(obj, varargin)
