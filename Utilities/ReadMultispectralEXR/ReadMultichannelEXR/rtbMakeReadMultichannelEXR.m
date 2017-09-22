@@ -28,11 +28,18 @@ output = '-output ReadMultichannelEXR';
 
 %% Choose library files to include and link with.
 INC = '-I/usr/local/include/OpenEXR -I/usr/include/OpenEXR -I/opt/local/include/OpenEXR';
-LINC = '-L/usr/local/lib -L/usr/lib -L/opt/local/lib';
+
+if ismac
+    matlabLinkDir = fullfile(matlabroot,'bin','maci64');
+elseif isunix
+    matlabLinkDir = fullfile(matlabroot,'bin','glnxa64');
+end
+
+LINC = sprintf('-L%s -L/usr/local/lib -L/usr/lib -L/opt/local/lib',matlabLinkDir);
 LIBS = '-lIlmImf -lz -lImath -lHalf -lIex -lIlmThread -lpthread';
 
 %% Build the function.
-mexCmd = sprintf('mex %s %s %s %s %s', INC, LINC, LIBS, output, source);
+mexCmd = sprintf('mex -v %s %s %s %s %s', INC, LINC, LIBS, output, source);
 fprintf('%s\n', mexCmd);
 eval(mexCmd);
 
