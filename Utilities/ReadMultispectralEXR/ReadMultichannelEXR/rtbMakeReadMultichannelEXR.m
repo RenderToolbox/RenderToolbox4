@@ -48,5 +48,4 @@ testFile = 'TestSphereMitsuba.exr';
 [sliceInfo, data] = rtbReadMultichannelEXR(testFile);
 
 fprintf('If you see a figure with several images, rtbReadMultichannelEXR() is working.\n');
-figure();
 rtbPlotSlices(sliceInfo, data);

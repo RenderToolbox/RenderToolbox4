@@ -13,7 +13,6 @@ p = inputParser;
 p.addParameter('imageWidth',640,@isnumeric);
 p.addParameter('imageHeight',480,@isnumeric);
 p.addParameter('recipeName',tempname,@ischar);
-p.addParameter('tokenPath','',@(x)(exist(x,'file')));
 p.addParameter('remodelerAfter', @MexximpRemodellerMultipleObj,@(x)(isequal(class(x),'function_handle')));
 p.addParameter('remodelerConvertAfter', @PBRTRemodeller,@(x)(isequal(class(x),'function_handle')));
 
@@ -43,7 +42,6 @@ hints.copyResources = 1;                   % Is this a logical?? (BW)
 hints.isParallel = false;
 
 % Change the docker container
-hints.tokenPath = p.Results.tokenPath; 
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = p.Results.remodelerAfter;
