@@ -20,9 +20,6 @@
 
 % Initialize ISET related variables
 ieInit;
-
-% tokenPath = '/home/wandell/gcloud/primalsurfer-token.json'; % Path to a storage admin access key 
-tokenPath = fullfile('/','home','hblasins','docker','StorageAdmin.json');
 gcloud = true;
 
 % Different labs might want to use the GCP in different zones.
@@ -36,7 +33,6 @@ gcloud = true;
 % Small image size for debugging.
 hints = rtbHintsInit('imageWidth',640,'imageHeight',480,...
     'recipeName','cloud-example',...
-    'tokenPath',tokenPath,...
     'gcloud',gcloud,...
     'remodelerConvertAfter',@remodelerPBRTCloudExample,...
     'remodelerAfter', @remodelerCloudExample);
@@ -207,8 +203,8 @@ rtbBatchRender(nativeSceneFiles, 'hints', hints);
 %
 radianceDataFiles = [];
 while isempty(radianceDataFiles)
-    radianceDataFiles = rtbCloudDownload(hints);
     pause(30);
+    radianceDataFiles = rtbCloudDownload(hints);
 end
 
 % We aren't saving the radianceDataFiles for all the conditions.
@@ -239,7 +235,7 @@ for i=1:length(radianceDataFiles)
     [~, label] = fileparts(radianceDataFiles{i});
     oiParams.name = label;
     
-    oi = buildOi(radianceData.multispectralImage,[],oiParams);
+    oi = BuildOI(radianceData.multispectralImage,[],oiParams);
     oi = oiAdjustIlluminance(oi,100);
     
     ieAddObject(oi);

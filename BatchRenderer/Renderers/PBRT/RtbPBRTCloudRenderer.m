@@ -17,10 +17,6 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
         % pbrt info struct
         pbrt;
         
-        % Google Clound Storage access token
-        tokenPath;
-        token;
-        
         % Cloud folder
         cloudFolder;
         
@@ -52,8 +48,6 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
             
             obj.hints = rtbDefaultHints(hints);
             obj.pbrt = getpref('PBRT');
-            obj.tokenPath = hints.tokenPath;
-            obj.token = loadjson(hints.tokenPath);
             obj.outputFolder = rtbWorkingFolder( ...
                 'folderName', 'renderings', ...
                 'rendererSpecific', true, ...
@@ -87,17 +81,6 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
             outFile = fullfile(workFolder,'renderings','PBRTCloud', [imageName '.dat']);
             inFile = fullfile(workFolder,[imageName '.pbrt']);
             
-            
-            % Bullshit handling of different new-line characters across
-            % systems. VERY HACKY
-            key = obj.token.private_key;
-            key = regexprep(key,'\n','\\n');
-            
-            token = obj.token;
-            token.private_key = key;
-            
-            processedToken = savejson('',token);
-            processedToken = regexprep(processedToken,'\\\\','\');
             
             %{
             command = sprintf('docker run -e http_proxy=http://10.102.1.10:8000 -e https_proxy=https://10.102.1.10:8000 --rm -ti hblasins/syncandrender ./syncAndRender.sh ''%s'' "%s" "%s" "%s" "%s" "%s"',...
@@ -140,12 +123,11 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
 
             
             % Before we can issue a new one
-            kubeCmd = sprintf('kubectl run %s --image=%s --namespace=%s --restart=OnFailure --limits cpu=%im  -- ./syncAndRender.sh ''%s'' "%s" "%s" "%s" "%s" "%s"',...
+            kubeCmd = sprintf('kubectl run %s --image=%s --namespace=%s --restart=OnFailure --limits cpu=%im  -- ./syncAndRender.sh  "%s" "%s" "%s" "%s" "%s"',...
                 jobName,...
                 obj.pbrt.dockerImage,...
                 obj.kubectlNamespace,...
                 (nCores-0.9)*1000,...
-                processedToken,...
                 obj.cloudFolder,...
                 workFolder,...
                 obj.currentDataFileName,...

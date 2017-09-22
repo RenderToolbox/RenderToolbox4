@@ -61,7 +61,7 @@ if isempty(result)
     % we need to create a new cluster
     instanceType = hints.batchRenderStrategy.renderer.instanceType;
     
-    cmd = sprintf('gcloud container clusters create %s --num-nodes=1 --max-nodes-per-pool=100 --machine-type=%s --zone=%s',...
+    cmd = sprintf('gcloud container clusters create %s --num-nodes=1 --max-nodes-per-pool=100 --machine-type=%s --zone=%s --scopes default,storage-rw',...
         clusterName, instanceType, timeZone);
     
     if hints.batchRenderStrategy.renderer.preemptible
