@@ -25,7 +25,7 @@ for a=1:nArrangements
         cameras{a}(i).lookAt(3) = cameras{a}(i).height;
         
         % Set the camera film distance to be in focus for the object?
-        lensFile = fullfile(lensDir,sprintf('%s.dat',cameras{a}(i).lens));
+        lensFile = fullfile(rtbRoot,'RenderData','Lenses',sprintf('%s.dat',cameras{a}(i).lens));
         if strcmp(cameras{a}(i).type,'pinhole')
             cameras{a}(i).filmDistance = effectiveFocalLength(lensFile);
         else
