@@ -20,7 +20,6 @@
 
 % Initialize ISET related variables
 ieInit;
-gcloud = true;
 
 % Different labs might want to use the GCP in different zones.
 % The defaults are set for the Wandell lab resources.  But to change the zone
@@ -33,7 +32,7 @@ gcloud = true;
 % Small image size for debugging.
 hints = rtbHintsInit('imageWidth',640,'imageHeight',480,...
     'recipeName','cloud-example',...
-    'gcloud',gcloud,...
+    'gcloud',true,...
     'remodelerConvertAfter',@remodelerPBRTCloudExample,...
     'remodelerAfter', @remodelerCloudExample);
 
