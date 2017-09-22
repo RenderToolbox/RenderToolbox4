@@ -21,8 +21,6 @@
 % Initialize ISET related variables
 ieInit;
 
-% tokenPath = '/home/wandell/gcloud/primalsurfer-token.json'; % Path to a storage admin access key 
-tokenPath = fullfile('/','home','hblasins','docker','StorageAdmin.json');
 gcloud = true;
 
 % Different labs might want to use the GCP in different zones.
@@ -36,7 +34,6 @@ gcloud = true;
 % Small image size for debugging.
 hints = rtbHintsInit('imageWidth',640,'imageHeight',480,...
     'recipeName','cloud-example',...
-    'tokenPath',tokenPath,...
     'gcloud',gcloud,...
     'remodelerConvertAfter',@remodelerPBRTCloudExample,...
     'remodelerAfter', @remodelerCloudExample);

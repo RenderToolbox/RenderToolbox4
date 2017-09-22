@@ -4,9 +4,6 @@ function [ cameras ] = rtbCamerasPlace( cameras, objects )
 %
 % HB SCIEN Stanford, 2017
 
-%% Maybe we can get rid of this somehow
-global lensDir
-
 %%
 nArrangements = length(objects);
 cameras = repmat({cameras},[1, nArrangements]);
