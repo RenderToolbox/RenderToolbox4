@@ -1,7 +1,7 @@
-function status = ieDockerConfig(varargin)
+function status = rtbDockerConfig(varargin)
 % Configure the Matlab environment and initiate the docker-machine
 %
-%   status = ieDockerConfig(varargin) 
+%   status = rtbDockerConfig(varargin) 
 % 
 % INPUTS: 
 %    'machine' - [Optional, type=char, default='default'] 
@@ -14,7 +14,7 @@ function status = ieDockerConfig(varargin)
 %    status    - boolean where 0=success and >0 denotes failure.
 % 
 % EXAMPLE:
-%    [status] = stDockerConfig('machine', 'default', 'debug', true); 
+%    [status] = rtbDockerConfig('machine', 'default', 'debug', true); 
 % 
 % (C) Stanford VISTA Lab, 2016 
 
