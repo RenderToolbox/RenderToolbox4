@@ -21,7 +21,8 @@ cmd = sprintf('zip -r %s/%s %s -x *.jpg *.png',hints.batchRenderStrategy.rendere
 system(cmd);
 cd(currentPath);
 
-cmd = sprintf('gsutil cp %s/%s %s/',hints.batchRenderStrategy.renderer.workingFolder,fileName,hints.batchRenderStrategy.renderer.cloudFolder);
+cmd = sprintf('gsutil cp %s/%s %s/',hints.batchRenderStrategy.renderer.workingFolder,fileName,...
+    hints.batchRenderStrategy.renderer.cloudFolder);
 system(cmd);
 
 

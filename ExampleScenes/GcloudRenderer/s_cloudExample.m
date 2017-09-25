@@ -157,7 +157,7 @@ for m=1:length(objectArrangements)
     currentCameras = placedCameras{m};  % An array of cameras
     
     
-    for c=1:length(placedCameras{m});
+    for c=1:length(placedCameras{m})
         
         % The scene output file name.  Mode determines the type, from radiance,
         % mesh, depth ...

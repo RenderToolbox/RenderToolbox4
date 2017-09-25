@@ -58,7 +58,8 @@ if p.Results.gcloud
         dockerImage = 'gcr.io/primal-surfer-140120/pbrt-v2-spectral-gcloud';
     end
     hints.batchRenderStrategy.renderer.pbrt.dockerImage = dockerImage;
-    hints.batchRenderStrategy.renderer.cloudFolder = fullfile('gs://primal-surfer-140120.appspot.com',hints.recipeName);
+    hints.batchRenderStrategy.renderer.cloudFolder = fullfile('gs://primal-surfer-140120.appspot.com',...
+        hints.batchRenderStrategy.renderer.kubectlNamespace,hints.recipeName);
     hints.batchRenderStrategy.renderer.zone = p.Results.zone;
 else
     % Local run
