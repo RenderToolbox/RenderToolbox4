@@ -1,21 +1,21 @@
 function [gs, kube] = rtbCloudInit( hints )
 % Sets up the container engine on a google cloud instance via kubernetes
 %
-% We assume that you have google cloud SDK installed on your system and that you
-% have set up the sdk by running
+% We assume that you have google cloud SDK installed on your system and
+% that you have set up the sdk by running
 % 
 %    gcloud init
 %
-% We assume you have set up your account services and credentials as per the
-% NN_camera_generalization wiki page description.  This has been tested on Linux
-% systems (only?) or mainly.
+% We assume you have set up your account services and credentials as per
+% the NN_camera_generalization wiki page description.  This has been tested
+% on Linux systems (only?) or mainly.
 %
 % This routine
 %
 %  * creates a cluster to run the container
 %  * sets up kubectl to manage the rtb4 cluster
-%  * If you don't have the docker image in your project repository, it will copy
-% it there.
+%  * If you don't have the docker image in your project repository, it will
+%    copy it there.
 %  * If the job runs successfully, it cleans up the stored data
 %
 % See also - Functions to upload and download the data

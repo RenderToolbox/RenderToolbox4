@@ -11,4 +11,6 @@ function [dockerExists, status, result] = rtbDockerExists()
 
 %% Can we use Docker?
 [status, result] = system('docker ps');
-dockerExists = 0 == status;
+dockerExists = (0 == status);
+
+end
