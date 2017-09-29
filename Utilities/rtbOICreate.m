@@ -43,7 +43,7 @@ end
 oi = oiCreate;
 oi = initDefaultSpectrum(oi);
 oi = oiSet(oi,'photons',photons);
-oi = oiSet(oi, 'optics focal length', p.Results.focalLength);
+oi = oiSet(oi,'optics focal length', p.Results.focalLength);
 oi = oiSet(oi,'optics fnumber',p.Results.fNumber);
 
 [r,c] = size(photons(:,:,1)); depthMap = ones(r,c);

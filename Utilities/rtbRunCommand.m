@@ -20,27 +20,35 @@ function [status, result, exception] = rtbRunCommand(command, varargin)
 %%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
+%%
 parser = inputParser();
 parser.addRequired('command', @ischar);
 parser.addParameter('hints', rtbDefaultHints(), @isstruct);
 parser.parse(command, varargin{:});
-command = parser.Results.command;
-hints = rtbDefaultHints(parser.Results.hints);
 
-status = [];
-result = '';
+command = parser.Results.command;
+hints   = rtbDefaultHints(parser.Results.hints);
+
+% Default returns.  Empty is good.
+status    = [];
+result    = '';
 exception = [];
 
-fprintf('%s\n', command);
+%%
+fprintf('Docker command\n\t%s\n', command);
 
 if hints.isCaptureCommandResults
+    % Capture the status and results
     try
         [status, result] = system(command);
     catch exception
     end
 else
+    % Not sure why this is showing them live?
     try
         status = system(command);
     catch exception
     end
+end
+
 end
