@@ -25,6 +25,8 @@ cameraTransform = mexximpLookAt(cameraPosition, cameraTarget, cameraUp);
 
 % find the camera node
 cameraNodeSelector = strcmp({scene.rootNode.children.name}, 'Camera');
+
+% Set the camera transform
 scene.rootNode.children(cameraNodeSelector).transformation = cameraTransform;
 
 

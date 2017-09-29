@@ -52,7 +52,7 @@ fprintf(fid, '\n');
 
 %% Write variable values.
 nCols = size(values, 2);
-if nCols ~= nNames;
+if nCols ~= nNames
     warning('Number of variable names %d must match number of variable columns %d', ...
         nNames, nCols);
 end

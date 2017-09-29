@@ -12,6 +12,8 @@ oi = oiSet(oi, 'depthmap', depthMap);
 % need to truncate and scale photon data for some reason?
 oi = oiSet(oi, 'photons', single(photons));
 
+if ~isempty(oiParams)
+
 %% Transfer various lens parameters to optical image.
 if strcmp(oiParams.lensType, 'realisticDiffraction')
     oi = oiSet(oi, 'optics name', oiParams.specFile);

@@ -2,6 +2,7 @@ function [imageData, imageSize, lens] = rtbReadDAT(filename, varargin)
 %% Get multispectral image data out of a .dat file from Stanford.
 %
 % imageData = rtbReadDAT(filename)
+%
 % Reads multi-spectral .dat image data from the fiven filename.  The .dat
 % format is described by Andy Lin on the Stanford Vision and Imaging
 % Science and Technology wiki:

@@ -4,6 +4,7 @@ classdef RtbRenderer < handle
     % renderer-native scene file.  Does not care about the original, basic
     % scene representation.
     %
+    % BH, Generic renderer
     
     methods (Abstract)
         % Invoke the renderer with the native scene.

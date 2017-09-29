@@ -51,23 +51,26 @@
 %    tbUse('isetbio','reset','as-is');
 clear; close all;
 
-ieDockerConfig;
-ieDockerTest;
+% rtbDockerConfig;
+% rtbDockerTest;
 
 %% Choose batch renderer options.
 hints.imageWidth = 200;
 hints.imageHeight = 200;
 hints.recipeName = 'ChessSet';
 hints.renderer = 'PBRT';
+
+% Start with the default Assimp strategy
 hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 
-% This function modifies general scene paraemters
+% This remodelere modifies the scene paraemters.  Not renderer specific.
+% The camera is moved in the remodeler to a position that TL likes.
 hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbChessSetMexximpRemodeler;
 
 % This function modifies PBRT specific parameters
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbChessSetPBRTRemodeler;
 
-% Change the docker container to our version of PBRT-spectral
+% Change the docker container to vistalab version of PBRT-spectral
 hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
 resourceFolder = rtbWorkingFolder( ...
     'folderName', 'resources',...
@@ -75,13 +78,12 @@ resourceFolder = rtbWorkingFolder( ...
 
 %% Load scene
 
-% When exporting as an OBJ Blender, we must keep the coordinate system
-% consistent. Right now I always export with YForward/ZUp and a scaling
-% factor of 1000 (to convert to mm) - if the scene was original in meters.
-% Nonetheless, there seems to still be a right/left flip in the images
-% right now.
+% We are reading a scene that was originally exporting as an OBJ in Blender. We
+% must keep the coordinate systems consistent. Right now TL exports with
+% YForward/ZUp and a scaling factor of 1000 (to convert to mm) - if the scene
+% was originally in meters.
 
-% The following scenefile must be a full path.
+% The following sceneFile must be a full path.
 sceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
     'ChessSet', 'Data', 'ChessSetNoAreaLight.obj');
 [scene, elements] = mexximpCleanImport(sceneFile,...
@@ -91,10 +93,10 @@ sceneFile = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
     'targetFormat','exr', ...
     'workingFolder', resourceFolder);
 
-% Add a camera
+% Add a camera and put it in a reasonable position relative to the scene.
 scene = mexximpCentralizeCamera(scene);
 
-% copy environment map over to main recipe folder
+% Copy environment map over to main recipe folder
 envMapPath = fullfile(rtbRoot(), 'ExampleScenes', 'IsetbioExamples', ...
     'ChessSet', 'Data', 'studio007small.exr');
 copyfile(envMapPath, resourceFolder);

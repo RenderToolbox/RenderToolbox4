@@ -47,21 +47,24 @@ function outFiles = rtbBatchRender(nativeScenes, varargin)
 %%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us
 %%% RenderToolbox4 is released under the MIT License.  See LICENSE file.
 
+%%
 parser = inputParser();
 parser.addRequired('nativeScenes', @iscell);
 parser.addParameter('hints', rtbDefaultHints(), @isstruct);
 parser.parse(nativeScenes, varargin{:});
 nativeScenes = parser.Results.nativeScenes;
+
+% Make sure all the default fields are filled in
 hints = rtbDefaultHints(parser.Results.hints);
 
 %% Choose the batch rendering strategy.
-strategy = rtbChooseStrategy('hints', hints);
 
+% Single should be available, right?  And the message should be more helpful.
+strategy = rtbChooseStrategy('hints', hints);
 
 %% Record toolbox and renderer version info.
 versionInfo = rtbVersionInfo();
 versionInfo.rendererVersionInfo = strategy.renderer.versionInfo();
-
 
 %% Render each scene file.
 fprintf('\nBatchRender started with isParallel=%d at %s.\n\n', ...

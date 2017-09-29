@@ -1,6 +1,17 @@
 classdef RtbPBRTRenderer < RtbRenderer
-    %% Implementation for rendering with Mitsuba.
-    
+    %% Implementation for rendering with PBRTs.
+    % 
+    % Creates a PBRT renderer object based on the defaults in hints
+    %
+    %   hints = rtbDefaultHints;
+    %   pbrt = RtbPBRTRenderesr(hints)
+    %
+    % Relies on rtbLocalConfigTemplate, which sets RenderToolbox4 prefs
+    %
+    % Examples
+    %    pbrt.versionInfo
+    %
+    % BH, sometime in the past
     properties
         % RenderToolbox4 options struct, see rtbDefaultHints()
         hints = [];
@@ -48,17 +59,20 @@ classdef RtbPBRTRenderer < RtbRenderer
             
             % run in a container or locally
             if rtbDockerExists()
+                % Run locally using docker
                 [status, result] = rtbRunDocker(renderCommand, ...
                     obj.pbrt.dockerImage, ...
                     'workingFolder', obj.workingFolder, ...
                     'volumes', {obj.workingFolder, rtbRoot()}, ...
                     'hints', obj.hints);
             elseif rtbKubernetesExists()
+                % Run on cloud using kubernetes
                 [status, result] = rtbRunKubernetes(renderCommand, ...
                     obj.pbrt.kubernetesPodSelector, ...
                     'workingFolder', obj.workingFolder, ...
                     'hints', obj.hints);
             else
+                % Run local version of pbrt
                 pbrtPath = fileparts(obj.pbrt.executable);
                 renderCommand = sprintf('%s%s%s', ...
                     pbrtPath, ...

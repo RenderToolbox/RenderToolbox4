@@ -7,6 +7,8 @@ classdef RtbAssimpStrategy < RtbBatchRenderStrategy
     % We choose a scene file converter and renderer based on the
     % hints.renderer passed to the constructor.
     %
+    % Note to BW:  Put this strategy stuff into the wiki some day.  Explain what
+    % it's doing and why.
     
     properties
         % options for batch rendering, see rtbDefaultHints()
