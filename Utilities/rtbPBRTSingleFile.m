@@ -1,29 +1,53 @@
-%% rtbPBRTSingleFile(sceneFile,varargin)
+function [oi, outFile] = rtbPBRTSingleFile(sceneFile,varargin)
+% Read a PBRT V2 scene file, run the docker cmd, return the oi.
 %
-%  oiParameters
-%    for ii=1:length(oiParameters), oiSet(oi,'oiparameters{i})
+%    oi = rtbPBRTSingleFile(sceneFile,varargin)
 %
-%  For PBRT V2, take a <>.pbrt file as input and produce an OI as output.
+% Examples:
+%  Scene files are in pbrt-v2-spectral on wandell's home account.
 %
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bunny.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bump-sphere.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/sanmiguel_cam3.pbrt';
+%
+%{
+   % Example 1 - run the docker container
+   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bunny.pbrt';
+   [oi, outFile] = rtbPBRTSingleFile(sceneFile);
+   ieAddObject(oi); oiWindow;
+
+   % Try just reading from previously written radiance file
+   photons = rtbReadDAT(outFile, 'maxPlanes', 31);
+   oi = rtbOICreate(photons);
+   ieAddObject(oi); oiWindow;
+%}
 % TL/BW/AJ Scienstanford 2017
+%
+%% PROGRAMMING TODO
+%
+%  We should write a routine to append the required text for a Realistic Camera
+%  and then run with a lens file
+%
+%  Should have an option to create the depth map
+%
+
+%%
+p = inputParser;
+p.addRequired('sceneFile');
 
 %% Set up the scene.  We need the absolute path.
-% sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bunny.pbrt';
-% sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bump-sphere.pbrt';
-sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/sanmiguel.pbrt';
-
-[workingFolder, name,ext] = fileparts(sceneFile);
-imageName = [name,ext];
+[workingFolder, name, ~] = fileparts(sceneFile);
 
 %% Build the docker command
-dockerCommand = 'docker run -ti --rm';
+dockerCommand   = 'docker run -ti --rm';
 dockerImageName = ' vistalab/pbrt-v2-spectral';
 
 outFile = fullfile(workingFolder,[name,'.dat']);
 renderCommand = sprintf('pbrt --outfile %s %s', ...
                 outFile, ...
                 sceneFile);
-            
+    
+% Not sure why this is not needed here, or it is needed in RtbPBRTRenderer.
 % if ~isempty(user)
 %     dockerCommand = sprintf('%s --user="%s":"%s"', dockerCommand, user, user);
 % end
@@ -41,19 +65,22 @@ cmd = sprintf('%s %s %s', dockerCommand, dockerImageName, renderCommand);
 
 %% Invoke the Docker command with or without capturing results.
 [status, result] = rtbRunCommand(cmd);
+if status
+    disp(result)
+    pause;
+end
 
 %% Convert the dat to an OI
 photons = rtbReadDAT(outFile, 'maxPlanes', 31);
-[r,c] = size(photons(:,:,1)); depthMap = ones(r,c);
 
-oi = oiCreate;
-oi = oiSet(oi,'wave',400:10:700);
-oi = oiSet(oi,'photons',photons);
-oi = setOIParams(oi,6,2,10);
-%
-ieAddObject(oi); oiWindow;
-%% Set other parameters from somewhere.
+% Be nice if there were a real depth map.  Maybe create one with a flag.
+% [r,c] = size(photons(:,:,1)); depthMap = ones(r,c);
 
+% You can set fov or filmDiag here.  You can also set fNumber and focalLength
+% here
+oi = rtbOICreate(photons);
+
+end
 
 %% Ask the system for the current user id.
 % function uid = getUserId()
