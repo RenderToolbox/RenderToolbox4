@@ -53,9 +53,8 @@ dockerImageName = 'vistalab/pbrt-v2-spectral';
 
 outName = [name,'.dat'];
 outFile = fullfile(workingFolder,outName);
-renderCommand = sprintf('pbrt %s --outfile "%s"', ...
-    sceneFile, ...
-    outFile);
+renderCommand = sprintf('pbrt --outfile %s %s', ...
+    outFile, sceneFile);
             
 % Not sure why this is not needed here, or it is needed in RtbPBRTRenderer.
 % if ~isempty(user)
@@ -72,7 +71,9 @@ dockerCommand = sprintf('%s --volume="%s":"%s"', dockerCommand, workingFolder, w
 cmd = sprintf('%s %s %s', dockerCommand, dockerImageName, renderCommand);
 
 %% Invoke the Docker command with or without capturing results.
+tic
 [status, result] = rtbRunCommand(cmd);
+toc
 
 %% Check the return
 
