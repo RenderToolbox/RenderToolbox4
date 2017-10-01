@@ -108,10 +108,11 @@ switch opticsType
         ieObject = oiSet(ieObject,'name',outName);
     case 'pinhole'
         % In this case, we the radiance really describe the scene, not an oi
-        ieObject = rtbSceneCreate(photons);
+        ieObject = rtbSceneCreate(photons,'mean luminance',100);
         ieObject = sceneSet(ieObject,'name',outName);
-end
+        % ieAddObject(ieObject); sceneWindow;
 
+end
 
 end
 

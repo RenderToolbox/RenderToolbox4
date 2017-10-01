@@ -26,6 +26,11 @@ function scene = rtbSceneCreate(photons,varargin)
 p = inputParser;
 p.addRequired('photons',@isnumeric);
 p.addParameter('fov',40,@isscalar)               % Horizontal fov, degrees
+p.addParameter('meanluminance',100,@isscalar);
+
+if ~isempty(varargin) 
+    for ii=1:2:length(varargin), varargin{ii} = ieParamFormat(varargin{ii}); end
+end
 
 p.parse(photons,varargin{:});
 
@@ -43,8 +48,8 @@ scene = sceneSet(scene,'photons',photons);
 [r,c] = size(photons(:,:,1)); depthMap = ones(r,c);
 
 scene = sceneSet(scene,'depth map',depthMap);
-
 scene = sceneSet(scene,'fov',p.Results.fov);
+scene = sceneAdjustLuminance(scene,'mean',100);
 
 % ieAddObject(scene); sceneWindow;
 
