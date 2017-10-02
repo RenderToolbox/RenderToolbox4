@@ -178,6 +178,9 @@ classdef RtbAssimpPBRTConverter < RtbConverter
         
         % transition in-memory nativeScene to on-disk pbrtFile
         function pbrtFile = finishConversion(obj, parentScene, nativeScene, mappings, names, conditionValues, conditionNumber)
+            
+            % Writes out the file.  Returns only the file name.  This is a key
+            % step in the process.
             imageName = rtbGetNamedValue(names, conditionValues, 'imageName', ...
                 sprintf('scene-%03d', conditionNumber));
             pbrtFullFile = fullfile(obj.outputFolder, [imageName '.pbrt']);

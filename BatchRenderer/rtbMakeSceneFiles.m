@@ -1,37 +1,48 @@
 function nativeScenes = rtbMakeSceneFiles(parentScene, varargin)
 %% Make a family of renderer-native scenes based on a given parent scene.
 %
+% nativeScenes = rtbMakeSceneFiles(parentScene, varargin)
+%
+% Input
+%  parentScene - Describe, please
+%
+% Return
+%  nativeScenes - File names of the scenes for the specific renderer (e.g., PBRT)
+%                 The scene files are written to disk by the relevant converter,
+%                 say RtbAssimpPBRTConverter.finishConversion for PBRT.
+%
+% Parameter/values
+%   'conditionsFIle'
+%   'mappingsFile'
+%   'hints'
+%
 % scenes = rtbMakeSceneFiles(parentScene)
-% Creates a family of renderer-native scenes, based on the given
-% parentScene.
+%   Creates a renderer-native scene based on the parentScene.  The parentScene
+%   format is described in XXXX.
 %
 % scenes = rtbMakeSceneFiles(... 'conditionsFile', conditionsFile)
-% Specify the conditionsFile which specifies how many scenes to generate
-% and parameters for each scene.  See the RenderToolbox wiki for more
-% about the conditions file format:
-%   https://github.com/RenderToolbox/RenderToolbox4/wiki/Conditions-File-Format
+%   Specify the conditionsFile which specifies how many scenes to generate
+%   and parameters for each scene.  If conditionsFile contains an 'imageName'
+%   variable, each scene file is named with the value of 'imageName'.
+%   See the RenderToolbox wiki for the conditions file format:
+%     https://github.com/RenderToolbox/RenderToolbox4/wiki/Conditions-File-Format
 %
 % scenes = rtbMakeSceneFiles(... 'mappingsFile', mappingsFile)
-% Specify the mappingsFile which specifies how to map conditions file
-% variables and other constants to the parent scene.  See the
-% RenderToolbox wiki for more  about the mappings file format:
-%   https://github.com/RenderToolbox/RenderToolbox4/wiki/Mappings-File-Format
+%   Specify the mappingsFile which specifies how to map conditions file
+%   variables and other constants to the parent scene.  See the
+%   RenderToolbox wiki for more about the mappings file format:
+%    https://github.com/RenderToolbox/RenderToolbox4/wiki/Mappings-File-Format
+%   (Not yet used by Stanford group)
 %
 % scenes = rtbMakeSceneFiles(... 'hints', hints)
-% Specify a struct of options that affect the process of generating
-% renderer-native scene files.  If hints is omitted, values are taken
-% from rtbDefaultHints().
-%   - hints.strategy specifies how to load and manipulate scene data (e.g.
-%   Collada vs Assimp).  The default is RtbAssimpStrategy.
-%   - hints.renderer specifies which renderer to target
-%   - hints.imageHeight and hints.imageWidth specify the image pixel
-%   dimensions to specify for the scene
-%
-% Returns a cell array of new renderer-native scene descriptions.  If
-% conditionsFile contains an 'imageName' variable, each scene file be named
-% with the value of 'imageName'.
-%
-% scenes = rtbMakeSceneFiles(parentScene, varargin)
+%   Specify a struct of options that affect the process of generating
+%   renderer-native scene files.
+%    - hints.strategy specifies how to load and manipulate scene data (e.g.
+%      Collada vs Assimp).  The default is RtbAssimpStrategy.
+%    - hints.renderer specifies which renderer to target
+%    - hints.imageHeight and hints.imageWidth specify the image pixel
+%      dimensions to specify for the scene
+%   If hints is omitted, values are taken from rtbDefaultHints().
 %
 %%% RenderToolbox4 Copyright (c) 2012-2016 The RenderToolbox Team.
 %%% About Us://github.com/RenderToolbox/RenderToolbox4/wiki/About-Us

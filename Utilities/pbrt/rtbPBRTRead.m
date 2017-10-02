@@ -10,14 +10,20 @@ function txtLines = rtbPBRTRead(fname,varargin)
 % BW/TL Scienstanford 2017
 
 %% Programming todo
-%  Find the Renderer (e.g., Metropolis) block.  Delete it and replace it with
+%  Find the Renderer (e.g., Metropolis) block.  Delete it.  Or, replace it with
 %  the default and the specification of the pixel samples.
 %
 %  This is a search through the cells for the Renderer string, and then the
 %  block continues until the empty string. Many of the blocks can be found that
 %  way.  Maybe rtbPBRTFindBlock(txtLines,blockName)?
+% 
+%  Apparently, SurfaceIntegrator is another term we want to delete.
+% 
+%  I am not sure why these don't run properly with our docker version.  The best
+%  would be to make them run!
 %
 %{
+  % Find a block
   txtLines = rtbPBRTRead('/home/wandell/pbrt-v2-spectral/pbrt-scenes/sanmiguel.pbrt');
   nLines = length(txtLines);
   for ii=1:nLines
@@ -34,6 +40,8 @@ function txtLines = rtbPBRTRead(fname,varargin)
          end
      end
   end
+  % Then we can edit the lines in the block, or just delete the whole thing
+  % And then we edit the parameters which have values in brackets - []
 %}
 
 

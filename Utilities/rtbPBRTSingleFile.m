@@ -9,11 +9,13 @@ function [ieObject, outFile] = rtbPBRTSingleFile(sceneFile,varargin)
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bunny.pbrt';
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bump-sphere.pbrt';
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbSanmiguel.pbrt';
-%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/teapot-metal.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbTeapot-metal.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbVilla-daylight.pbrt';
 %
+% Example code
 %{
    % Example 1 - run the docker container
-   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbSanmiguel.pbrt';
+   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbVilla-daylight.pbrt';
    [scene, outFile] = rtbPBRTSingleFile(sceneFile,'opticsType','pinhole');
    ieAddObject(scene); sceneWindow;
 

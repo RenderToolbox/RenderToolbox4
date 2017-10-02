@@ -1,5 +1,5 @@
 classdef RtbAssimpStrategy < RtbBatchRenderStrategy
-    %% Implementation for how batch process with mexximp and JSON.
+    %% Implementation for batch process with mexximp and JSON.
     %
     % This implements a batch rendering strategy for the Version 3
     % way of doing batch rendering, with mexximp and JSON mappings files.
