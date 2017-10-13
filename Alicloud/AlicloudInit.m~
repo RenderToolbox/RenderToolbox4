@@ -35,6 +35,5 @@ system(cmd);
 % Delet a kluster
 %cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros delete-stack --region-id us-west-1 --stack-name ros-demo --stack-id %s',StackID);
 %system(cmd)
-% Create a buket
 
-% Connect a buket to kubernetes
+
