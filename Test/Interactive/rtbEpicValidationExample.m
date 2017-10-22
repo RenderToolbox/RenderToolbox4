@@ -2,7 +2,7 @@
 %
 % This script is an example of how to run through an "epic scene test" and
 % comparison of results to reference data stored at Brainard Archiva.
-%   http://52.32.77.154/#browse~RenderToolbox/reference-data
+%   http://brainard-archiva.psych.upenn.edu/#browse~RenderToolbox/reference-data
 %
 % All the work is done by the function rtbRunEpicValidation().  But there
 % are several parameters that you might want to configure.  So here is a
