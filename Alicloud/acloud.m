@@ -141,16 +141,18 @@ classdef acloud < handle
             cmd = [cmd, sprintf('LoginPassword=%s',password)];
             
             obj.k8sPassword = password;
-            
+            obj.stackName = stackName;
+
             %             cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s',...
             %                 obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password);
             %
             
             [~, result] = system(cmd);
-            result = erase(result,'[Succeed]');
+            % result = erase(result,'[Succeed]');  % Get rid of this part of the string
             result = jsonread(result);
-            obj.stackID = result.Id;
-            obj.stackName = stackName;
+            obj.stackID   = result.Id;
+            
+            fprintf('Initiated %s creation.  Takes about 30 minutes\n',obj.stackName);
             
             while true
                 % Check the status of the creation.  Return
