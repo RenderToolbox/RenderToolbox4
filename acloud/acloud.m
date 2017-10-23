@@ -24,7 +24,7 @@ classdef acloud < handle
             else
                 d = fullfile(obj.bucket, bucketname);
             end
-            cmd = sprintf('/Applications/ossutil ls %s\n',d);
+            cmd = sprintf('ossutil ls %s\n',d);
             [status,result] = system(cmd);
         end
         function [result, status, cmd] = objectrm(obj,objectname)
@@ -32,7 +32,7 @@ classdef acloud < handle
                 disp('Object name required')
             else
                 objname = fullfile(obj.bucket,objectname);
-                cmd = sprintf('/Applications/ossutil rm %s \n',objname);
+                cmd = sprintf('ossutil rm %s \n',objname);
                 [status, result] = system(cmd);
             end
         end
@@ -41,7 +41,7 @@ classdef acloud < handle
                 disp('Bucket name required')
             else
                 bname = fullfile(obj.bucket,bucketname);
-                cmd = sprintf('/Applications/ossutil rm %s -b -f\n',bname);
+                cmd = sprintf('ossutil rm %s -b -f\n',bname);
                 [status, result] = system(cmd);
             end
         end
@@ -51,44 +51,29 @@ classdef acloud < handle
             else
                 bucketname = lower(bucketname);
                 bname  = fullfile(obj.bucket,bucketname);
-                cmd = sprintf('/Applications/ossutil mb %s \n',bname);
+                cmd = sprintf('ossutil mb %s \n',bname);
                 [status, result] = system(cmd);
             end
         end
         function [result, status, cmd] = upload(obj,local_dir,cloud_dir)
             cloud_dir = fullfile(obj.bucket,cloud_dir);
-            cmd = sprintf('/Applications/ossutil cp %s %s -r -f -u\n',local_dir,cloud_dir);
+            cmd = sprintf('ossutil cp %s %s -r -f -u\n',local_dir,cloud_dir);
             [status, result] = system(cmd);
         end
         function [result, status, cmd] = download(obj,cloud_dir,local_dir)
             cloud_dir = fullfile(obj.bucket,cloud_dir);
-            cmd = sprintf('/Applications/ossutil cp %s %s -r -f -u\n',cloud_dir,local_dir);
+            cmd = sprintf('ossutil cp %s %s -r -f -u\n',cloud_dir,local_dir);
             [status, result] = system(cmd);
         end
-        function [result, status, masterIp, cmd] = k8sCreate(obj,stackname, MasterInstanceType,WorkerInstanceType,NumberOfNodes)
-            if ieNotDefined('MasterInstanceType')
-                MasterType = ecs.n1.medium;
-            else
-                MasterType = MasterInstanceType;
-            end
-            if ieNotDefined('WorkerInstanceType')
-                WorkerType = ecs.n1.medium;
-            else
-                WorkerType = WorkerInstanceType;
-            end
-            if ieNotDefined('NumberOfNodes')
-                NumNodes = 2;
-            else
-                NumNodes = NumberOfNodes;
-            end
-            cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,...WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%s,LoginPassword=Project2017',...
-                obj.ros,stackname,MasterType,WorkerType,NumNodes);
+        function [result, status,masterIp, stackname ,stackID, cmd] = k8sCreate(obj,stackname, MasterInstanceType,WorkerInstanceType,NumberOfNodes,password)
+            cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s',...
+                obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password);
             [~, result] = system(cmd);
             result = erase(result,'[Succeed]');
             result = parse_json(result);
-            StackID = result.Id;
+            stackID = result.Id;
             while 1 
-                    cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros --json describe-stack --stack-name ros-demo --stack-id %s',StackID);
+                    cmd = sprintf('%s describe-stack --stack-name %s --stack-id %s',obj.ros,stackname,stackID);
                     [~, result] = system(cmd);
                     result_check = erase(result,'[Succeed]');
                     result_check = parse_json(result_check);
@@ -102,7 +87,16 @@ classdef acloud < handle
             end
             
             
-    end
+        end
+        function[result, status, cmd]= k8sDelete(obj,stackname,stackID)
+                cmd = sprintf('%s delete-stack --region-id us-west-1 --stack-name %s --stack-id %s',obj.ros,stackname,stackID);
+                [status, result] = system(cmd);
+        end
+        function[result, status, cmd]=k8sUpdate(obj,stackname,stackID,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password)
+                cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s,--regionID us-west-1 --stack-id %s',...
+                obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password,stackID); 
+                [status, result] = system(cmd);
+        end
     end
 end
 

@@ -191,6 +191,8 @@ nativeSceneFiles = rtbMakeSceneFiles(mfScene, 'hints', hints,...
 
 rtbCloudUpload(hints, nativeSceneFiles);
 
+%rtbCloudUpload_Ali(hints, nativeSceneFiles);
+
 %%
 rtbBatchRender(nativeSceneFiles, 'hints', hints);
 
