@@ -1,16 +1,31 @@
 classdef acloud < handle
-    % Create an alibaba cloud object to interact with aliyun
-    % You need to set up your alibaba account (see <https://account.aliyun.com/register/register.htm>)
+    % Create an alibaba cloud object to interact with aliyun.
+    %
+    % To use these methods, you need to have an Alibaba account.
+    % See the instructions on the RenderToolbox4 wiki page, or her
+    % <https://account.aliyun.com/register/register.htm>.  
+    %
+    % Ultimately, we will move the cloud components into a separate
+    % repository.
     %
     % For testing see v_acloudTest.m
     %
     % ZL Vistasoft Team 2017
     properties 
-        bucket;
-        ros;             % 'python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros --json';
-        kubeTemplate;    % Template for the kubernetes cluster
-        python;          % Many people have two versions of python. This is the executable you want used for alicloud.
+        bucket;          % Bucket on Aliyun where the data are stored.
+        ros;             % Resource orchestration service command
+        kubeTemplate;    % Kubernetes cluster template
+        python;          % The executable you want used for python (many people have multiple pythons).
+        
+        
+        masterIP;      
+        masterType;               % 
+        stackID;
+        stackName;
+        k8sPassword;              % Kubernetes Cluster password
+        regionID = 'us-west-1';   % Stanford uses this
     end
+    
     methods
         function obj = acloud(varargin)
             % Users may vary in the version of python, ossutil, ros, and template
@@ -100,24 +115,50 @@ classdef acloud < handle
         end
         
         % Create a kubernetes cluster that can be controled by kubectl
-        function [result, status,masterIp, stackname ,stackID, cmd] = ...
-                k8sCreate(obj,stackname, MasterInstanceType,WorkerInstanceType,NumberOfNodes,password)
+        function [result, status, cmd] = ...
+                k8sCreate(obj, stackName, MasterInstanceType, WorkerInstanceType, NumberOfNodes, password)
+            %{
+            alicloud = acloud('python','/Users/wandell/anaconda/bin/python');
+            StackName = 'ros-name';           % Name of the cluster you are creating
+            MasterType = 'ecs.n1.medium';     % The options can be found in the kube_3master.json template
+            WorkerType = MasterType;          % Match the workers to the master or use another type
+            NumberWorkerNodes = 2;            % A string, though we are planning to make it a number
+            Password   = 'go2017Warriors';    % Creating a password for this cluster
+            [result, status, masterIp, cmd] = alicloud.k8sCreate(StackName, MasterType, ...
+                WorkerType,NumberWorkerNodes,Password);
+            %}
             
-            cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s',...
-                obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password);
+            if notDefined('password'), password = 'go2017Cleveland'; end
+            
+            cmd = sprintf('%s create-stack',[obj.python,' ',obj.ros]);
+            cmd = [cmd, sprintf(' --stack-name %s',stackName)];
+            cmd = [cmd, sprintf(' --template-url %s',obj.kubeTemplate)];
+            cmd = [cmd, sprintf(' --parameters ')];
+            cmd = [cmd, sprintf('MasterInstanceType=%s,',MasterInstanceType)];
+            cmd = [cmd, sprintf('WorkerInstanceType=%s,',WorkerInstanceType)];
+            cmd = [cmd, sprintf('ImageId=centos_7,')];
+            cmd = [cmd, sprintf('NumOfNodes=%d,',NumberOfNodes)];
+            cmd = [cmd, sprintf('LoginPassword=%s',password)];
+            
+            obj.k8sPassword = password;
+            
+            %             cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s',...
+            %                 obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password);
+            %
             
             [~, result] = system(cmd);
             result = erase(result,'[Succeed]');
-            result = parse_json(result);
-            stackID = result.Id;
+            result = jsonread(result);
+            obj.stackID = result.Id;
+            obj.stackName = stackName;
             
             while true
-                % Loop to check the status of the creation.  Return
-                % when done.
-                cmd = sprintf('%s describe-stack --stack-name %s --stack-id %s',obj.ros,stackname,stackID);
+                % Check the status of the creation.  Return
+                % when done.  This could be its own separate function.
+                cmd = sprintf('%s describe-stack --stack-name %s --stack-id %s',obj.ros,obj.stackName,obj.stackID);
                 [~, result] = system(cmd);
                 result_check = erase(result,'[Succeed]');
-                result_check = parse_json(result_check);
+                result_check = jsonread(result_check);
                 status = result_check.Status;
                 
                 % Check again in 60 secs
@@ -126,21 +167,22 @@ classdef acloud < handle
                 if strcmp(status,'CREATE_COMPLETE')== 1
                     break;
                 end
-                masterIp = result_check.Outputs{2}.OutputValue;
+                obj.masterIP = result_check.Outputs{2}.OutputValue;
             end
             
         end
         
         % Delete a kubernetes cluster
-        function[result, status, cmd]= k8sDelete(obj,stackname,stackID)
-                cmd = sprintf('%s delete-stack --region-id us-west-1 --stack-name %s --stack-id %s',obj.ros,stackname,stackID);
+        function[result, status, cmd]= k8sDelete(obj)
+                cmd = sprintf('%s delete-stack --region-id %s --stack-name %s --stack-id %s',...
+                    obj.ros,obj.regionID, obj.stackName,obj.stackID);
                 [status, result] = system(cmd);
         end
         
         % Adjust the kubernetes allocation
         function[result, status, cmd]=k8sUpdate(obj,stackname,stackID,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password)
                 cmd = sprintf('%s create-stack --stack-name %s --template-url /Users/eugeneliu/git_repo/RenderToolbox4/Alicloud/kube_3master.json --parameters MasterInstanceType=%s,WorkerInstanceType=%s,ImageId=centos_7,NumOfNodes=%d,LoginPassword=%s,--regionID us-west-1 --stack-id %s',...
-                obj.ros,stackname,MasterInstanceType,WorkerInstanceType,NumberOfNodes,password,stackID); 
+                obj.ros,obj.stackName,obj.masterType,WorkerInstanceType,NumberOfNodes,password,stackID); 
                 [status, result] = system(cmd);
         end
         
