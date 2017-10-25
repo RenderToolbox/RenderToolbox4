@@ -48,6 +48,10 @@ opticsType = p.Results.opticsType;
 %% Set up the working folder.  We need the absolute path.
 
 [workingFolder, name, ~] = fileparts(sceneFile);
+if(isempty(workingFolder))
+    error('We need an absolute path for the working folder.');
+end
+
 
 %% Build the docker command
 dockerCommand   = 'docker run -ti --rm';
