@@ -51,3 +51,4 @@ fov = 2 * atan2d(fwidth / 2, oiParams.filmDistance);
 
 % Store the horizontal field of view in degrees in the oi
 oi = oiSet(oi, 'fov', fov);
+end

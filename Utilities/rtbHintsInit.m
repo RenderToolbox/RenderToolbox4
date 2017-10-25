@@ -27,7 +27,7 @@ p.addParameter('gcloud',false,@islogical);
 % Local docker image
 p.addParameter('dockerImage','',@ischar);
 
-p.parse(varargin{:});
+p.parse(varargin{:});1
 
 %%
 hints.imageWidth  =  p.Results.imageWidth;

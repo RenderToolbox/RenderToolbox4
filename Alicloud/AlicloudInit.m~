@@ -1,0 +1,39 @@
+%% Kubernete Initialization
+% Create a Kubernetes cluster using ROS service provided by Alicloud using a template which is located in current folder.
+cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros --json create-stack --stack-name ros-demo --template-url kube_3master.json --parameters MasterInstanceType=ecs.n1.medium,WorkerInstanceType=ecs.n1.medium,ImageId=centos_7,NumOfNodes=1,LoginPassword=Project2017');
+[~, result] = system(cmd);
+result;
+result = erase(result,'[Succeed]');
+result = parse_json(result);
+StackID = result.Id
+% check status of creating process
+while 1 
+      cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros --json describe-stack --stack-name ros-demo --stack-id %s',StackID);
+      [~, result] = system(cmd);
+      result_check = erase(result,'[Succeed]');
+      result_check = parse_json(result_check);
+      status = result_check.Status
+if strcmp(status,'CREATE_COMPLETE')== 1;
+    break;
+end
+end
+% Check the jump ip
+result = parse_json(result);
+result = erase(str,'[succeed]');
+JumasterIp = result.Outpus{2};
+% MasterIp = result.Outputs{4};
+% Copy kube.config to local
+
+% copy kube config file from alicloud master machine to local machine
+cmd = sprintf('scp root@%s:/etc/kubernetes/kube.conf $HOME/.kube/config',masterIp)
+system(cmd);
+% Validate template
+% cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros validate-template --template-url kube_3master.json')
+% [~, result] = system(cmd);
+% result;
+
+% Delet a kluster
+%cmd = sprintf('python /Library/Frameworks/Python.framework/Versions/2.7/bin/ros delete-stack --region-id us-west-1 --stack-name ros-demo --stack-id %s',StackID);
+%system(cmd)
+
+

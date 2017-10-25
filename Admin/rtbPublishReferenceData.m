@@ -1,7 +1,7 @@
 function artifacts = rtbPublishReferenceData(varargin)
 % Use RemoteDataToolbox to publish reference data to brainard-archiva.
 %
-% Archiva server "brainard-archiva" on AWS at http://52.32.77.154/
+% Archiva server "brainard-archiva" on AWS at http://brainard-archiva.psych.upenn.edu/
 % and repository called RenderToolbox.
 % see rdt-config-render-toolbox.json
 %
