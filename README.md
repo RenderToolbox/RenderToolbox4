@@ -1,4 +1,4 @@
-[![Build Status](http://50.112.42.141/buildStatus/icon?job=RenderToolbox4)](http://50.112.42.141/job/RenderToolbox4/)
+[![Build Status](http://brainard-jenkins.psych.upenn.edu/buildStatus/icon?job=RenderToolbox4)](http://brainard-jenkins.psych.upenn.edu/job/RenderToolbox4/)
 
 RenderToolbox4
 ==============
