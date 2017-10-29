@@ -71,7 +71,7 @@ hints.batchRenderStrategy.remodelPerConditionAfterFunction = @rtbChessSetMexximp
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbChessSetPBRTRemodeler;
 
 % Change the docker container to vistalab version of PBRT-spectral
-hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
+hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'rendertoolbox/pbrt-v2-spectral';
 resourceFolder = rtbWorkingFolder( ...
     'folderName', 'resources',...
     'hints', hints);

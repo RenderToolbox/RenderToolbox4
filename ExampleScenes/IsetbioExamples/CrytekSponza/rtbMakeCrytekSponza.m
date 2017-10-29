@@ -63,7 +63,7 @@ pbrtRemodelerFunction = @(varargin) rtbCrytekPBRTRemodeler(varargin{:}, cameraIn
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = pbrtRemodelerFunction;
 
 % Change the docker container to our version of PBRT-spectral
-hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
+hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'rendertoolbox/pbrt-v2-spectral';
 
 resourceFolder = rtbWorkingFolder( ...
     'folderName', 'resources',...

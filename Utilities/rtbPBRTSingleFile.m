@@ -55,7 +55,7 @@ end
 
 %% Build the docker command
 dockerCommand   = 'docker run -ti --rm';
-dockerImageName = 'vistalab/pbrt-v2-spectral';
+dockerImageName = 'rendertoolbox/pbrt-v2-spectral';
 
 outName = [name,'.dat'];
 outFile = fullfile(workingFolder,outName);
