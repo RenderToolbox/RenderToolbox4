@@ -81,7 +81,7 @@ hints.batchRenderStrategy = RtbAssimpStrategy(hints);
 hints.batchRenderStrategy.converter.remodelAfterMappingsFunction = @rtbSponzaPBRTRemodeler;
 
 % Change the docker container to our version of PBRT-spectral
-hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
+hints.batchRenderStrategy.renderer.pbrt.dockerImage = 'rendertoolbox/pbrt-v2-spectral';
 
 resourceFolder = rtbWorkingFolder( ...
     'folderName', 'resources',...
