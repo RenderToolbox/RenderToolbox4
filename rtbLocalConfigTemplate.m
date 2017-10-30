@@ -73,7 +73,7 @@ setpref('Mitsuba', fieldnames(mitsuba), struct2cell(mitsuba));
 pbrt.radiometricScaleFactor = 0.0063831432;
 
 % use Docker, if present
-pbrt.dockerImage = 'vistalab/pbrt-v2-spectral';
+pbrt.dockerImage = 'rendertoolbox/pbrt-v2-spectral';
 pbrt.kubernetesPodSelector = 'app=pbrt';
 
 % or use local install

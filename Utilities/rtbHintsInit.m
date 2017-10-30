@@ -65,7 +65,7 @@ else
     % Local run
     hints.batchRenderStrategy.renderer = RtbPBRTRenderer(hints);
     if isempty(p.Results.dockerImage)
-        dockerImage = 'vistalab/pbrt-v2-spectral';
+        dockerImage = 'rendertoolbox/pbrt-v2-spectral';
     end
     hints.batchRenderStrategy.renderer.pbrt.dockerImage = dockerImage;
 end

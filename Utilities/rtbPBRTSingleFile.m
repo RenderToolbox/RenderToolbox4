@@ -60,10 +60,14 @@ opticsType = p.Results.opticsType;
 %% Set up the working folder.  We need the absolute path.
 
 [workingFolder, name, ~] = fileparts(sceneFile);
+if(isempty(workingFolder))
+    error('We need an absolute path for the working folder.');
+end
+
 
 %% Build the docker command
 dockerCommand   = 'docker run -ti --rm';
-dockerImageName = 'vistalab/pbrt-v2-spectral';
+dockerImageName = 'rendertoolbox/pbrt-v2-spectral';
 
 outName = [name,'.dat'];
 outFile = fullfile(workingFolder,outName);
