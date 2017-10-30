@@ -7,10 +7,17 @@ function [ieObject, outFile] = rtbPBRTSingleFile(sceneFile,varargin)
 %  Scene files are in pbrt-v2-spectral on wandell's home account.
 %
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bunny.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbBunny.pbrt';
+%
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/bump-sphere.pbrt';
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbSanmiguel.pbrt';
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbTeapot-metal.pbrt';
 %   sceneFile = '/home/wandell/pbrt-v2-spectral/pbrt-scenes/rtbVilla-daylight.pbrt';
+%
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/scenes/bunny.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/scenes/killeroo-simple.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/scenes/prt-teapot.pbrt';
+%   sceneFile = '/home/wandell/pbrt-v2-spectral/scenes/metal.pbrt';
 %
 % Example code
 %{
@@ -34,6 +41,11 @@ function [ieObject, outFile] = rtbPBRTSingleFile(sceneFile,varargin)
 %  and then run with a lens file
 %
 %  Should have an option to create the depth map
+%  See rtbPBRTRead.m
+%    We should be able to parse PBRT scene files a bit and re-write them.
+%    What is the deal with the --outfile not working
+%    Can we add a conditions file for the singleFile case
+%    Can we use 'hints' for the singleFile case?
 %
 
 %%  Name of the pbrt scene file and whether we use a pinhole or lens model
