@@ -16,12 +16,10 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
         
         % pbrt info struct
         pbrt;
-        
-        % Cloud folder
-        cloudFolder;
-        
+                
         % Local folder in the docker image
         localFolder = 'WorkDir';
+        cloudBucket = '';
         
         % where to write output files
         outputFolder;
@@ -68,6 +66,10 @@ classdef RtbPBRTCloudRenderer < RtbRenderer
             name = sprintf('%s-%i.zip',obj.dataFileName,obj.dataFileCounter);
             obj.currentDataFileName = name;
             obj.dataFileCounter = obj.dataFileCounter + 1;
+        end
+        
+        function path = cloudFolder(obj)
+            path = fullfile(obj.cloudBucket,obj.kubectlNamespace,obj.hints.recipeName);
         end
         
         function [status, result, image, sampling, imageName] = render(obj, nativeScene)
