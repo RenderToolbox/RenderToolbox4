@@ -44,7 +44,7 @@ setpref('RenderToolbox4', fieldnames(renderToolbox4), struct2cell(renderToolbox4
 mitsuba.radiometricScaleFactor = 0.0795827427;
 
 % use Docker or Kubernetes, if present
-mitsuba.dockerImage = 'ninjaben/mitsuba-spectral';
+mitsuba.dockerImage = 'rendertoolbox/mitsuba-spectral';
 mitsuba.kubernetesPodSelector = 'app=mitsuba-spectral';
 
 % or use local installation
