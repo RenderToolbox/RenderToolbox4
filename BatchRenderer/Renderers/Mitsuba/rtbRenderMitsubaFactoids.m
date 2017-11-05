@@ -34,7 +34,7 @@ hints = rtbDefaultHints(parser.Results.hints);
 if isempty(mitsuba)
     % modify default mitsuba config to look for rgb
     mitsuba = getpref('Mitsuba');
-    mitsuba.dockerImage = 'ninjaben/mitsuba-rgb';
+    mitsuba.dockerImage = 'rendertoolbox/mitsuba-rgb';
     mitsuba.kubernetesPodSelector = 'app=mitsuba-spectral';
     if ismac()
         mitsuba.app = '/Applications/Mitsuba-RGB.app';
