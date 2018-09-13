@@ -1,6 +1,6 @@
 [![Build Status](http://brainard-jenkins.psych.upenn.edu/buildStatus/icon?job=RenderToolbox4)](http://brainard-jenkins.psych.upenn.edu/job/RenderToolbox4/)
 
-RenderToolbox4
+RenderToolbox4 
 ==============
 RenderToolbox4 is a Matlab toolbox for working with 3D scenes and physically-based renderers.
 
