@@ -10,7 +10,7 @@ For more information, please see the [wiki](https://github.com/RenderToolbox/Ren
 
 # Installation
 
-Please see the installation instructions on the RenderToolbox4 wiki.
+Please see the installation instructions on the [wiki](https://github.com/RenderToolbox/RenderToolbox4/wiki/Installation).
 
 ## Testing
 To test that RenderToolbox is installed correctly, you can run
