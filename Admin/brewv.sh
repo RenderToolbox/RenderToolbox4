@@ -2,42 +2,80 @@
 #
 # Install specific version of a Homebrew formula
 #
-# Usage: brewv.sh formula_name desired_version
+# Usage: brewv.sh install|upgrade formula_name desired_version
 #
 # Notes:
-# - this will unshallow your brew repo copy. It might take some time the first time 
-#   you call this script
-# - it will uninstall (instead of unlink) all your other versions of the formula.
-#   Proper version management is out of scope of this script. Feel free to improve.
+# - this may unshallow your brew repo copy. It might take some time the first time 
+#   you call this script.
 # - my "git log" uses less by default and when that happens it breaks the script 
 #   Therefore we have the "--max-count=20" parameter. This might fail to find proper 
 #   version if the one you wish to install is outside of this count.
 #
-# Author: Stanimir Karoserov ( demosten@gmail.com )
+# Origin Author: Stanimir Karoserov ( demosten@gmail.com )
+# Edited: Alan Voiski ( alan@voiski.com )
 #
 
-if [ "$#" -ne 2 ]; then
-	echo "brewv.sh - installs specific version of a brew formula"
-	echo "syntax: brewv.sh formula_name desired_version"
-	echo "e.g.: brewv.sh swiftformat 0.39.1"
+tap=homebrew/homebrew-core
+max_count=20
+while test $# -gt 0; do
+	case "$1" in
+		-u|--unshallow)
+			git -C "$(brew --repo homebrew/core)" fetch --unshallow || echo "Homebrew repo already unshallowed"
+			;;
+		-m|--max-count)
+			max_count=$2
+			shift
+			;;
+		-t|--tap)
+			tap=$2
+			shift
+			;;
+		install|upgrade)
+			action=$1
+			;;
+		*)
+			[ -z "${formula}" ] \
+				&& formula=$1 \
+				|| version=$1
+			;;
+	esac
+	shift
+done
+
+if [ -z ${action} ] || [ -z ${formula} ]; then
+	echo 'brewv.sh - installs specific version of a brew formula
+syntax: brewv.sh <command> <options> <formula_name> <desired_version>
+Command
+install   Does the same of brew install
+upgrade   Does the same of brew upgrade
+Options
+-u|--unshallow           Fetch the tap repository with unshallow option. Time
+                         consuming, use only if you dont find your version.
+-m|--max-count <value>   How deep it will go to find your version, default: 20
+-t|--tap <value>         Which tap to search, default: homebrew/homebrew-core
+Example
+brewv.sh swiftformat 0.39.1
+brewv.sh -u -m 200 swiftformat 0.01.1'
 	exit 1
 fi
 
-git -C "$(brew --repo homebrew/core)" fetch --unshallow || echo "Homebrew repo already unshallowed"
+if [ -z ${version} ];then
+	echo 'Versions:'
+	brew log --max-count=${max_count} --oneline ${formula}|grep -v ":"
+	exit 0
+fi
 
-commit=$(brew log --max-count=20 --oneline $1|grep $2| head -n1| cut -d ' ' -f1)
-formula=$(brew log --max-count=20 --oneline $1|grep $2| head -n1| cut -d ':' -f1|cut -d ' ' -f2)
+commit=$(brew log --max-count=${max_count} --oneline ${formula}|grep -F " ${version} "| head -n1| cut -d ':' -f1)
 
-if [ -z ${commit} ] || [ -z ${formula} ]; then
-	echo "No version matching '$2' for '$1'"
+if [ -z "${commit}" ]; then
+	echo "No version matching '${formula}' for '${version}'"
 	exit 1
 else 
-	cd /usr/local/bin
-	if [[ -e $formula ]]; then
-		brew uninstall --force $1
-	fi
-	brew install https://raw.githubusercontent.com/Homebrew/homebrew-core/$commit/Formula/$formula.rb
-
-	echo "$1 $2 installed."
+	sha1=$(echo ${commit}| cut -d ' ' -f1)
+	formula=$(echo ${commit}| cut -d ' ' -f2)
+	(
+		cd $(brew --repository)/Library/Taps/${tap};
+		git checkout ${sha1} -- Formula/${formula}.rb;
+		HOMEBREW_NO_AUTO_UPDATE=1 brew ${action} ${formula}
+	)
 fi
-
