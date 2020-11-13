@@ -44,12 +44,17 @@
 % 08/12/17  dhb  Made isetbio stuff conditional on isetbio being installed.
 %                Write out a png of the image in any case.
 %                Some cosmetic changes.
+% 11/12/20  dhb  Initialize isetbio at start so as not to clear variables
+%                needed if it is initialized later.
 
 %% Initialize
 %
 % If you want to use isetbio and have TbTb installed, but not isetbio, type:
 %    tbUse('isetbio','reset','as-is');
 clear; close all;
+if (exist('ieInit','file'))    
+    ieInit;
+end
 
 %% Choose batch renderer options.
 hints.imageWidth = 200;
@@ -139,8 +144,6 @@ rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.re
 
 %% Display as an isetbio optical image, if isetbio is available
 if (exist('ieInit','file'))
-    
-    ieInit;
     renderingsFolder = rtbWorkingFolder( ...
         'folderName', 'renderings',...
         'hints', hints);

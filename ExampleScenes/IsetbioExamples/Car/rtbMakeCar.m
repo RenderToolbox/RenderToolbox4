@@ -10,14 +10,18 @@
 %                Rename rtbMakeCar... helper functions to rtbCar....  rtbMake...
 %                  has a special status for our examples, and should be used only
 %                  as the prefix for top level directories.
+% 11/12/20  dhb  Initialize isetbio at start so as not to clear variables
+%                needed if it is initialized later.
 
 %% Initialize.
 %
 % If you want to use isetbio and have TbTb installed, but not isetbio, type:
 %    tbUse('isetbio','reset','as-is');
-close all;
-clear;
-clc;
+close all; clear;
+if (exist('ieInit','file'))
+    % Initialize isetbio
+    ieInit;
+end
 
 %% Choose simulation parameters.
 filmDiag = 20;
@@ -112,10 +116,7 @@ rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.re
 % this information to fill in parameter info in the OI, such as the
 % F-number or the FOV. Now all that info is held in the remodeler. How
 % should we move that info out from the remodeler into the oi?
-if (exist('ieInit','file'))
-    % Initialize isetbio
-    ieInit;
-    
+if (exist('ieInit','file') 
     % Create the optical image.
     for i=1:length(radianceDataFiles)
         radianceData = load(radianceDataFiles{i});

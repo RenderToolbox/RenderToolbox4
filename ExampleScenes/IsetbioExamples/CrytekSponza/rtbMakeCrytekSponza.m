@@ -36,12 +36,18 @@
 % 08/12/17  dhb  Made isetbio stuff conditional on isetbio being installed.
 %                Write out a png of the image in any case.
 %                Some cosmetic changes.
+% 11/12/20  dhb  Initialize isetbio at start so as not to clear variables
+%                needed if it is initialized later.
 
 %% Initialize
 %
 % If you want to use isetbio and have TbTb installed, but not isetbio, type:
 %    tbUse('isetbio','reset','as-is');
-clear; close all;
+close all; clear;
+if (exist('ieInit','file'))
+    % Initialize isetbio
+    ieInit;
+end
 
 %% Choose batch renderer options.
 hints.imageWidth = 144;
@@ -110,8 +116,6 @@ workingFolder = rtbWorkingFolder('hints', hints);
 rtbWriteSpectrumFile(wls, spd, fullfile(workingFolder, 'D65.spd'));
 
 %% Write conditions and generate scene files
-
-
 nConditions = 3;
 pixelSamples = ones(1,nConditions).*1024;
 lightRotateAxis = [1 0 0;...
@@ -153,7 +157,6 @@ nativeSceneFiles = rtbMakeSceneFiles(scene,'hints', hints,'conditionsFile',condi
 radianceDataFiles = rtbBatchRender(nativeSceneFiles, ...
     'hints', hints);
 
-
 %% Images for display
 %
 % The different rendered images come with different scales,
@@ -173,9 +176,7 @@ rtbShowXYZAndSRGB([], SRGBMontage, sprintf('%s (%s)', hints.recipeName, hints.re
 %
 % TODO: use cameraInfo struct to build correct optics for optical image,
 % below.
-if (exist('ieInit','file'))
-    ieInit;
-    
+if (exist('ieInit','file')) 
     renderingsFolder = rtbWorkingFolder( ...
         'folderName', 'renderings',...
         'hints', hints);
